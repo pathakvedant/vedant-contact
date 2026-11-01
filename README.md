@@ -20,16 +20,14 @@ Personal portfolio for Vedant Pathak: Business Analyst, Certified Data Analyst, 
 
 ## Put it on GitHub Pages (one time)
 
-1. Sign in at github.com and create a new **public** repository named exactly **`YOUR-USERNAME.github.io`** (your GitHub username). That gives you the cleanest URL.
-2. Click **Add file → Upload files** and drag in **everything in this folder**, keeping the `assets` and `blog` folders. Click **Commit changes**.
-3. Go to **Settings → Pages**, set Source to **Deploy from a branch**, choose branch **main** and folder **/ (root)**, then Save.
-4. After 1–2 minutes the site is live at `https://YOUR-USERNAME.github.io/`.
+1. Open the repository **pathakvedant/vedant-contact** on github.com.
+2. Click **Add file → Upload files**. Select everything in this folder and **drag it onto the page**, so the `assets` and `blog` folders are included ("choose your files" can't add folders). Click **Commit changes**.
+3. Pages is already switched on for this repository. Wait for the green tick in the **Actions** tab before uploading again.
+4. After 1–2 minutes the site is live at `https://pathakvedant.github.io/vedant-contact/`.
 
-## Replace the placeholder URL (important for SEO)
+## Site address
 
-Find **`YOUR-USERNAME.github.io`** and replace it with your real address in these files:
-`index.html`, `assets/app.js`, `sitemap.xml`, `robots.txt`.
-(In GitHub you can edit a file by opening it and clicking the ✏️ pencil.)
+The address above is already set in `index.html`, `assets/app.js`, `sitemap.xml` and `robots.txt`.
 
 ## Turn on the forms (one time)
 
@@ -45,7 +43,7 @@ The contact form, the phone-number form and the newsletter form all email **path
 3. Change `slug`, `date`, `cat`, `title`, `excerpt`, `tags` and `body`.
 4. Click **Commit changes**. The post is live in about a minute.
 
-Post links look like `https://YOUR-USERNAME.github.io/#post/your-slug`. Share these on LinkedIn.
+Post links look like `https://pathakvedant.github.io/vedant-contact/#post/your-slug`. Share these on LinkedIn.
 
 ## Getting to the top of Google
 

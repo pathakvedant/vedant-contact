@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://YOUR-USERNAME.github.io/sitemap.xml
+Sitemap: https://pathakvedant.github.io/vedant-contact/sitemap.xml
