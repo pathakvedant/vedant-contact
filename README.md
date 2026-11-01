@@ -38,24 +38,24 @@ The contact form, the phone-number form and the newsletter form all email **path
 
 ## Add a daily blog post
 
-1. Open `blog/posts.js` on GitHub and click ✏️.
-2. Copy one `{ ... },` block and paste it at the **top** of the list.
-3. Change `slug`, `date`, `cat`, `title`, `excerpt`, `tags` and `body`.
-4. Click **Commit changes**. The post is live in about a minute.
+1. Open `blog/posts.js` on your computer. Copy one `{ ... },` block and paste it at the **top** of the list.
+2. Change `slug`, `date`, `cat`, `title`, `excerpt`, `tags` and `body`. Write the title as the question a buyer would ask, and answer it in the excerpt.
+3. In this folder, run `python tools/build_site.py`. This makes the post's own page and updates `sitemap.xml`.
+4. Upload the changed files to GitHub in one commit.
 
-Post links look like `https://pathakvedant.github.io/vedant-contact/#post/your-slug`. Share these on LinkedIn.
+Share the post's own link, for example `https://pathakvedant.github.io/vedant-contact/blog/your-slug.html`.
 
-## Getting to the top of Google
+## Add your real client conversion numbers
 
-The site already has: an SEO title & description, keywords, Open Graph/social cards, structured data (Person + TRAASS business), a sitemap, robots.txt, a mobile-friendly design and fast loading. To rank:
+In `assets/app.js`, find `CONVERSION_HISTORY` and fill in your years, leads and converted clients. The 5-year chart then appears in the Marketing & BD section.
+
+## Getting found on Google and AI tools
+
 1. Add the site to **Google Search Console** (search.google.com/search-console), verify it and submit `sitemap.xml`.
-2. Add the site URL to your **LinkedIn profile** (Contact info → Website) and to your featured section.
-3. Post regularly. Each blog post targets a search phrase, e.g. "bag filter high differential pressure".
-4. Share each new post on LinkedIn. Visits and links are what move you up.
-5. Optional: buy a domain like `traass.in` and connect it in Settings → Pages → Custom domain.
+2. Add the site URL to your **LinkedIn profile** (Contact info → Website) and to your Featured section.
+3. Create a free **Google Business Profile** for **TRAASS** (business.google.com) with this website link.
+4. Use the exact same name everywhere: **Vedant Pathak (VP) · TRAASS**, on LinkedIn, Google Business, email signature and visiting card.
+5. Publish useful posts regularly and share each one on LinkedIn. Links from other real websites are what move you up.
+6. Optional: a custom domain such as `traass.in`, connected in Settings → Pages → Custom domain.
 
-6. Create a free **Google Business Profile** for **TRAASS** (business.google.com) with this website link. This strongly helps "TRAASS" and "APCD consultant" searches.
-7. Use the exact same name everywhere: **Vedant Pathak (VP) · TRAASS · APCD Expert & Business Analyst**, on LinkedIn, Google Business, email signature and visiting card. Google connects identical names.
-
-Target searches built into the page: *Vedant Pathak*, *VP*, *Vedant Pathak VP*, *TRAASS*, *APCD expert*, *APCD consultant India*, *business analyst mechanical domain*, *dust collection system consultant*, *bag filter RCA*, *industrial fan selection*.
-Your name and "TRAASS" are the most realistic to reach page 1 (usually 1–4 weeks after Search Console). "VP" alone is shared by millions of pages, so it ranks best as "Vedant Pathak VP" or "VP TRAASS". Broad terms like "APCD" take months of regular blog posts.
+Most realistic searches first: *Vedant Pathak TRAASS*, *TRAASS*, then long questions such as *bag filter high differential pressure*. Plain *Vedant Pathak* is shared with other people, *VP* alone is not realistic, and broad terms like *APCD* or *B2B marketing* take long, steady effort. No one can guarantee a Google position.

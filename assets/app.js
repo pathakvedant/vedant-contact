@@ -10,6 +10,9 @@ const EMAIL='pathakvedant001@gmail.com';
 const FORM_ENDPOINT='https://formsubmit.co/ajax/'+EMAIL; // first submission sends you an activation email: click it once
 const MY_PHONE=atob('KzkxIDYzOTI1IDM3NDU0');            // +91 phone, Base64 so it isn't plain text in the page
 const SITE='https://pathakvedant.github.io/vedant-contact/';
+// Your real client conversion history. Fill in all three lists to show the chart on the site, e.g.
+// {years:['2022','2023','2024','2025','2026'],leads:[...],converted:[...]}
+const CONVERSION_HISTORY=null;
 
 async function sendForm(data){
  const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_template:'table',_captcha:'false',Page:location.href,Time:new Date().toLocaleString('en-IN'),...data})});
@@ -37,7 +40,7 @@ $('#toTop').onclick=()=>scrollTo({top:0});
 $('#yr').textContent=new Date().getFullYear();
 
 // ===== Typing =====
-const roles=['Business Analyst','Mechanical Engineer · Certified Data Analyst','Fan Design & APCD Expert','Dust Collection RCA Specialist','ERP & Dashboard Builder','Steel Industry Transformer'];let ri=0,ci=0,del=false;
+const roles=['Business Analyst','B2B Marketing for Manufacturing','Business Development & Client Conversion','Branding for Industrial Companies','Mechanical Engineer · Certified Data Analyst','Fan Design & APCD Expert','ERP & Dashboard Builder','Transforming Every Industry: Steel to FMCG'];let ri=0,ci=0,del=false;
 (function ty(){const w=roles[ri];$('#typed').textContent='> '+w.slice(0,ci)+'_';if(!del&&ci++===w.length){del=true;return setTimeout(ty,1500)}if(del&&ci--===0){del=false;ri=(ri+1)%roles.length}setTimeout(ty,del?35:75)})();
 
 // ===== Reveal, skill bars, counters =====
@@ -52,7 +55,7 @@ const J=[
  ['🌀 Fan Design Software Expert','Industrial fan design and selection: duty point, static pressure, efficiency, motor sizing and noise. The right fan is the heart of every dust collection system.'],
  ['🏭 APCD Consulting & RCA · 5+ years','5+ years serving customers on Air Pollution Control Devices. I studied each application, did RCA of existing dust collection systems and recommended the best-suited APCD.'],
  ['📊 Certified Data Analyst','I took the engineer\'s habit of measuring everything into data: SQL, Excel, Power BI and storytelling. Readings became decisions.'],
- ['🔩 Steel Industry: Digital Transformation','Now transforming the base of the mechanical industry, steel, with ERP, live dashboards and B2B marketing, using engineering sense and data skills together.']];
+ ['🚀 Digital Transformation: From Steel to FMCG','Now transforming businesses in every industry, from steel to FMCG, with ERP, live dashboards and B2B marketing, using engineering sense and data skills together.']];
 function showJ(k){$('#jInfo').innerHTML=`<h3>${J[k][0]}</h3><p>${J[k][1]}</p>`;$$('.stg').forEach(g=>g.querySelector('circle,rect').style.strokeWidth=g.dataset.k==k?5:2)}
 $$('.stg').forEach(g=>{g.style.cursor='pointer';g.setAttribute('tabindex','0');g.onclick=()=>showJ(+g.dataset.k);g.onkeydown=e=>{if(e.key==='Enter')showJ(+g.dataset.k)}});showJ(2);
 const imp=$('#imp'),pg=$('#parts'),NS='http://www.w3.org/2000/svg';let P=[],ang=0;
@@ -110,18 +113,36 @@ function charts(){
   const d=(a,b)=>`<small class="${a>=b?'up':'dn'}">${a>=b?'▲':'▼'} ${Math.abs((a-b)/b*100).toFixed(1)}% YoY</small>`;
   $('#kRevD').innerHTML=d(rev,prev);$('#kOrdD').innerHTML=d(ord,pord)}
  $('#fYear').onchange=$('#fSeg').onchange=upd;upd();
- // conversion
- new Chart($('#cConv'),{data:{labels:['2022','2023','2024','2025','2026'],datasets:[
-  {type:'bar',label:'Leads',data:[180,220,250,280,310],backgroundColor:'rgba(0,229,255,.35)',borderRadius:6,yAxisID:'y'},
-  {type:'bar',label:'Converted',data:[36,48,62,76,90],backgroundColor:'rgba(177,77,255,.7)',borderRadius:6,yAxisID:'y'},
-  {type:'line',label:'Conversion %',data:[20,21.8,24.8,27.1,29],borderColor:'#ff4d9d',tension:.4,yAxisID:'y1'}]},
-  options:{plugins:{legend:{position:'bottom'}},scales:{y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
+ // conversion history (only shown once real numbers are filled in)
+ const H=CONVERSION_HISTORY;
+ if(H){$('#convHistory').classList.remove('hidden');
+  new Chart($('#cConv'),{data:{labels:H.years,datasets:[
+   {type:'bar',label:'Leads',data:H.leads,backgroundColor:'rgba(0,229,255,.35)',borderRadius:6,yAxisID:'y'},
+   {type:'bar',label:'Converted',data:H.converted,backgroundColor:'rgba(177,77,255,.7)',borderRadius:6,yAxisID:'y'},
+   {type:'line',label:'Conversion %',data:H.leads.map((l,i)=>+(H.converted[i]/l*100).toFixed(1)),borderColor:'#ff4d9d',tension:.4,yAxisID:'y1'}]},
+   options:{plugins:{legend:{position:'bottom'}},scales:{y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}})}
 }
 charts();
 
+// ===== Sales funnel calculator =====
+const money=l=>l>=100?'₹'+(l/100).toFixed(2)+' Cr':'₹'+l.toFixed(1)+' L';
+function funnel(){
+ const v=id=>+$('#'+id).value,leads=v('fLeads')*12,q=v('fQual'),p=v('fProp'),w=v('fWin'),aov=v('fAov');
+ $('#fLeadsV').textContent=v('fLeads');$('#fQualV').textContent=q+'%';$('#fPropV').textContent=p+'%';$('#fWinV').textContent=w+'%';$('#fAovV').textContent='₹'+aov+' L';
+ const qual=leads*q/100,prop=qual*p/100,ord=prop*w/100,rev=ord*aov;
+ const steps=[['Qualifying your leads',q],['Getting qualified leads to a proposal',p],['Winning proposals',w]],leak=steps.reduce((a,b)=>b[1]<a[1]?b:a),li=steps.indexOf(leak);
+ const uplift=ord*(leak[1]+5)/leak[1]-ord;
+ const rows=[['Leads',leads],['Qualified',qual],['Proposals',prop],['Orders',ord]];
+ $('#funnelOut').innerHTML=rows.map((r,i)=>`<div class="fstage${i===li+1?' leak':''}"><div><span>${r[0]}</span><b>${Math.round(r[1]).toLocaleString('en-IN')}</b></div><i style="width:${r[1]/leads*100}%"></i></div>`).join('')
+  +`<div class="frev">${money(rev)} <small style="font-size:.7rem;color:var(--mut)">a year</small></div><p class="fnote"><strong>Biggest leak:</strong> ${leak[0].toLowerCase()} (${leak[1]}%). Improving just this step by 5 points adds about ${uplift.toFixed(1)} orders, worth ${money(uplift*aov)} a year.</p>`;
+ $('#funnelCta').dataset.summary=`Hi Vedant, I tried your funnel calculator: ${v('fLeads')} leads a month, ${q}% qualify, ${p}% get a proposal, ${w}% win. My biggest leak looks like ${leak[0].toLowerCase()}. Can we talk?`;
+}
+$$('#funnelInputs input').forEach(i=>i.oninput=funnel);funnel();
+$('#funnelCta').addEventListener('click',e=>{$('#cMsg').value=e.currentTarget.dataset.summary});
+
 // ===== Blog =====
 const POSTS=(window.POSTS||[]).map(p=>({...p,mins:Math.max(1,Math.round(p.body.split(/\s+/).length/200))})).sort((a,b)=>b.date.localeCompare(a.date));
-const CAT_STYLE={'APCD':['#ff4d9d','🏭'],'Fans':['#b14dff','🌀'],'Steel':['#3dffa8','🔩'],'ERP':['#00e5ff','🧩'],'Dashboards':['#ffb84d','📊'],'Marketing':['#4d8bff','📣'],'Data Story':['#00e5ff','📖']};
+const CAT_STYLE={'Business Development':['#ffb84d','🤝'],'APCD':['#ff4d9d','🏭'],'Fans':['#b14dff','🌀'],'Steel':['#3dffa8','🔩'],'ERP':['#00e5ff','🧩'],'Dashboards':['#ffb84d','📊'],'Marketing':['#4d8bff','📣'],'Data Story':['#00e5ff','📖']};
 const cs=c=>CAT_STYLE[c]||['#00e5ff','📝'];
 const cover=p=>{const[c,e]=cs(p.cat);return `<div class="cover" style="background:linear-gradient(135deg,${c}33,#0b0e22 70%)">${p.emoji||e}</div>`};
 const fmtDate=d=>new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
@@ -149,7 +170,7 @@ function md(t){const out=[];let list=false;
  if(list)out.push('</ul>');return out.join('')}
 const baseTitle=document.title,metaDesc=document.querySelector('meta[name=description]'),baseDesc=metaDesc.content;
 function openPost(slug){const i=POSTS.findIndex(p=>p.slug===slug);if(i<0)return;const p=POSTS[i],prev=POSTS[i+1],next=POSTS[i-1];
- const url=SITE+'#post/'+p.slug,share=encodeURIComponent(url),txt=encodeURIComponent(p.title+' by Vedant Pathak');
+ const url=(window.POST_PAGES||[]).includes(p.slug)?SITE+'blog/'+p.slug+'.html':SITE+'#post/'+p.slug,share=encodeURIComponent(url),txt=encodeURIComponent(p.title+' by Vedant Pathak');
  const rel=POSTS.filter(x=>x.cat===p.cat&&x.slug!==p.slug).slice(0,2);
  $('#rArt').innerHTML=`${cover(p).replace('class="cover"','class="cover" style="border-radius:18px;height:200px;font-size:4.5rem;background:linear-gradient(135deg,'+cs(p.cat)[0]+'44,#0b0e22 75%)"')}
  <div class="meta" style="margin-top:22px"><span class="c">${esc(p.cat)}</span><span>${fmtDate(p.date)}</span><span>${p.mins} min read</span><span>By Vedant Pathak</span></div>

@@ -2,11 +2,120 @@
  DAILY BLOG: add a new post by copying one block below and pasting it at the TOP of the list.
  - slug:    short-url-name (lowercase, hyphens, unique)
  - date:    YYYY-MM-DD
- - cat:     APCD | Fans | Steel | ERP | Dashboards | Marketing | Data Story  (or a new one)
+ - cat:     Marketing | Business Development | APCD | Fans | Steel | ERP | Dashboards | Data Story  (or a new one)
+ - excerpt: answer the title's question in one or two plain sentences. Search engines and AI tools quote this
  - body:    plain text. "## " = heading, "- " = bullet, "> " = quote, **bold**. Leave a blank line between paragraphs.
- Then add the post URL to sitemap.xml and upload to GitHub.
+ Then run: python tools/build_site.py   (this creates the post's own page and updates the sitemap)
+ and upload to GitHub. Without that step the post still shows on the homepage, but Google won't index it separately.
 */
 window.POSTS = [
+{
+ slug: "get-b2b-leads-without-ranking-on-google",
+ date: "2026-11-01",
+ cat: "Marketing",
+ title: "How can a manufacturer get B2B leads without ranking on Google's first page?",
+ excerpt: "Go where industrial buyers already are: LinkedIn, existing customers, dealers, trade directories, trade shows and direct outreach. Search is one channel, and in B2B it is rarely the first one to pay off.",
+ tags: ["B2B marketing","lead generation","manufacturing","LinkedIn"],
+ body: `
+Ranking on page one takes months and can't be guaranteed. Meanwhile, you need enquiries this quarter. A manufacturer's buyer list is small and findable, which is a real advantage: you can go to them directly.
+
+## Start with the people who already know you
+
+- **Past customers:** call them. Ask about spares, upgrades and who else in the group has the same problem
+- **Referrals:** ask right after a successful commissioning, when trust is highest
+- **Dealers and consultants:** one good EPC or consultant relationship can bring repeated enquiries
+
+## Go direct to named accounts
+
+- List 50 target plants in the right industries
+- Find the plant head, maintenance head and purchase head on LinkedIn
+- Open with something useful about their process, not your catalogue
+
+## Show up where buyers look
+
+- **LinkedIn:** two posts a week from a real person, not only a company page
+- **Google Business Profile:** free, and it covers searches for your name and company
+- **Trade directories:** IndiaMART, TradeIndia and industry associations
+- **Trade shows:** book meetings before the event and follow up within 48 hours
+
+## Measure one thing
+
+Ask every new enquiry "how did you find us?" and record it. After three months, stop what brings nothing and double what works.
+
+> Search brings people who are already looking. Outreach reaches the buyers who haven't started looking yet.
+
+The website still matters. When your name comes up, buyers will check you out, and that page has to earn their trust.
+`
+},
+{
+ slug: "what-does-business-development-do-in-manufacturing",
+ date: "2026-11-01",
+ cat: "Business Development",
+ title: "What does business development do in a manufacturing company?",
+ excerpt: "Business development finds new accounts, markets and partners, then builds the relationship and technical trust that turns them into long-term customers. Sales closes orders; BD creates the opportunities.",
+ tags: ["business development","manufacturing","client conversion","sales"],
+ body: `
+In a manufacturing company, sales usually handles today's enquiries. Business development decides where next year's orders will come from.
+
+## What BD actually does
+
+- **Market mapping:** which industries, regions and applications fit the product
+- **Account targeting:** which plants, and who influences the decision there
+- **Opening doors:** first meetings, site visits and technical conversations
+- **Partnerships:** dealers, EPC contractors and consultants
+- **Feedback:** telling the factory what the market is asking for
+
+## Why engineering knowledge changes the result
+
+Industrial buyers are spending on equipment that has to run for years, and a failure stops their plant. They trust someone who can walk the site, ask the right questions and explain why something failed.
+
+> Solve one real problem during the first site visit and you stop being a vendor.
+
+## The numbers worth tracking
+
+- New qualified accounts per quarter
+- Conversion at each stage: lead, qualified, visit, proposal, order
+- Time from first contact to order
+- Share of revenue from accounts won in the last two years
+
+## Where companies go wrong
+
+The most common mistake is measuring BD only on this month's orders. Industrial sales cycles are long, so that pushes people back to chasing easy quotations and away from building new accounts.
+`
+},
+{
+ slug: "does-a-manufacturing-company-need-branding",
+ date: "2026-11-01",
+ cat: "Marketing",
+ title: "Does a manufacturing company really need branding?",
+ excerpt: "Yes. In B2B manufacturing, branding is not about a fancy logo. It is the trust and clarity that gets you shortlisted before anyone compares prices.",
+ tags: ["branding","B2B marketing","manufacturing"],
+ body: `
+Many manufacturers believe that quality speaks for itself. It does, but only after someone has bought from you. Branding is what gets you onto the shortlist in the first place.
+
+## What a brand means for a manufacturer
+
+- **A clear promise:** what you do better, and for whom, in one sentence
+- **Consistency:** the same name, logo and message on the website, catalogue, LinkedIn and visiting card
+- **Proof:** case studies, photographs of real installations and technical data
+- **People:** engineers and founders who are visible and helpful
+
+## Where to start
+
+- Write your one-sentence positioning. If your team gives five different answers, start there
+- Fix your company profile and catalogue so they answer what buyers ask
+- Make your website pass the 30-second test: what do you make, for whom, and why trust you?
+- Turn your three best projects into short case studies
+
+## What it pays back
+
+A stronger brand helps you get enquiries before the price discussion starts, and lets your sales team spend less time proving you are credible.
+
+> Buyers rarely choose the unknown supplier, even at a lower price, when a breakdown would stop their plant.
+
+Branding doesn't need a big budget. It needs clarity, consistency and patience.
+`
+},
 {
  slug: "steel-plant-digital-transformation-first-90-days",
  date: "2026-11-01",
