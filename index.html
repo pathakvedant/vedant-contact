@@ -1,259 +1,246 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vedant Pathak | Business Analyst</title>
-<meta name="description" content="Vedant Pathak — Business Analyst: data storytelling, interactive dashboards, ERP implementation, digital transformation and B2B manufacturing marketing.">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-:root{--bg:#05060f;--bg2:#0b0e22;--card:rgba(255,255,255,.04);--line:rgba(120,140,255,.18);--txt:#e6e9ff;--mut:#9aa3c7;--a1:#00e5ff;--a2:#b14dff;--a3:#ff4d9d}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:Inter,sans-serif;line-height:1.6;overflow-x:hidden}
-#stars{position:fixed;inset:0;z-index:-1}
-a{color:var(--a1);text-decoration:none}
-h1,h2,h3,.logo{font-family:Orbitron,sans-serif;letter-spacing:.04em}
-.wrap{max-width:1150px;margin:auto;padding:0 20px}
-nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(5,6,15,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-.logo{font-weight:900;font-size:1.3rem;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;color:transparent}
-nav ul{display:flex;gap:22px;list-style:none}
-nav ul a{color:var(--mut);font-size:.9rem;transition:.2s}
-nav ul a:hover{color:var(--a1)}
-#burger{display:none;background:none;border:0;color:var(--txt);font-size:1.6rem;cursor:pointer}
-section{padding:100px 0 60px}
-.hero{min-height:100vh;display:flex;align-items:center;text-align:center}
-.hero h1{font-size:clamp(2.2rem,7vw,5rem);font-weight:900;line-height:1.1;background:linear-gradient(90deg,var(--a1),var(--a2),var(--a3));-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 0 25px rgba(0,229,255,.25))}
-.hero .tag{font-family:Orbitron;color:var(--a1);margin:18px 0;min-height:1.6em;font-size:clamp(.9rem,2.5vw,1.2rem)}
-.hero p{color:var(--mut);max-width:680px;margin:0 auto 30px}
-.btn{display:inline-block;padding:12px 28px;border-radius:40px;border:1px solid var(--a1);color:var(--txt);font-weight:600;margin:6px;transition:.25s;cursor:pointer;background:transparent;font-family:inherit;font-size:1rem}
-.btn.fill{background:linear-gradient(90deg,var(--a1),var(--a2));border:0;color:#05060f}
-.btn:hover{box-shadow:0 0 22px rgba(0,229,255,.5);transform:translateY(-2px)}
-.title{font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:10px}
-.title span{color:var(--a1)}
-.sub{color:var(--mut);margin-bottom:40px;max-width:700px}
-.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;transition:.3s;position:relative;overflow:hidden}
-.card:hover{border-color:var(--a1);transform:translateY(-4px);box-shadow:0 10px 40px rgba(0,229,255,.12)}
-.card h3{font-size:1rem;margin:10px 0;color:var(--a1)}
-.card p,.card li{color:var(--mut);font-size:.93rem}
-.card ul{padding-left:18px}
-.ico{font-size:2rem}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin-top:40px}
-.stat{text-align:center;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
-.stat b{font-family:Orbitron;font-size:2rem;color:var(--a1);display:block}
-.stat small{color:var(--mut)}
-.bar{margin:14px 0}
-.bar div{display:flex;justify-content:space-between;font-size:.9rem}
-.bar i{display:block;height:8px;border-radius:8px;background:rgba(255,255,255,.07);margin-top:6px;overflow:hidden}
-.bar i em{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a1),var(--a2));transition:width 1.6s ease}
-.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
-.tab{padding:8px 18px;border-radius:30px;border:1px solid var(--line);background:none;color:var(--mut);cursor:pointer;font-family:inherit}
-.tab.on{background:var(--a1);color:#05060f;border-color:var(--a1)}
-.dash{display:grid;gap:18px;grid-template-columns:2fr 1fr}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.kpi{padding:16px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
-.kpi small{color:var(--mut);font-size:.75rem;text-transform:uppercase}
-.kpi b{display:block;font-family:Orbitron;font-size:1.3rem}
-.up{color:#3dffa8}.dn{color:var(--a3)}
-select,input,textarea{background:var(--bg2);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:inherit;width:100%}
-.story{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
-.step{padding:20px;border-left:3px solid var(--a2);background:var(--card);border-radius:0 12px 12px 0}
-.step:before{counter-increment:s;content:"0" counter(s);font-family:Orbitron;color:var(--a2);font-size:1.4rem}
-.step h3{color:var(--txt)}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--a1)}
-.timeline{border-left:2px solid var(--a2);padding-left:24px}
-.tl{margin-bottom:28px;position:relative}
-.tl:before{content:"";position:absolute;left:-31px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--a1);box-shadow:0 0 12px var(--a1)}
-.tl span{color:var(--a1);font-family:Orbitron;font-size:.8rem}
-.post{cursor:pointer}
-.post .date{font-size:.75rem;color:var(--a2);font-family:Orbitron}
-.chip{display:inline-block;font-size:.72rem;padding:2px 10px;border:1px solid var(--a2);border-radius:20px;color:var(--a2);margin-top:8px}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
-#modal .card{max-width:720px;width:100%;max-height:85vh;overflow:auto}
-form{display:grid;gap:14px}
-.contact{display:grid;grid-template-columns:1fr 1.3fr;gap:30px}
-.reveal{opacity:0;transform:translateY(30px);transition:1s}
-.reveal.show{opacity:1;transform:none}
-footer{text-align:center;padding:30px;color:var(--mut);border-top:1px solid var(--line);font-size:.85rem}
-.hidden{display:none!important}
-@media(max-width:860px){
- nav ul{position:absolute;top:64px;left:0;right:0;flex-direction:column;background:var(--bg2);padding:20px;display:none}
- nav ul.open{display:flex}#burger{display:block}
- .dash,.contact{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.story{grid-template-columns:1fr 1fr}
-}
-@media(max-width:520px){.story{grid-template-columns:1fr}}
-</style>
+<title>Vedant Pathak (VP) | TRAASS | APCD Expert & Business Analyst, Mechanical Domain</title>
+<meta name="description" content="Vedant Pathak (VP), founder of TRAASS: APCD expert and Business Analyst in the mechanical domain. B.Tech Mechanical Engineer, Certified Data Analyst, 5+ years in Air Pollution Control Devices, dust collection systems and fan design, now driving digital transformation in steel.">
+<meta name="keywords" content="Vedant Pathak, VP, Vedant Pathak VP, TRAASS, TRAASS Vedant Pathak, APCD, APCD expert, APCD consultant India, air pollution control device, business analyst mechanical domain, mechanical business analyst, business analyst manufacturing, dust collection system, dust collector consultant, bag filter, bag filter RCA, industrial fan design, fan selection, ID fan, steel industry digital transformation, ERP implementation manufacturing, Power BI manufacturing dashboard, certified data analyst mechanical engineer">
+<meta name="author" content="Vedant Pathak">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://YOUR-USERNAME.github.io/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TRAASS · Vedant Pathak">
+<meta property="og:title" content="Vedant Pathak (VP) | TRAASS: APCD Expert & Business Analyst, Mechanical Domain">
+<meta property="og:description" content="APCD expert & Business Analyst in the mechanical domain: dust collection, fan design, ERP and dashboards for steel & manufacturing.">
+<meta property="og:image:alt" content="Vedant Pathak (VP), TRAASS: APCD Expert & Business Analyst">
+<meta property="profile:first_name" content="Vedant"><meta property="profile:last_name" content="Pathak">
+<meta property="og:url" content="https://YOUR-USERNAME.github.io/">
+<meta property="og:image" content="https://YOUR-USERNAME.github.io/og-image.png">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vedant Pathak (VP) | TRAASS: APCD & Business Analyst">
+<meta name="twitter:description" content="Business Analyst · Certified Data Analyst · APCD & Fan Design Expert · Steel Industry Digital Transformation">
+<meta name="twitter:image" content="https://YOUR-USERNAME.github.io/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Person","@id":"https://YOUR-USERNAME.github.io/#vedant","name":"Vedant Pathak","alternateName":["VP","Vedant Pathak VP","Vedant Pathak TRAASS"],"givenName":"Vedant","familyName":"Pathak",
+  "jobTitle":["APCD Expert","Business Analyst (Mechanical Domain)","Founder, TRAASS"],"email":"mailto:pathakvedant001@gmail.com",
+  "url":"https://YOUR-USERNAME.github.io/","image":"https://YOUR-USERNAME.github.io/assets/vedant-pathak.jpg",
+  "description":"Vedant Pathak (VP) is the founder of TRAASS, an APCD expert and Business Analyst in the mechanical domain with 5+ years in air pollution control devices and dust collection systems.",
+  "sameAs":["https://www.linkedin.com/in/vedant-pathak-65915b160/"],
+  "alumniOf":{"@type":"EducationalOrganization","name":"B.Tech Mechanical Engineering"},
+  "hasCredential":{"@type":"EducationalOccupationalCredential","name":"Certified Data Analyst"},
+  "worksFor":{"@id":"https://YOUR-USERNAME.github.io/#traass"},
+  "knowsAbout":["APCD","Air Pollution Control Devices","Business Analysis in Mechanical Domain","Bag Filter","Business Analysis","Data Analytics","Power BI","ERP Implementation","Digital Transformation","Air Pollution Control Devices","Dust Collection Systems","Industrial Fan Design","Root Cause Analysis","Steel Industry","B2B Marketing"],
+  "address":{"@type":"PostalAddress","addressCountry":"IN"}},
+ {"@type":"ProfessionalService","@id":"https://YOUR-USERNAME.github.io/#traass","name":"TRAASS","founder":{"@id":"https://YOUR-USERNAME.github.io/#vedant"},
+  "url":"https://YOUR-USERNAME.github.io/","areaServed":"IN","email":"pathakvedant001@gmail.com",
+  "alternateName":"TRAASS by Vedant Pathak","logo":"https://YOUR-USERNAME.github.io/assets/traass-logo.png","image":"https://YOUR-USERNAME.github.io/og-image.png",
+  "description":"TRAASS by Vedant Pathak (VP): APCD and dust collection consulting, business analysis in the mechanical domain, dashboards, ERP implementation and digital transformation for manufacturing and steel.",
+  "knowsAbout":["APCD","Dust Collection Systems","Bag Filter","Industrial Fans","Business Analysis","ERP","Steel Industry"]},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Who is Vedant Pathak (VP)?","acceptedAnswer":{"@type":"Answer","text":"Vedant Pathak, also known as VP, is the founder of TRAASS. He is a B.Tech Mechanical Engineer, a Certified Data Analyst and an APCD expert with 5+ years in air pollution control devices and dust collection systems, now working as a Business Analyst in the mechanical and steel domain."}},
+  {"@type":"Question","name":"What is TRAASS?","acceptedAnswer":{"@type":"Answer","text":"TRAASS is Vedant Pathak's practice for APCD and dust collection consulting, business analysis in the mechanical domain, dashboards, ERP implementation and digital transformation for manufacturing and steel companies."}},
+  {"@type":"Question","name":"What APCD services does Vedant Pathak offer?","acceptedAnswer":{"@type":"Answer","text":"Application study, selection of the best-suited air pollution control device (bag filter, cyclone, wet scrubber or ESP), industrial fan selection, and root cause analysis (RCA) of existing dust collection systems."}},
+  {"@type":"Question","name":"What does a business analyst in the mechanical domain do?","acceptedAnswer":{"@type":"Answer","text":"A business analyst in the mechanical domain brings engineering knowledge and data analysis together: turning plant, sales and production data into dashboards and decisions, mapping processes for ERP, and leading digital transformation in manufacturing."}}]},
+ {"@type":"WebSite","name":"TRAASS · Vedant Pathak","url":"https://YOUR-USERNAME.github.io/"}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script defer src="blog/posts.js"></script>
+<script defer src="assets/app.js"></script>
 </head>
 <body>
-<canvas id="stars"></canvas>
+<div id="progress"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="glowcur" id="glowcur" aria-hidden="true"></div>
 
-<nav><div class="wrap">
- <a href="#home" class="logo">TRAAS<small style="font-size:.55rem;letter-spacing:.2em;color:var(--mut);-webkit-text-fill-color:var(--mut);margin-left:8px">BY VEDANT PATHAK</small></a>
- <button id="burger" aria-label="Menu">☰</button>
+<nav id="nav" aria-label="Main"><div class="wrap">
+ <a href="#home" class="logo" aria-label="TRAASS home"><img src="assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a>
+ <button id="burger" aria-label="Open menu" aria-expanded="false">☰</button>
  <ul id="menu">
-  <li><a href="#about">About</a></li><li><a href="#journey">Journey</a></li><li><a href="#skills">Skills</a></li><li><a href="#services">Services</a></li>
-  <li><a href="#story">Data → Story</a></li><li><a href="#dashboard">Dashboard</a></li><li><a href="#clients">Clients</a></li>
-  <li><a href="#blog">Blog</a></li><li><a href="#contact">Contact</a></li>
+  <li><a href="#about">About</a></li><li><a href="#journey">Journey</a></li><li><a href="#services">Services</a></li>
+  <li><a href="#story">Data → Story</a></li><li><a href="#dashboard">Dashboard</a></li><li><a href="#clients">Results</a></li>
+  <li><a href="#blog">Blog</a></li><li><a href="#contact" class="cta">Let's Talk</a></li>
  </ul>
 </div></nav>
 
+<main>
 <!-- HERO -->
-<section class="hero" id="home"><div class="wrap">
- <p style="font-family:Orbitron;color:var(--mut);letter-spacing:.3em">HELLO, I'M</p>
- <h1>VEDANT PATHAK</h1>
- <div class="tag" id="typed"></div>
- <p>Mechanical Engineer turned Certified Data Analyst. I bring shop-floor engineering — fans, dust collection, steel — together with data, dashboards and ERP to digitally transform the mechanical industry.</p>
- <a href="#dashboard" class="btn fill">View Live Dashboard</a>
- <a href="#contact" class="btn">Hire / Contact Me</a>
- <a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener" class="btn">LinkedIn ↗</a>
-</div></section>
+<header class="hero" id="home"><div class="wrap hero-grid">
+ <div>
+  <span class="eyebrow">TRAASS · APCD Expert · Business Analyst (Mechanical)</span>
+  <h1><span class="grad">Vedant Pathak</span> <span class="vp">(VP)</span></h1>
+  <div class="tag" id="typed" aria-live="polite"></div>
+  <p class="lead">Founder of <strong>TRAASS</strong>. <strong>APCD expert</strong> and <strong>Business Analyst in the mechanical domain</strong>. A B.Tech Mechanical Engineer and Certified Data Analyst with <strong>5+ years in Air Pollution Control Devices</strong>. I bring together shop-floor engineering (fans, dust collection, steel) and data, dashboards and ERP to digitally transform the mechanical industry.</p>
+  <a href="#contact" class="btn fill">Work with me →</a>
+  <a href="#dashboard" class="btn">Live Dashboard</a>
+  <a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener" class="btn">in LinkedIn</a>
+  <div class="chips"><span>🎓 B.Tech Mechanical</span><span>📜 Certified Data Analyst</span><span>🌀 Fan Design Software</span><span>🏭 APCD · 5+ yrs</span><span>🔩 Steel Industry</span></div>
+ </div>
+ <div class="orb" aria-hidden="true">
+  <div class="ring"></div><div class="ring r2"></div>
+  <div class="core"><img src="assets/vedant-pathak.jpg" alt="Vedant Pathak (VP), APCD Expert and Business Analyst, founder of TRAASS" width="400" height="430" fetchpriority="high" onerror="this.remove()"><b class="grad">VP</b><small>ENGINEER × ANALYST</small></div>
+  <span class="badge">VP · TRAASS</span>
+  <span class="dot" style="top:4%;left:58%">📊 Power BI</span>
+  <span class="dot" style="top:44%;left:-14%">🌀 Fan Design</span>
+  <span class="dot" style="bottom:8%;left:8%">🧩 ERP</span>
+  <span class="dot" style="bottom:22%;right:-6%">🏭 APCD</span>
+ </div>
+</div></header>
+
+<div class="marquee" aria-hidden="true"><div>
+ <span>Steel</span><span>Cement</span><span>Foundry</span><span>Power Plants</span><span>Pharma</span><span>Chemicals</span><span>Food Processing</span><span>Woodworking</span><span>Solar</span><span>Engineering Goods</span>
+ <span>Steel</span><span>Cement</span><span>Foundry</span><span>Power Plants</span><span>Pharma</span><span>Chemicals</span><span>Food Processing</span><span>Woodworking</span><span>Solar</span><span>Engineering Goods</span>
+</div></div>
 
 <!-- ABOUT -->
 <section id="about"><div class="wrap reveal">
- <h2 class="title">About <span>Me</span></h2>
- <p class="sub">A B.Tech Mechanical Engineer and Certified Data Analyst who has worked on machines, consulted customers on them, and now uses data to transform the industry that builds them.</p>
+ <span class="eyebrow">About</span>
+ <h2 class="title">Engineer by training. <span>Analyst by choice.</span></h2>
+ <p class="sub">I've worked on machines, consulted customers on them, and now use data to transform the industry that builds them.</p>
  <div class="grid">
-  <div class="card"><div class="ico">🎓</div><h3>Education</h3><p><b style="color:var(--txt)">B.Tech — Mechanical Engineering</b><br>Strong base in fluid mechanics, thermodynamics and machine design.</p><span class="chip">Engineering</span></div>
-  <div class="card"><div class="ico">📜</div><h3>Certification</h3><p><b style="color:var(--txt)">Certified Data Analyst</b><br>Data cleaning, SQL, Excel, Power BI, statistics and storytelling with data.</p><span class="chip">Analytics</span></div>
-  <div class="card"><div class="ico">🌀</div><h3>Fan Design Expert</h3><p>Expert in industrial fan design & selection software — duty point, static pressure, efficiency and fan curve analysis.</p><span class="chip">Software</span></div>
-  <div class="card"><div class="ico">🏭</div><h3>APCD Consultant</h3><p>5+ years in Air Pollution Control Devices — consulting customers on the best-suited dust collection system for their application.</p><span class="chip">Dust Collection</span></div>
-  <div class="card"><div class="ico">🔍</div><h3>Root Cause Analysis</h3><p>RCA of existing dust collection systems — low suction, bag failures, high ΔP, fan vibration — and practical fixes.</p><span class="chip">RCA</span></div>
-  <div class="card"><div class="ico">🔩</div><h3>Now: Steel Industry</h3><p>Transforming the base of the mechanical industry — digitising steel operations with ERP, dashboards and data-driven decisions.</p><span class="chip">Transformation</span></div>
+  <article class="card"><div class="ico">🎓</div><h3>Education</h3><p><strong>B.Tech: Mechanical Engineering</strong><br>Fluid mechanics, thermodynamics and machine design: the base of everything I do.</p><span class="chip">Engineering</span></article>
+  <article class="card"><div class="ico">📜</div><h3>Certified Data Analyst</h3><p>Data cleaning, SQL, Excel, Power BI, statistics and storytelling with data.</p><span class="chip">Analytics</span></article>
+  <article class="card"><div class="ico">🌀</div><h3>Fan Design Software Expert</h3><p>Industrial fan design & selection: duty point, static pressure, efficiency, motor sizing and fan curve analysis.</p><span class="chip">Software</span></article>
+  <article class="card"><div class="ico">🏭</div><h3>APCD Consultant · 5+ years</h3><p>Consulted customers on the best-suited Air Pollution Control Device for each application: bag filters, cyclones, scrubbers and ESPs.</p><span class="chip">Dust Collection</span></article>
+  <article class="card"><div class="ico">🔍</div><h3>Root Cause Analysis</h3><p>RCA of existing dust collection systems: low suction, bag failure, high ΔP, fan vibration, then practical fixes.</p><span class="chip">RCA</span></article>
+  <article class="card"><div class="ico">🔩</div><h3>Now: Steel Industry</h3><p>Transforming the base of the mechanical industry: ERP, live dashboards and data-driven decisions in steel.</p><span class="chip">Transformation</span></article>
  </div>
- <div class="timeline" style="margin-top:50px">
-  <div class="tl"><span>NOW</span><h3>Steel Industry — Digital Transformation</h3><p class="sub" style="margin:0">Bringing ERP, dashboards and data culture to steel manufacturing — production, inventory, sales and B2B marketing.</p></div>
-  <div class="tl"><span>EARLIER</span><h3>Air Pollution Control Devices (Dust Collection Systems)</h3><p class="sub" style="margin:0">Served customers for 5+ years: understood their process, did RCA of existing systems, and consulted on the best-suited APCD — bag filters, cyclones, scrubbers, ESPs and fans.</p></div>
-  <div class="tl"><span>CERTIFICATION</span><h3>Certified Data Analyst</h3><p class="sub" style="margin:0">Added data & BI skills on top of engineering — the bridge between the shop floor and the boardroom.</p></div>
-  <div class="tl"><span>FOUNDATION</span><h3>B.Tech — Mechanical Engineering</h3><p class="sub" style="margin:0">Where it began: machines, airflow and design.</p></div>
+ <div class="timeline">
+  <div class="tl"><span>NOW</span><h3>Steel Industry: Digital Transformation</h3><p>Bringing ERP, dashboards and a data culture to steel manufacturing: production, inventory, sales and B2B marketing.</p></div>
+  <div class="tl"><span>5+ YEARS</span><h3>Air Pollution Control Devices (Dust Collection Systems)</h3><p>Served customers by understanding their process, doing RCA of existing systems, and recommending the best-suited APCD and fan.</p></div>
+  <div class="tl"><span>CERTIFICATION</span><h3>Certified Data Analyst</h3><p>Added data & BI on top of engineering: the bridge between the shop floor and the boardroom.</p></div>
+  <div class="tl"><span>FOUNDATION</span><h3>B.Tech: Mechanical Engineering</h3><p>Where it began: machines, airflow and design.</p></div>
  </div>
 </div></section>
 
 <!-- JOURNEY -->
 <section id="journey"><div class="wrap reveal">
+ <span class="eyebrow">Journey</span>
  <h2 class="title">From Airflow to <span>Analytics</span></h2>
- <p class="sub">My journey as one system: air goes in dirty, comes out clean, and the data shows the story. Click any stage.</p>
+ <p class="sub">My career as one system: dusty air goes in, clean air comes out, and the data tells the story. Click any stage.</p>
  <div class="card" style="padding:10px">
-  <svg viewBox="0 0 1000 300" style="width:100%;height:auto;display:block" id="jsvg">
+  <svg viewBox="0 0 1000 300" style="width:100%;height:auto;display:block" role="img" aria-label="Career journey: Mechanical Engineering, Fan Design, APCD and RCA, Data Analyst, Steel Industry">
    <defs>
     <linearGradient id="pipe" x1="0" x2="1"><stop offset="0" stop-color="#8a6a4a"/><stop offset=".45" stop-color="#b14dff"/><stop offset="1" stop-color="#00e5ff"/></linearGradient>
     <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
    </defs>
-   <path id="duct" d="M40 170 H960" stroke="url(#pipe)" stroke-width="10" fill="none" stroke-linecap="round" opacity=".5"/>
+   <path d="M40 170 H960" stroke="url(#pipe)" stroke-width="10" fill="none" stroke-linecap="round" opacity=".5"/>
    <g id="parts"></g>
-   <!-- stages -->
-   <g class="stg" data-k="0" transform="translate(110,170)"><circle r="46" fill="#0b0e22" stroke="#8a6a4a" stroke-width="2"/><text y="8" text-anchor="middle" font-size="28">🎓</text><text y="80" text-anchor="middle" fill="#e6e9ff" font-family="Orbitron" font-size="13">B.TECH MECH</text></g>
+   <g class="stg" data-k="0" transform="translate(110,170)"><circle r="46" fill="#0b0e22" stroke="#8a6a4a" stroke-width="2"/><text y="10" text-anchor="middle" font-size="28">🎓</text><text y="80" text-anchor="middle" fill="#e8ebff" font-family="Orbitron" font-size="13">B.TECH MECH</text></g>
    <g class="stg" data-k="1" transform="translate(300,170)"><circle r="46" fill="#0b0e22" stroke="#b14dff" stroke-width="2"/>
-     <g id="imp"><path d="M0 0 L0 -34 Q14 -26 6 -4Z M0 0 L34 0 Q26 14 4 6Z M0 0 L0 34 Q-14 26 -6 4Z M0 0 L-34 0 Q-26 -14 -4 -6Z" fill="#b14dff"/><circle r="6" fill="#e6e9ff"/></g>
-     <text y="80" text-anchor="middle" fill="#e6e9ff" font-family="Orbitron" font-size="13">FAN DESIGN</text></g>
+     <g id="imp"><path d="M0 0 L0 -34 Q14 -26 6 -4Z M0 0 L34 0 Q26 14 4 6Z M0 0 L0 34 Q-14 26 -6 4Z M0 0 L-34 0 Q-26 -14 -4 -6Z" fill="#b14dff"/><circle r="6" fill="#e8ebff"/></g>
+     <text y="80" text-anchor="middle" fill="#e8ebff" font-family="Orbitron" font-size="13">FAN DESIGN</text></g>
    <g class="stg" data-k="2" transform="translate(500,170)"><rect x="-44" y="-60" width="88" height="100" rx="8" fill="#0b0e22" stroke="#ff4d9d" stroke-width="2"/>
      <g stroke="#ff4d9d" stroke-width="3" opacity=".8"><line x1="-24" y1="-48" x2="-24" y2="22"/><line x1="-8" y1="-48" x2="-8" y2="22"/><line x1="8" y1="-48" x2="8" y2="22"/><line x1="24" y1="-48" x2="24" y2="22"/></g>
      <path d="M-44 40 L0 64 L44 40" fill="#0b0e22" stroke="#ff4d9d" stroke-width="2"/>
-     <text y="88" text-anchor="middle" fill="#e6e9ff" font-family="Orbitron" font-size="13">APCD / RCA</text></g>
+     <text y="88" text-anchor="middle" fill="#e8ebff" font-family="Orbitron" font-size="13">APCD / RCA</text></g>
    <g class="stg" data-k="3" transform="translate(700,170)"><circle r="46" fill="#0b0e22" stroke="#00e5ff" stroke-width="2"/>
      <g fill="#00e5ff"><rect x="-22" y="0" width="10" height="20"/><rect x="-6" y="-14" width="10" height="34"/><rect x="10" y="-26" width="10" height="46"/></g>
-     <text y="80" text-anchor="middle" fill="#e6e9ff" font-family="Orbitron" font-size="13">DATA ANALYST</text></g>
-   <g class="stg" data-k="4" transform="translate(890,170)"><circle r="46" fill="#0b0e22" stroke="#3dffa8" stroke-width="2" filter="url(#glow)"/><text y="9" text-anchor="middle" font-size="28">🔩</text><text y="80" text-anchor="middle" fill="#3dffa8" font-family="Orbitron" font-size="13">STEEL 4.0</text></g>
+     <text y="80" text-anchor="middle" fill="#e8ebff" font-family="Orbitron" font-size="13">DATA ANALYST</text></g>
+   <g class="stg" data-k="4" transform="translate(890,170)"><circle r="46" fill="#0b0e22" stroke="#3dffa8" stroke-width="2" filter="url(#glow)"/><text y="10" text-anchor="middle" font-size="28">🔩</text><text y="80" text-anchor="middle" fill="#3dffa8" font-family="Orbitron" font-size="13">STEEL 4.0</text></g>
    <text x="40" y="40" fill="#9aa3c7" font-size="13">DUSTY AIR IN · RAW DATA</text>
    <text x="960" y="40" fill="#00e5ff" font-size="13" text-anchor="end">CLEAN AIR OUT · CLEAR DECISIONS</text>
   </svg>
  </div>
- <div class="card" id="jInfo" style="margin-top:18px;min-height:120px"></div>
+ <div class="card" id="jInfo" style="margin-top:18px;min-height:110px"></div>
 
- <h3 style="margin:50px 0 16px;font-size:1.2rem">How I consult on <span style="color:var(--a1)">dust collection systems</span></h3>
+ <h3 style="margin:50px 0 16px;font-size:1.15rem">How I consult on <span style="color:var(--a1)">dust collection systems</span></h3>
  <div class="story">
-  <div class="step"><h3>Study the application</h3><p class="sub" style="margin:0">Dust type, particle size, temperature, moisture, CFM and emission norms.</p></div>
-  <div class="step"><h3>RCA of the existing system</h3><p class="sub" style="margin:0">Suction loss, high ΔP, bag choking, leakage, fan vibration — find the true cause.</p></div>
-  <div class="step"><h3>Pick the best-suited APCD</h3><p class="sub" style="margin:0">Bag filter, cyclone, wet scrubber or ESP, with the right fan on its curve.</p></div>
-  <div class="step"><h3>Prove it with data</h3><p class="sub" style="margin:0">Before/after readings, energy savings and compliance, all in a dashboard.</p></div>
+  <div class="step"><h3>Study the application</h3><p>Dust type, particle size, temperature, moisture, airflow and emission norms.</p></div>
+  <div class="step"><h3>RCA of the existing system</h3><p>Suction loss, high ΔP, bag choking, leakage, fan vibration: find the true cause.</p></div>
+  <div class="step"><h3>Pick the best-suited APCD</h3><p>Bag filter, cyclone, wet scrubber or ESP, with the right fan on its curve.</p></div>
+  <div class="step"><h3>Prove it with data</h3><p>Before/after readings, energy savings and compliance, all in a dashboard.</p></div>
  </div>
-
  <div class="dash" style="margin-top:30px">
-  <div class="card"><h3>Fan Curve Simulator</h3><p class="sub" style="margin:0 0 10px">Move the slider to change the system resistance and see where the duty point lands.</p>
-   <canvas id="cFan" height="150"></canvas>
-   <input type="range" id="sysK" min="2" max="12" value="6" style="margin-top:12px;padding:0">
+  <div class="card"><h3>Fan Curve Simulator</h3><p style="margin-bottom:10px">Drag the slider to change system resistance and watch the duty point move.</p>
+   <canvas id="cFan" height="150" aria-label="Fan curve and system curve chart"></canvas>
+   <input type="range" id="sysK" min="2" max="12" value="6" style="margin-top:12px;padding:0" aria-label="System resistance">
   </div>
-  <div class="card"><h3>Duty Point</h3><div id="fanOut" class="sub" style="margin:0"></div></div>
+  <div class="card"><h3>Duty Point</h3><div id="fanOut"></div></div>
  </div>
 </div></section>
 
 <!-- SKILLS -->
 <section id="skills"><div class="wrap reveal">
+ <span class="eyebrow">Skills</span>
  <h2 class="title">Skills & <span>Toolkit</span></h2>
- <p class="sub">Business, data and technology skills I use every day.</p>
+ <p class="sub">Engineering, business, data and growth skills I use every day.</p>
  <div class="grid">
-  <div class="card"><h3>Business Analysis</h3>
-   <div class="bar"><div><span>Requirement Gathering (BRD/FRD)</span><span>95%</span></div><i><em data-w="95"></em></i></div>
-   <div class="bar"><div><span>Process Mapping (BPMN)</span><span>90%</span></div><i><em data-w="90"></em></i></div>
-   <div class="bar"><div><span>Stakeholder Management</span><span>92%</span></div><i><em data-w="92"></em></i></div>
-   <div class="bar"><div><span>Gap & Root-Cause Analysis</span><span>88%</span></div><i><em data-w="88"></em></i></div></div>
-  <div class="card"><h3>Data & Dashboards</h3>
-   <div class="bar"><div><span>Power BI / DAX</span><span>92%</span></div><i><em data-w="92"></em></i></div>
-   <div class="bar"><div><span>Excel (Power Query, Pivot)</span><span>95%</span></div><i><em data-w="95"></em></i></div>
-   <div class="bar"><div><span>SQL</span><span>82%</span></div><i><em data-w="82"></em></i></div>
-   <div class="bar"><div><span>Tableau / Looker Studio</span><span>78%</span></div><i><em data-w="78"></em></i></div></div>
-  <div class="card"><h3>ERP & Digital</h3>
-   <div class="bar"><div><span>ERP Implementation</span><span>90%</span></div><i><em data-w="90"></em></i></div>
-   <div class="bar"><div><span>Workflow Automation</span><span>85%</span></div><i><em data-w="85"></em></i></div>
-   <div class="bar"><div><span>CRM Setup & Adoption</span><span>84%</span></div><i><em data-w="84"></em></i></div>
-   <div class="bar"><div><span>UAT & Training</span><span>90%</span></div><i><em data-w="90"></em></i></div></div>
   <div class="card"><h3>Engineering & APCD</h3>
    <div class="bar"><div><span>Fan Design & Selection Software</span><span>95%</span></div><i><em data-w="95"></em></i></div>
    <div class="bar"><div><span>Dust Collection System Design</span><span>92%</span></div><i><em data-w="92"></em></i></div>
    <div class="bar"><div><span>RCA of Existing Systems</span><span>93%</span></div><i><em data-w="93"></em></i></div>
    <div class="bar"><div><span>Techno-commercial Consulting</span><span>90%</span></div><i><em data-w="90"></em></i></div></div>
-  <div class="card"><h3>Marketing & Growth</h3>
+  <div class="card"><h3>Business Analysis</h3>
+   <div class="bar"><div><span>Requirement Gathering (BRD/FRD)</span><span>92%</span></div><i><em data-w="92"></em></i></div>
+   <div class="bar"><div><span>Process Mapping (BPMN)</span><span>88%</span></div><i><em data-w="88"></em></i></div>
+   <div class="bar"><div><span>Stakeholder Management</span><span>92%</span></div><i><em data-w="92"></em></i></div>
+   <div class="bar"><div><span>Gap & Root-Cause Analysis</span><span>90%</span></div><i><em data-w="90"></em></i></div></div>
+  <div class="card"><h3>Data & Dashboards</h3>
+   <div class="bar"><div><span>Power BI / DAX</span><span>90%</span></div><i><em data-w="90"></em></i></div>
+   <div class="bar"><div><span>Excel (Power Query, Pivot)</span><span>95%</span></div><i><em data-w="95"></em></i></div>
+   <div class="bar"><div><span>SQL</span><span>82%</span></div><i><em data-w="82"></em></i></div>
+   <div class="bar"><div><span>Data Storytelling</span><span>90%</span></div><i><em data-w="90"></em></i></div></div>
+  <div class="card"><h3>ERP, Digital & Growth</h3>
+   <div class="bar"><div><span>ERP Implementation</span><span>88%</span></div><i><em data-w="88"></em></i></div>
+   <div class="bar"><div><span>Workflow Automation</span><span>85%</span></div><i><em data-w="85"></em></i></div>
    <div class="bar"><div><span>B2B Lead Generation</span><span>88%</span></div><i><em data-w="88"></em></i></div>
-   <div class="bar"><div><span>Branding & Positioning</span><span>85%</span></div><i><em data-w="85"></em></i></div>
-   <div class="bar"><div><span>LinkedIn & SEO</span><span>83%</span></div><i><em data-w="83"></em></i></div>
-   <div class="bar"><div><span>Funnel & Conversion Analytics</span><span>90%</span></div><i><em data-w="90"></em></i></div></div>
+   <div class="bar"><div><span>Branding & LinkedIn</span><span>85%</span></div><i><em data-w="85"></em></i></div></div>
  </div>
 </div></section>
 
 <!-- SERVICES -->
 <section id="services"><div class="wrap reveal">
+ <span class="eyebrow">Services</span>
  <h2 class="title">What I <span>Deliver</span></h2>
- <p class="sub">End-to-end services from analysis to adoption.</p>
+ <p class="sub">End-to-end, from the first site visit to a dashboard your team actually opens every morning.</p>
  <div class="grid">
-  <div class="card"><div class="ico">📊</div><h3>Conventional Business Analysis</h3><ul><li>Market, sales & cost analysis</li><li>Profitability & variance reports</li><li>SWOT, Pareto, cohort analysis</li></ul></div>
-  <div class="card"><div class="ico">📈</div><h3>Interactive Dashboards</h3><ul><li>Executive KPI & MIS dashboards</li><li>Sales, production, inventory views</li><li>Automated data refresh</li></ul></div>
-  <div class="card"><div class="ico">🧩</div><h3>ERP Development & Implementation</h3><ul><li>As-is / To-be process design</li><li>Module configuration & data migration</li><li>UAT, go-live & hypercare</li></ul></div>
-  <div class="card"><div class="ico">⚙️</div><h3>Digital Transformation</h3><ul><li>Paper-to-digital workflows</li><li>CRM + ERP integration</li><li>Change management & training</li></ul></div>
-  <div class="card"><div class="ico">📣</div><h3>B2B Marketing for Manufacturing</h3><ul><li>Brand identity & catalogues</li><li>LinkedIn & email campaigns</li><li>Trade-show & lead nurturing</li></ul></div>
-  <div class="card"><div class="ico">🤝</div><h3>Client Conversion</h3><ul><li>Lead scoring & pipeline hygiene</li><li>Proposal analytics</li><li>Win-rate improvement</li></ul></div>
+  <article class="card"><div class="ico">🏭</div><h3>APCD & Dust Collection Consulting</h3><ul><li>Application study & system sizing</li><li>RCA of existing systems</li><li>Fan selection & energy savings</li></ul><a href="#contact" class="more" data-topic="APCD / Dust Collection">Discuss this →</a></article>
+  <article class="card"><div class="ico">📊</div><h3>Business Analysis</h3><ul><li>Sales, cost & profitability analysis</li><li>Variance, Pareto & cohort studies</li><li>Raw data → board-ready story</li></ul><a href="#contact" class="more" data-topic="Business Analysis">Discuss this →</a></article>
+  <article class="card"><div class="ico">📈</div><h3>Interactive Dashboards</h3><ul><li>Executive KPI & MIS dashboards</li><li>Production, inventory, sales views</li><li>Automated data refresh</li></ul><a href="#contact" class="more" data-topic="Dashboard">Discuss this →</a></article>
+  <article class="card"><div class="ico">🧩</div><h3>ERP Development & Implementation</h3><ul><li>As-is / to-be process design</li><li>Configuration & data migration</li><li>UAT, go-live & hypercare</li></ul><a href="#contact" class="more" data-topic="ERP Implementation">Discuss this →</a></article>
+  <article class="card"><div class="ico">⚙️</div><h3>Digital Transformation</h3><ul><li>Paper-to-digital workflows</li><li>CRM + ERP integration</li><li>Change management & training</li></ul><a href="#contact" class="more" data-topic="Digital Transformation">Discuss this →</a></article>
+  <article class="card"><div class="ico">📣</div><h3>B2B Marketing for Manufacturing</h3><ul><li>Brand identity & catalogues</li><li>LinkedIn & email campaigns</li><li>Lead nurturing & conversion</li></ul><a href="#contact" class="more" data-topic="B2B Marketing">Discuss this →</a></article>
  </div>
 </div></section>
 
 <!-- DATA TO STORY -->
 <section id="story"><div class="wrap reveal">
+ <span class="eyebrow">Method</span>
  <h2 class="title">Raw Data → <span>Story</span></h2>
- <p class="sub">How I do conventional business analysis — try it: the raw sales table below is turned into an insight automatically.</p>
+ <p class="sub">This is how I do conventional business analysis. Edit any number in the table, then click the button to see the story change.</p>
  <div class="story">
-  <div class="step"><h3>Collect</h3><p class="sub" style="margin:0">ERP exports, CRM, Excel sheets, invoices.</p></div>
-  <div class="step"><h3>Clean</h3><p class="sub" style="margin:0">Remove duplicates, fix formats, map masters.</p></div>
-  <div class="step"><h3>Analyse</h3><p class="sub" style="margin:0">Trends, segments, Pareto, variances.</p></div>
-  <div class="step"><h3>Narrate</h3><p class="sub" style="margin:0">One headline, three insights, one action.</p></div>
+  <div class="step"><h3>Collect</h3><p>ERP exports, CRM, Excel sheets, invoices.</p></div>
+  <div class="step"><h3>Clean</h3><p>Remove duplicates, fix formats, map masters.</p></div>
+  <div class="step"><h3>Analyse</h3><p>Trends, segments, Pareto, variances.</p></div>
+  <div class="step"><h3>Narrate</h3><p>One headline, three insights, one action.</p></div>
  </div>
  <div class="dash" style="margin-top:30px">
-  <div class="card"><h3>Raw Data (sample — editable)</h3>
+  <div class="card" style="overflow-x:auto"><h3>Raw Data (₹ Lakh, editable)</h3>
    <table id="rawT"><thead><tr><th>Region</th><th>Product</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr></thead><tbody></tbody></table>
    <button class="btn fill" id="tellStory" style="margin-top:16px">Transform → Story</button>
   </div>
-  <div class="card"><h3>The Story</h3><div id="storyOut" class="sub" style="margin:0">Click “Transform → Story” to generate the narrative.</div></div>
+  <div class="card"><h3>The Story</h3><div id="storyOut"><p>Click “Transform → Story” to generate the narrative.</p></div></div>
  </div>
 </div></section>
 
 <!-- DASHBOARD -->
 <section id="dashboard"><div class="wrap reveal">
+ <span class="eyebrow">Demo</span>
  <h2 class="title">Interactive <span>Dashboard</span></h2>
- <p class="sub">A demo manufacturing sales dashboard. Filter by year and segment — every chart updates.</p>
+ <p class="sub">A sample manufacturing sales dashboard with demo data. Pick a year and segment, and every number and chart updates.</p>
  <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-  <select id="fYear" style="max-width:160px"><option>2026</option><option>2025</option><option>2024</option></select>
-  <select id="fSeg" style="max-width:200px"><option value="all">All Segments</option><option>Solar</option><option>Industrial</option><option>Infrastructure</option></select>
+  <select id="fYear" style="max-width:160px" aria-label="Year"><option>2026</option><option>2025</option><option>2024</option></select>
+  <select id="fSeg" style="max-width:220px" aria-label="Segment"><option value="all">All Segments</option><option>Steel</option><option>APCD</option><option>Engineering</option></select>
  </div>
  <div class="kpis">
   <div class="kpi"><small>Revenue</small><b id="kRev"></b><span id="kRevD"></span></div>
@@ -269,207 +256,104 @@ footer{text-align:center;padding:30px;color:var(--mut);border-top:1px solid var(
 
 <!-- CLIENTS -->
 <section id="clients"><div class="wrap reveal">
- <h2 class="title">Client Conversion — <span>Last 5 Years</span></h2>
- <p class="sub">Leads handled vs. clients converted, with conversion rate trend.</p>
+ <span class="eyebrow">Results</span>
+ <h2 class="title">Client Conversion: <span>Last 5 Years</span></h2>
+ <p class="sub">Leads handled vs. clients converted, with the conversion rate trend.</p>
  <div class="card"><canvas id="cConv" height="110"></canvas></div>
  <div class="stats">
   <div class="stat"><b data-c="1240">0</b><small>Leads Analysed</small></div>
   <div class="stat"><b data-c="312">0</b><small>Clients Converted</small></div>
   <div class="stat"><b data-c="25">0</b><small>% Avg Conversion</small></div>
-  <div class="stat"><b data-c="18">0</b><small>ERP / BI Projects</small></div>
+  <div class="stat"><b data-c="5">0</b><small>+ Years in APCD</small></div>
  </div>
 </div></section>
 
 <!-- BLOG -->
 <section id="blog"><div class="wrap reveal">
- <h2 class="title">Daily <span>Blog</span></h2>
- <p class="sub">Short daily notes on analytics, ERP and B2B growth. <a href="#" id="writeBtn">✍️ Write a new post</a></p>
- <div id="editor" class="card hidden" style="margin-bottom:22px">
-  <form id="postForm">
-   <input id="pTitle" placeholder="Post title" required>
-   <input id="pTag" placeholder="Tag (e.g. ERP, Power BI)">
-   <textarea id="pBody" rows="6" placeholder="Write your thoughts..." required></textarea>
-   <button class="btn fill">Publish Post</button>
-  </form>
-  <p class="sub" style="margin:10px 0 0;font-size:.8rem">Posts are saved in this browser. For a public blog, connect a CMS or host posts as files.</p>
+ <span class="eyebrow">Daily Blog</span>
+ <h2 class="title">Notes from the <span>Shop Floor & Spreadsheet</span></h2>
+ <p class="sub">Short, practical posts on dust collection, fans, steel, ERP, dashboards and B2B growth.</p>
+ <div class="bloghead">
+  <input id="search" type="search" placeholder="🔍 Search posts…" aria-label="Search posts">
+  <select id="sort" aria-label="Sort posts"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="short">Quick reads</option></select>
  </div>
- <input id="search" placeholder="🔍 Search posts..." style="margin-bottom:20px">
+ <div class="cats" id="cats"></div>
+ <div id="featured"></div>
  <div class="grid" id="posts"></div>
+ <div class="card subscribe">
+  <div><h3 style="margin-top:0">📬 Get new posts in your inbox</h3><p>One practical idea at a time. No spam.</p></div>
+  <form id="subForm"><input class="hp" name="_honey" tabindex="-1" autocomplete="off"><input id="subMail" type="email" placeholder="you@company.com" required aria-label="Email"><button class="btn fill" style="margin:0">Subscribe</button></form>
+ </div>
+</div></section>
+
+<!-- FAQ -->
+<section id="faq"><div class="wrap reveal">
+ <span class="eyebrow">FAQ</span>
+ <h2 class="title">About <span>Vedant Pathak (VP)</span> & TRAASS</h2>
+ <p class="sub">Quick answers for anyone looking for an APCD expert or a business analyst in the mechanical domain.</p>
+ <div class="faq">
+  <details open><summary>Who is Vedant Pathak (VP)?</summary><p>Vedant Pathak, also known as VP, is the founder of TRAASS. He is a B.Tech Mechanical Engineer, a Certified Data Analyst and an APCD expert with 5+ years in air pollution control devices and dust collection systems, now working as a Business Analyst in the mechanical and steel domain.</p></details>
+  <details><summary>What is TRAASS?</summary><p>TRAASS is Vedant Pathak's practice for APCD and dust collection consulting, business analysis in the mechanical domain, dashboards, ERP implementation and digital transformation for manufacturing and steel companies.</p></details>
+  <details><summary>What APCD services does Vedant Pathak offer?</summary><p>Application study, selection of the best-suited air pollution control device (bag filter, cyclone, wet scrubber or ESP), industrial fan selection, and root cause analysis (RCA) of existing dust collection systems.</p></details>
+  <details><summary>What does a business analyst in the mechanical domain do?</summary><p>A business analyst in the mechanical domain brings engineering knowledge and data analysis together: turning plant, sales and production data into dashboards and decisions, mapping processes for ERP, and leading digital transformation in manufacturing.</p></details>
+ </div>
 </div></section>
 
 <!-- CONTACT -->
 <section id="contact"><div class="wrap reveal">
+ <span class="eyebrow">Contact</span>
  <h2 class="title">Let's <span>Connect</span></h2>
- <p class="sub">Have data that needs a story, or an ERP that needs to work? Let's talk.</p>
+ <p class="sub">A dust collection problem, data that needs a story, or an ERP that needs to work: let's talk.</p>
  <div class="contact">
   <div class="card">
-   <h3>Reach me</h3>
-   <p>📧 <a href="mailto:pathakvedant001@gmail.com">pathakvedant001@gmail.com</a></p>
-   <p>💼 <a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener">linkedin.com/in/vedant-pathak</a></p>
-   <p>📞 <span id="phoneMask" style="font-family:Orbitron;letter-spacing:.1em">+91 ●●●●● ●●●●●</span></p>
-   <div id="otpBox" style="margin:14px 0;padding:14px;border:1px dashed var(--a2);border-radius:12px">
-    <p style="font-size:.85rem;margin-bottom:10px">🔒 My number is private. Verify your own mobile number with an OTP to see it.</p>
-    <div id="otpStep1" style="display:grid;gap:10px">
-     <input id="vName" placeholder="Your name">
-     <input id="vPhone" placeholder="Your 10-digit mobile number" inputmode="numeric" maxlength="10">
-     <button class="btn fill" type="button" id="sendOtp" style="margin:0">Send OTP</button>
-    </div>
-    <div id="otpStep2" class="hidden" style="display:grid;gap:10px">
-     <input id="vOtp" placeholder="Enter 6-digit OTP" inputmode="numeric" maxlength="6">
-     <button class="btn fill" type="button" id="verifyOtp" style="margin:0">Verify & Reveal</button>
-    </div>
-    <p id="otpMsg" style="font-size:.8rem;margin-top:8px"></p>
+   <div class="cline"><div class="i">📧</div><div><small>Email</small><a href="mailto:pathakvedant001@gmail.com">pathakvedant001@gmail.com</a></div></div>
+   <div class="cline"><div class="i">in</div><div><small>LinkedIn</small><a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener">linkedin.com/in/vedant-pathak</a></div></div>
+   <div class="cline"><div class="i">📞</div><div><small>Phone / WhatsApp</small><span id="phoneMask" class="mono" style="letter-spacing:.08em">+91 ●●●●● ●●●●●</span></div></div>
+   <div class="gate" id="gate">
+    <p style="font-size:.88rem;margin-bottom:12px">🔒 Share your number to see mine, so I can call you back too.</p>
+    <form id="gateForm">
+     <input class="hp" name="_honey" tabindex="-1" autocomplete="off">
+     <input id="vName" placeholder="Your name" required autocomplete="name">
+     <input id="vPhone" placeholder="Your 10-digit mobile number" inputmode="numeric" maxlength="10" required autocomplete="tel-national">
+     <input id="vCo" placeholder="Company (optional)" autocomplete="organization">
+     <button class="btn fill" id="revealBtn" style="margin:0;justify-content:center">Show Vedant's Number</button>
+    </form>
+    <p id="gateMsg" class="note"></p>
    </div>
-   <p>📍 India — available for remote & on-site</p>
-   <p style="margin-top:16px">Response time: within 24 hours.</p>
+   <div class="cline" style="border:0"><div class="i">📍</div><div><small>Location</small>India · remote & on-site</div></div>
   </div>
   <div class="card">
+   <h3 style="margin-top:0">Send a message</h3>
    <form id="cForm">
-    <input id="cName" placeholder="Your name" required>
-    <input id="cMail" type="email" placeholder="Your email" required>
-    <select id="cTopic"><option>Business Analysis</option><option>Dashboard</option><option>ERP Implementation</option><option>Digital Transformation</option><option>B2B Marketing</option><option>Job Opportunity</option></select>
-    <textarea id="cMsg" rows="5" placeholder="Tell me about your project..." required></textarea>
-    <button class="btn fill">Send Message</button>
+    <input class="hp" name="_honey" tabindex="-1" autocomplete="off">
+    <div class="row2"><input id="cName" placeholder="Your name" required autocomplete="name"><input id="cMail" type="email" placeholder="Your email" required autocomplete="email"></div>
+    <div class="row2"><input id="cCo" placeholder="Company" autocomplete="organization"><select id="cTopic" aria-label="Topic"><option>APCD / Dust Collection</option><option>Business Analysis</option><option>Dashboard</option><option>ERP Implementation</option><option>Digital Transformation</option><option>B2B Marketing</option><option>Job Opportunity</option><option>Other</option></select></div>
+    <textarea id="cMsg" rows="6" placeholder="Tell me about your project or problem…" required></textarea>
+    <button class="btn fill" id="cBtn" style="justify-content:center">Send Message</button>
+    <p id="cMsgOut" class="note"></p>
    </form>
   </div>
  </div>
 </div></section>
+</main>
 
-<footer>© <span id="yr"></span> TRAAS · Vedant Pathak · Mechanical Engineer · Certified Data Analyst · Business Analyst</footer>
+<footer><div class="wrap">
+ <div class="fgrid">
+  <div><a href="#home" class="logo"><img src="assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a><p style="margin-top:14px;max-width:380px">Vedant Pathak (VP): APCD expert & Business Analyst in the mechanical domain. B.Tech Mechanical · Certified Data Analyst. Transforming the mechanical industry with data.</p></div>
+  <div><h4>EXPLORE</h4><ul><li><a href="#about">About</a></li><li><a href="#journey">Journey</a></li><li><a href="#services">Services</a></li><li><a href="#blog">Blog</a></li></ul></div>
+  <div><h4>CONNECT</h4><ul><li><a href="mailto:pathakvedant001@gmail.com">Email</a></li><li><a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener">LinkedIn</a></li><li><a href="#contact">Contact form</a></li></ul></div>
+ </div>
+ <div class="copy">© <span id="yr"></span> TRAASS · Vedant Pathak. All rights reserved.</div>
+</div></footer>
 
-<div id="modal"><div class="card"><button class="btn" style="float:right" onclick="modal.style.display='none'">✕</button><div id="mBody"></div></div></div>
+<button id="toTop" aria-label="Back to top">↑</button>
+<div class="toast" id="toast" role="status"></div>
 
-<script>
-// stars background
-const cv=document.getElementById('stars'),cx=cv.getContext('2d');let S=[];
-function rs(){cv.width=innerWidth;cv.height=innerHeight;S=Array.from({length:140},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.5,v:Math.random()*.3+.05}))}
-rs();addEventListener('resize',rs);
-(function an(){cx.fillStyle='#05060f';cx.fillRect(0,0,cv.width,cv.height);
- const g=cx.createRadialGradient(cv.width*.7,cv.height*.2,0,cv.width*.7,cv.height*.2,cv.width*.6);g.addColorStop(0,'rgba(177,77,255,.12)');g.addColorStop(1,'transparent');cx.fillStyle=g;cx.fillRect(0,0,cv.width,cv.height);
- S.forEach(s=>{s.y-=s.v;if(s.y<0)s.y=cv.height;cx.fillStyle='rgba(200,220,255,.8)';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill()});requestAnimationFrame(an)})();
-
-// nav
-burger.onclick=()=>menu.classList.toggle('open');menu.querySelectorAll('a').forEach(a=>a.onclick=()=>menu.classList.remove('open'));
-yr.textContent=new Date().getFullYear();
-
-// typing
-const roles=['Business Analyst','Mechanical Engineer · Certified Data Analyst','Fan Design & APCD Expert','Dashboard & BI Specialist','ERP Implementation Expert','Digital Transformation Partner','B2B Manufacturing Marketer'];let ri=0,ci=0,del=false;
-(function ty(){const w=roles[ri];typed.textContent='> '+w.slice(0,ci)+'_';if(!del&&ci++===w.length){del=true;return setTimeout(ty,1500)}if(del&&ci--===0){del=false;ri=(ri+1)%roles.length}setTimeout(ty,del?40:80)})();
-
-// reveal + bars + counters
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('show');
- e.target.querySelectorAll('em[data-w]').forEach(m=>m.style.width=m.dataset.w+'%');
- e.target.querySelectorAll('[data-c]').forEach(b=>{if(b.done)return;b.done=1;let n=0,t=+b.dataset.c;const st=setInterval(()=>{n+=Math.ceil(t/60);if(n>=t){n=t;clearInterval(st)}b.textContent=n},25)})}),{threshold:.15});
-document.querySelectorAll('.reveal').forEach(r=>io.observe(r));
-
-// Chart defaults
-Chart.defaults.color='#9aa3c7';Chart.defaults.borderColor='rgba(120,140,255,.12)';Chart.defaults.font.family='Inter';
-
-// ---- Data to story ----
-const raw=[['North','Solar Panels',42,48,55,63],['South','Solar Panels',38,36,33,30],['West','Inverters',25,29,34,41],['East','Inverters',18,19,18,20],['West','Structures',30,31,35,38]];
-const tb=rawT.querySelector('tbody');
-raw.forEach(r=>{const tr=document.createElement('tr');r.forEach((c,i)=>{const td=document.createElement('td');td.textContent=c;if(i>1)td.contentEditable=true;tr.appendChild(td)});tb.appendChild(tr)});
-tellStory.onclick=()=>{
- const rows=[...tb.rows].map(r=>{const c=[...r.cells].map(x=>x.textContent.trim());return{reg:c[0],prod:c[1],q:c.slice(2).map(Number)}});
- rows.forEach(r=>{r.tot=r.q.reduce((a,b)=>a+b,0);r.gr=((r.q[3]-r.q[0])/r.q[0]*100)});
- const tot=rows.reduce((a,r)=>a+r.tot,0),qs=[0,1,2,3].map(i=>rows.reduce((a,r)=>a+r.q[i],0));
- const best=[...rows].sort((a,b)=>b.gr-a.gr)[0],worst=[...rows].sort((a,b)=>a.gr-b.gr)[0],top=[...rows].sort((a,b)=>b.tot-a.tot)[0];
- const yoy=((qs[3]-qs[0])/qs[0]*100).toFixed(1);
- storyOut.innerHTML=`<h3 style="color:var(--txt)">📌 Headline: Sales grew ${yoy}% from Q1 to Q4 (₹${tot} L total)</h3>
- <p>1️⃣ <b>${top.reg} – ${top.prod}</b> is the largest contributor at ${(top.tot/tot*100).toFixed(0)}% of revenue.</p>
- <p>2️⃣ <b>${best.reg} – ${best.prod}</b> is the fastest grower (+${best.gr.toFixed(0)}% Q1→Q4).</p>
- <p>3️⃣ <b>${worst.reg} – ${worst.prod}</b> is ${worst.gr<0?'declining':'lagging'} (${worst.gr.toFixed(0)}%) — needs attention.</p>
- <p style="color:var(--a1);margin-top:10px">🎯 Action: Shift sales effort & marketing budget toward ${best.reg} ${best.prod}; run a root-cause review on ${worst.reg} ${worst.prod} (pricing, competition, dealer coverage).</p>
- <p style="font-size:.8rem">Tip: edit the Q1–Q4 numbers in the table and click again.</p>`;
-};
-
-// ---- Dashboard ----
-const segs=['Solar','Industrial','Infrastructure'],cols=['#00e5ff','#b14dff','#ff4d9d'];
-function gen(y,s){let seed=y*7+s.length*13;const r=()=>(seed=(seed*9301+49297)%233280)/233280;const base={Solar:60,Industrial:40,Infrastructure:30}[s]*(1+(y-2024)*.18);return Array.from({length:12},(_,i)=>Math.round(base*(0.8+r()*.5)+i*1.5))}
-const data={};[2024,2025,2026].forEach(y=>{data[y]={};segs.forEach(s=>data[y][s]=gen(y,s))});
-const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const line=new Chart(cLine,{type:'line',data:{labels:months,datasets:[]},options:{plugins:{legend:{position:'bottom'}},interaction:{mode:'index',intersect:false}}});
-const pie=new Chart(cPie,{type:'doughnut',data:{labels:segs,datasets:[{data:[],backgroundColor:cols,borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{position:'bottom'}}}});
-const sum=a=>a.reduce((x,y)=>x+y,0);
-function upd(){const y=+fYear.value,s=fSeg.value,use=s==='all'?segs:[s];
- line.data.datasets=use.map(k=>({label:k,data:data[y][k],borderColor:cols[segs.indexOf(k)],backgroundColor:cols[segs.indexOf(k)]+'22',fill:true,tension:.4}));line.update();
- pie.data.datasets[0].data=segs.map(k=>sum(data[y][k]));pie.update();
- const rev=sum(use.map(k=>sum(data[y][k]))),prev=data[y-1]?sum(use.map(k=>sum(data[y-1][k]))):null;
- const ord=Math.round(rev/2.4),pord=prev?Math.round(prev/2.4):null;
- kRev.textContent='₹'+(rev/100).toFixed(2)+' Cr';kOrd.textContent=ord;kAov.textContent='₹'+(rev/ord).toFixed(1)+' L';kWin.textContent=(22+(y-2024)*3+use.length)+'%';
- const d=(a,b)=>b?`<small class="${a>=b?'up':'dn'}">${a>=b?'▲':'▼'} ${Math.abs((a-b)/b*100).toFixed(1)}% YoY</small>`:'<small>—</small>';
- kRevD.innerHTML=d(rev,prev);kOrdD.innerHTML=d(ord,pord)}
-fYear.onchange=fSeg.onchange=upd;upd();
-
-// ---- Conversion ----
-new Chart(cConv,{data:{labels:['2022','2023','2024','2025','2026'],datasets:[
- {type:'bar',label:'Leads',data:[180,220,250,280,310],backgroundColor:'rgba(0,229,255,.35)',borderRadius:6,yAxisID:'y'},
- {type:'bar',label:'Converted',data:[36,48,62,76,90],backgroundColor:'rgba(177,77,255,.7)',borderRadius:6,yAxisID:'y'},
- {type:'line',label:'Conversion %',data:[20,21.8,24.8,27.1,29],borderColor:'#ff4d9d',tension:.4,yAxisID:'y1'}]},
- options:{plugins:{legend:{position:'bottom'}},scales:{y1:{position:'right',grid:{display:false},ticks:{callback:v=>v+'%'}}}}});
-
-// ---- Blog ----
-const seed=[
- {t:'Why most dashboards fail (and how to fix it)',g:'Dashboards',d:'2026-10-30',b:'A dashboard fails when it answers questions nobody asked. Start with 3 decisions the user makes weekly, then design KPIs backward from those decisions. Fewer charts, more clarity.'},
- {t:'ERP go-live: the 30-day hypercare checklist',g:'ERP',d:'2026-10-29',b:'Daily stand-ups with key users, a single issue tracker, master-data freeze, and a reconciliation of stock & ledgers at day 7, 15 and 30. Adoption beats configuration.'},
- {t:'B2B manufacturing marketing: sell outcomes, not specs',g:'Marketing',d:'2026-10-28',b:'Buyers in manufacturing compare spec sheets in minutes. What wins is proof: case studies, ROI calculators and response time. Build your LinkedIn content around client outcomes.'},
- {t:'From Excel chaos to a single source of truth',g:'Digital Transformation',d:'2026-10-27',b:'Map every spreadsheet, find owners, standardise masters, then automate with Power Query. Transformation is 70% process and people, 30% tools.'}];
-let posts;try{posts=JSON.parse(localStorage.getItem('vp_posts'))||seed}catch(e){posts=seed}
-const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function render(){const q=search.value.toLowerCase();posts.innerHTML;document.getElementById('posts').innerHTML=posts.filter(p=>(p.t+p.b+p.g).toLowerCase().includes(q)).map((p,i)=>`<div class="card post" data-i="${posts.indexOf(p)}"><div class="date">${p.d}</div><h3>${esc(p.t)}</h3><p>${esc(p.b.slice(0,110))}…</p><span class="chip">${esc(p.g||'General')}</span></div>`).join('')||'<p class="sub">No posts found.</p>';
- document.querySelectorAll('.post').forEach(el=>el.onclick=()=>{const p=posts[el.dataset.i];mBody.innerHTML=`<div class="date">${p.d}</div><h2 style="margin:10px 0">${esc(p.t)}</h2><span class="chip">${esc(p.g||'General')}</span><p style="margin-top:16px;white-space:pre-wrap;color:var(--mut)">${esc(p.b)}</p>`;modal.style.display='flex'})}
-search.oninput=render;render();
-writeBtn.onclick=e=>{e.preventDefault();editor.classList.toggle('hidden')};
-postForm.onsubmit=e=>{e.preventDefault();posts.unshift({t:pTitle.value,g:pTag.value,b:pBody.value,d:new Date().toISOString().slice(0,10)});try{localStorage.setItem('vp_posts',JSON.stringify(posts))}catch(e){}postForm.reset();editor.classList.add('hidden');render()};
-modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
-
-// ---- Journey ----
-const J=[
- ['🎓 B.Tech — Mechanical Engineering','The foundation: fluid mechanics, thermodynamics and machine design. This is where I learned how air, heat and machines behave.'],
- ['🌀 Fan Design Software Expert','Industrial fan design and selection: duty point, static pressure, efficiency, motor sizing and noise. The right fan is the heart of any dust collection system.'],
- ['🏭 APCD Consulting & RCA','5+ years serving customers on Air Pollution Control Devices. I studied each application, did RCA on existing dust collection systems and recommended the best-suited APCD.'],
- ['📊 Certified Data Analyst','Took the engineer\'s habit of measuring everything into data: SQL, Excel, Power BI and storytelling. Readings turned into decisions.'],
- ['🔩 Steel Industry: Digital Transformation','Now transforming the base of the mechanical industry: steel. ERP, live dashboards and B2B marketing, using engineering sense and data skills together.']];
-function showJ(k){jInfo.innerHTML=`<h3>${J[k][0]}</h3><p>${J[k][1]}</p>`;document.querySelectorAll('.stg circle,.stg rect').forEach(c=>c.style.strokeWidth=2);document.querySelector(`.stg[data-k="${k}"]`).querySelector('circle,rect').style.strokeWidth=5}
-document.querySelectorAll('.stg').forEach(g=>{g.style.cursor='pointer';g.onclick=()=>showJ(+g.dataset.k)});showJ(2);
-// rotating impeller + particles (brown dust becomes cyan data after the filter)
-const imp=document.getElementById('imp'),pg=document.getElementById('parts'),NS='http://www.w3.org/2000/svg';let P=[],ang=0;
-for(let i=0;i<34;i++){const c=document.createElementNS(NS,'circle');c.setAttribute('r',3);pg.appendChild(c);P.push({el:c,x:Math.random()*920+40,o:Math.random()*14-7})}
-(function fl(){ang=(ang+6)%360;imp.setAttribute('transform',`rotate(${ang})`);
- P.forEach(p=>{p.x+=2.2;if(p.x>960)p.x=40;p.el.setAttribute('cx',p.x);p.el.setAttribute('cy',170+p.o+Math.sin(p.x/30)*3);p.el.setAttribute('fill',p.x<500?'#c49a6c':'#00e5ff');p.el.setAttribute('opacity',p.x<500?.8:.9)});requestAnimationFrame(fl)})();
-// fan curve simulator
-const Q=Array.from({length:21},(_,i)=>i*1000);const fanP=Q.map(q=>Math.max(0,250-0.0000006*q*q));
-const fan=new Chart(cFan,{type:'line',data:{labels:Q.map(q=>q/1000+'k'),datasets:[
- {label:'Fan curve (mmWC)',data:fanP,borderColor:'#b14dff',tension:.4,pointRadius:0},
- {label:'System curve',data:[],borderColor:'#00e5ff',tension:.4,pointRadius:0},
- {label:'Duty point',data:[],borderColor:'#ff4d9d',backgroundColor:'#ff4d9d',pointRadius:7,showLine:false}]},
- options:{plugins:{legend:{position:'bottom'}},scales:{x:{title:{display:true,text:'Airflow (m³/hr)'}},y:{min:0,max:300}}}});
-function fanUpd(){const k=+sysK.value*1e-7;const sys=Q.map(q=>k*q*q);let bi=0,bd=1e9;Q.forEach((q,i)=>{const d=Math.abs(fanP[i]-sys[i]);if(d<bd){bd=d;bi=i}});
- fan.data.datasets[1].data=sys;fan.data.datasets[2].data=Q.map((q,i)=>i===bi?fanP[i]:null);fan.update('none');
- const q=Q[bi],p=fanP[bi],kw=(q/3600*p*9.81/1000/0.75).toFixed(1);
- fanOut.innerHTML=`<p><b style="color:var(--txt);font-size:1.4rem;font-family:Orbitron">${q.toLocaleString()} m³/hr</b><br>airflow at the duty point</p><p><b style="color:var(--txt)">${p.toFixed(0)} mmWC</b> static pressure</p><p><b style="color:var(--txt)">≈ ${kw} kW</b> shaft power (75% efficiency)</p><p style="color:var(--a1);font-size:.85rem;margin-top:8px">${+sysK.value>8?'⚠️ High resistance: check for choked bags or poor duct design. This is a classic RCA finding.':'✅ A healthy system: the fan is running near its best efficiency.'}</p>`}
-sysK.oninput=fanUpd;fanUpd();
-
-// ---- OTP-gated phone reveal ----
-// Put your number here (Base64 so it doesn't sit as plain text in the page): btoa('+91 98XXXXXXXX')
-const MY_PHONE_B64=btoa('+91 XXXXX XXXXX');
-const MY_WA_B64=MY_PHONE_B64; // WhatsApp uses the same number
-// DEMO MODE: a static site cannot send SMS. For real OTP, connect Firebase Phone Auth / MSG91 / Twilio Verify in sendOtp & verifyOtp.
-let otpCode=null,otpTries=0;
-sendOtp.onclick=()=>{const ph=vPhone.value.trim();if(!vName.value.trim()){otpMsg.textContent='Please enter your name.';return}
- if(!/^[6-9]\d{9}$/.test(ph)){otpMsg.textContent='Enter a valid 10-digit Indian mobile number.';return}
- otpCode=String(Math.floor(100000+Math.random()*900000));otpTries=0;
- otpStep1.classList.add('hidden');otpStep2.classList.remove('hidden');
- otpMsg.innerHTML=`OTP sent to +91 ${ph.slice(0,2)}●●●●●●${ph.slice(8)}. <span style="color:var(--a3)">(Demo mode, your OTP is ${otpCode})</span>`};
-verifyOtp.onclick=()=>{if(vOtp.value.trim()===otpCode){const ph=atob(MY_PHONE_B64),wa=atob(MY_WA_B64).replace(/\D/g,'');
- phoneMask.innerHTML=`<a href="tel:${ph.replace(/\s/g,'')}">${ph}</a>`;
- const txt=encodeURIComponent(`Hi Vedant, I'm ${vName.value} (+91 ${vPhone.value}). I found you through your TRAAS portfolio.`);
- otpBox.innerHTML=`<p class="up">✅ Verified. Thanks ${esc(vName.value)}!</p><a class="btn fill" style="margin:10px 0 0;background:#25D366" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${txt}">💬 Chat on WhatsApp</a>`}
- else if(++otpTries>=3){otpMsg.textContent='Too many attempts. Please request a new OTP.';otpStep2.classList.add('hidden');otpStep1.classList.remove('hidden')}
- else otpMsg.textContent=`Wrong OTP. ${3-otpTries} attempt(s) left.`};
-
-// ---- Contact ----
-cForm.onsubmit=e=>{e.preventDefault();const s=encodeURIComponent(`[Portfolio] ${cTopic.value} — ${cName.value}`),b=encodeURIComponent(`${cMsg.value}\n\nFrom: ${cName.value} (${cMail.value})`);location.href=`mailto:pathakvedant001@gmail.com?subject=${s}&body=${b}`};
-</script>
+<!-- Blog reader -->
+<div id="reader" role="dialog" aria-modal="true" aria-label="Blog post">
+ <div id="readBar"></div>
+ <button class="btn close" id="rClose" aria-label="Close post">✕ Close</button>
+ <article id="rArt"></article>
+</div>
 </body>
 </html>
