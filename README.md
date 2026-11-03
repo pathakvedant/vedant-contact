@@ -9,6 +9,8 @@ Personal portfolio for Vedant Pathak: Business Analyst, Certified Data Analyst, 
 | `index.html` | The website |
 | `assets/style.css` | Design |
 | `assets/app.js` | All interactive features (dashboard, blog, forms) |
+| `markets.html`, `assets/markets.js`, `assets/markets-py.worker.js`, `assets/markets.css` | NSE/BSE prices and the Python Lab. Prices are read from `data/market` by `FEED` in `markets.js` |
+| `tools/fetch_market_data.py`, `.github/workflows/market-data.yml` | Fetch prices with the free yfinance library. GitHub runs this about every 10 minutes in market hours and saves the results in `data/market` |
 | `blog/posts.js` | **Your blog posts. Edit this to add a daily post** |
 | `og-image.png` | Image shown when the link is shared on LinkedIn/WhatsApp |
 | `favicon.svg`, `apple-touch-icon.png` | Browser tab and phone home-screen icons (your emblem) |
@@ -35,6 +37,14 @@ The contact form, the phone-number form and the newsletter form all email **path
 1. Once the site is live, fill in the contact form yourself.
 2. FormSubmit emails you an **activation link**. Click it.
 3. From then on, every lead (name, phone, company, message) arrives in your Gmail.
+
+## Turn on Markets prices (one time)
+
+1. Upload the site, including the `.github` and `tools` folders. Don't upload a `data` folder: GitHub creates it, and it has more files than the upload page allows.
+2. In the repository, open **Actions → Market data → Run workflow**. The first run takes about 10 minutes.
+3. After that it runs by itself on weekdays. If a run shows a red cross, open it to see why; the page keeps showing the last good prices and says they are delayed.
+
+To test on your own computer: `pip install yfinance`, `python tools/fetch_market_data.py`, then `python -m http.server` in this folder and open `http://localhost:8000/markets.html`.
 
 ## Add a daily blog post
 

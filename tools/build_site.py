@@ -96,8 +96,8 @@ def page(path, title, desc, schema, body, og_type="website"):
 </head>
 <body>
 <header class="pagehead"><div class="wrap">
- <a href="{up}./" class="logo" aria-label="TRAASS home"><img src="{up}assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a>
- <div class="links" role="navigation" aria-label="Main"><a href="{up}vedant-pathak.html">About</a><a href="{up}b2b-marketing-business-development.html">Marketing &amp; BD</a><a href="{up}apcd-consulting.html">APCD</a><a href="{up}blog/">Blog</a><a href="{up}./#contact">Contact</a></div>
+ <a href="{up}index.html" class="logo" aria-label="TRAASS home"><img src="{up}assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a>
+ <div class="links" role="navigation" aria-label="Main"><a href="{up}index.html">Home</a><a href="{up}vedant-pathak.html">About</a><a href="{up}markets.html">Markets</a><a href="{up}b2b-marketing-business-development.html">Marketing &amp; BD</a><a href="{up}apcd-consulting.html">APCD</a><a href="{up}blog/index.html">Blog</a><a href="{up}index.html#contact">Contact</a></div>
 </div></header>
 <main class="pagebody">
 {body}
@@ -112,7 +112,7 @@ def page(path, title, desc, schema, body, og_type="website"):
 
 
 def crumbs(up, items):
-    parts = [f'<a href="{up}./">Home</a>'] + [f'<a href="{up}{href}">{e(n)}</a>' if href else e(n) for n, href in items]
+    parts = [f'<a href="{up}index.html">Home</a>'] + [f'<a href="{up}{href}">{e(n)}</a>' if href else e(n) for n, href in items]
     return f'<div class="crumbs" role="navigation" aria-label="Breadcrumb">{" › ".join(parts)}</div>'
 
 
@@ -126,7 +126,7 @@ def author_box(up):
     return (f'<aside class="author"><img src="{up}assets/vedant-pathak.jpg" alt="Vedant Pathak (VP)" width="84" height="84" loading="lazy">'
             f'<div><p><strong><a href="{up}vedant-pathak.html">Vedant Pathak (VP)</a></strong>, founder of TRAASS</p>'
             f'<p>Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. '
-            f'B.Tech Mechanical, Certified Data Analyst. <a href="{up}./#contact">Get in touch →</a></p></div></aside>')
+            f'B.Tech Mechanical, Certified Data Analyst. <a href="{up}index.html#contact">Get in touch →</a></p></div></aside>')
 
 
 def person_ref():
@@ -140,7 +140,7 @@ def build_posts(posts):
         related = [x for x in posts if x["cat"] == p["cat"] and x is not p][:2] or [x for x in posts if x is not p][:2]
         rel = "".join(f'<li><a href="{x["slug"]}.html">{e(x["title"])}</a></li>' for x in related)
         minutes = max(1, round(len(p["body"].split()) / 200))
-        body = f"""{crumbs("../", [("Blog", "blog/"), (p["cat"], "")])}
+        body = f"""{crumbs("../", [("Blog", "blog/index.html"), (p["cat"], "")])}
 <article>
 <div class="meta"><span class="c">{e(p["cat"])}</span><time datetime="{p["date"]}">{p["date"]}</time><span>{minutes} min read</span></div>
 <h1>{e(p["title"])}</h1>
@@ -152,7 +152,7 @@ def build_posts(posts):
 {author_box("../")}
 <h2 class="subhead">Related <span>articles</span></h2>
 <ul class="linklist">{rel}</ul>
-<p style="margin-top:24px"><a class="btn fill" href="../#contact">Talk to me about this →</a></p>"""
+<p style="margin-top:24px"><a class="btn fill" href="../index.html#contact">Talk to me about this →</a></p>"""
         schema = [
             {"@type": "BlogPosting", "headline": p["title"], "description": p["excerpt"], "datePublished": p["date"],
              "dateModified": p["date"], "url": url, "mainEntityOfPage": url, "image": SITE + "og-image.png",
@@ -201,9 +201,9 @@ def build_profile():
 <h2>Education and certification</h2>
 <ul><li>B.Tech, Mechanical Engineering</li><li>Certified Data Analyst</li></ul>
 <h2>Services</h2>
-<ul><li><a href="b2b-marketing-business-development.html">B2B Marketing &amp; Business Development for Manufacturers</a></li><li><a href="apcd-consulting.html">APCD &amp; Dust Collection Consulting</a></li><li><a href="./#services">All services</a></li></ul>
+<ul><li><a href="b2b-marketing-business-development.html">B2B Marketing &amp; Business Development for Manufacturers</a></li><li><a href="apcd-consulting.html">APCD &amp; Dust Collection Consulting</a></li><li><a href="index.html#services">All services</a></li></ul>
 <h2>Contact</h2>
-<p>Email <a href="mailto:{EMAIL}">{EMAIL}</a>, connect on <a href="{LINKEDIN}" target="_blank" rel="noopener">LinkedIn</a>, or use the <a href="./#contact">contact form</a>.</p>
+<p>Email <a href="mailto:{EMAIL}">{EMAIL}</a>, connect on <a href="{LINKEDIN}" target="_blank" rel="noopener">LinkedIn</a>, or use the <a href="index.html#contact">contact form</a>.</p>
 </div>"""
     person = {**person_ref(), "description": BIO, "email": "mailto:" + EMAIL,
               "jobTitle": ["Business Analyst (Mechanical Domain)", "B2B Marketing & Business Development Specialist", "APCD Expert", "Founder, TRAASS"],
@@ -224,7 +224,7 @@ def service_page(path, h1, title, answer, content, service):
 {content}
 </div>
 {author_box("")}
-<p><a class="btn fill" href="./#contact">Discuss your requirement →</a></p>"""
+<p><a class="btn fill" href="index.html#contact">Discuss your requirement →</a></p>"""
     schema = [{"@type": "Service", "name": service, "description": answer, "url": url, "areaServed": "IN",
                "provider": {"@type": "ProfessionalService", "@id": ORG_ID, "name": "TRAASS", "url": SITE, "founder": person_ref()}},
               crumb_schema([(h1, url)])]
@@ -258,7 +258,7 @@ def build_services():
 <p>Industrial buyers want to know you understand their plant. A B.Tech Mechanical background and 5+ years with APCD customers means the conversation starts with their problem, and a data analyst's habits mean every channel gets measured in enquiries and orders.</p>
 <h2>How the work runs</h2>
 <ul><li>Find the right accounts</li><li>Qualify early</li><li>Consult before selling</li><li>Propose around the outcome</li><li>Close with disciplined follow-up</li><li>Turn each result into proof for the next client</li></ul>
-<p>Try the <a href="./#growth">funnel calculator</a> to find where your own sales funnel leaks. Related reading: <a href="blog/get-b2b-leads-without-ranking-on-google.html">getting leads without ranking on Google</a>, <a href="blog/what-does-business-development-do-in-manufacturing.html">what business development does</a> and <a href="blog/does-a-manufacturing-company-need-branding.html">branding for manufacturers</a>.</p>""",
+<p>Try the <a href="index.html#growth">funnel calculator</a> to find where your own sales funnel leaks. Related reading: <a href="blog/get-b2b-leads-without-ranking-on-google.html">getting leads without ranking on Google</a>, <a href="blog/what-does-business-development-do-in-manufacturing.html">what business development does</a> and <a href="blog/does-a-manufacturing-company-need-branding.html">branding for manufacturers</a>.</p>""",
         "B2B Marketing & Business Development for Manufacturers")
     service_page(
         "apcd-consulting.html",
@@ -288,7 +288,7 @@ def build_sitemap(posts):
     newest = posts[0]["date"]
     urls = [("", newest, "1.0"), ("vedant-pathak.html", newest, "0.9"),
             ("b2b-marketing-business-development.html", newest, "0.9"),
-            ("apcd-consulting.html", newest, "0.9"), ("blog/", newest, "0.8")]
+            ("apcd-consulting.html", newest, "0.9"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
     urls += [(f"blog/{p['slug']}.html", p["date"], "0.7") for p in posts]
     rows = "\n".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     (ROOT / "sitemap.xml").write_text(

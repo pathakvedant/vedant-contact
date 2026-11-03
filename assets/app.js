@@ -40,7 +40,7 @@ $('#toTop').onclick=()=>scrollTo({top:0});
 $('#yr').textContent=new Date().getFullYear();
 
 // ===== Typing =====
-const roles=['Business Analyst','B2B Marketing for Manufacturing','Business Development & Client Conversion','Branding for Industrial Companies','Mechanical Engineer · Certified Data Analyst','Fan Design & APCD Expert','ERP & Dashboard Builder','Transforming Every Industry: Steel to FMCG'];let ri=0,ci=0,del=false;
+const roles=['Business Analyst','B2B Marketing for Manufacturing','Business Development & Client Conversion','Branding for Industrial Companies','Mechanical Engineer · Certified Data Analyst','Fan Design & APCD Expert','ERP & Dashboard Builder','Python for Data & Markets','Transforming Every Industry: Steel to FMCG'];let ri=0,ci=0,del=false;
 (function ty(){const w=roles[ri];$('#typed').textContent='> '+w.slice(0,ci)+'_';if(!del&&ci++===w.length){del=true;return setTimeout(ty,1500)}if(del&&ci--===0){del=false;ri=(ri+1)%roles.length}setTimeout(ty,del?35:75)})();
 
 // ===== Reveal, skill bars, counters =====
@@ -194,6 +194,8 @@ function closePost(keep){$('#reader').classList.remove('open');document.body.sty
 $('#rClose').onclick=()=>closePost();
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#reader').classList.contains('open'))closePost()});
 $('#reader').addEventListener('scroll',e=>{const r=e.target;$('#readBar').style.width=(r.scrollTop/(r.scrollHeight-r.clientHeight)*100)+'%'});
+// Arriving from another page: the browser's own jump can be lost while this long page lays out
+addEventListener('load',()=>{const el=location.hash.length>1&&!location.hash.startsWith('#post/')&&document.getElementById(location.hash.slice(1));if(el)setTimeout(()=>el.scrollIntoView({behavior:'instant'}),100)});
 function route(){const m=location.hash.match(/^#post\/(.+)/);if(m)openPost(m[1]);else if($('#reader').classList.contains('open'))closePost(true)}
 addEventListener('popstate',route);route();
 

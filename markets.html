@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSE & BSE Stock Prices + Free Python Analysis | TRAASS</title>
+<meta name="description" content="NSE and BSE stock prices for the Nifty 500, refreshed through market hours, with free Python analysis tools that run in your browser: RSI, MACD, Bollinger Bands, risk and return, backtesting and correlation. Built by Vedant Pathak (VP), TRAASS.">
+<meta name="author" content="Vedant Pathak">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#05060f">
+<link rel="canonical" href="https://pathakvedant.github.io/vedant-contact/markets.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TRAASS · Vedant Pathak">
+<meta property="og:title" content="NSE & BSE Stock Prices + Free Python Analysis">
+<meta property="og:description" content="Indian stock prices and free Python analysis tools that run in your browser. No sign-up.">
+<meta property="og:url" content="https://pathakvedant.github.io/vedant-contact/markets.html">
+<meta property="og:image" content="https://pathakvedant.github.io/vedant-contact/og-image.png">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/markets.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script defer src="assets/markets.js"></script>
+</head>
+<body>
+<header class="pagehead"><div class="wrap">
+ <a href="index.html" class="logo" aria-label="TRAASS home"><img src="assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a>
+ <div class="links" role="navigation" aria-label="Main"><a href="index.html">Home</a><a href="vedant-pathak.html">About</a><a href="markets.html">Markets</a><a href="b2b-marketing-business-development.html">Marketing &amp; BD</a><a href="apcd-consulting.html">APCD</a><a href="blog/index.html">Blog</a><a href="index.html#contact">Contact</a></div>
+</div></header>
+
+<main class="wrap mk">
+ <div class="mk-head">
+  <div>
+   <span class="eyebrow">Markets · Python Lab</span>
+   <h1 class="title">NSE & BSE prices. <span>Free Python analysis.</span></h1>
+   <p class="sub">Search the Nifty 500, see NSE and BSE prices refreshed about every 10 minutes in market hours, then run real Python analysis in your browser. No sign-up and nothing to install.</p>
+  </div>
+  <div class="mk-status" id="mkStatus" role="status"><i></i><span>Connecting…</span></div>
+ </div>
+
+ <div class="mk-indices" id="mkIndices" aria-label="Market indices"></div>
+
+ <div class="mk-search">
+  <input id="mkQ" type="search" placeholder="Search the Nifty 500: Tata Steel, INFY, 500325…" autocomplete="off" aria-label="Search stocks">
+  <div class="mk-ex" role="group" aria-label="Exchange"><button id="exNSE" class="on" type="button">NSE</button><button id="exBSE" type="button">BSE</button></div>
+  <div id="mkSug" class="mk-sug" hidden></div>
+ </div>
+
+ <div class="mk-main">
+  <section class="mk-panel" aria-label="Selected stock">
+   <div class="mk-quote">
+    <div><h2 id="qName">Loading…</h2><p id="qMeta" class="mk-mut"></p></div>
+    <div class="mk-price"><b id="qPrice">–</b><span id="qChange"></span></div>
+   </div>
+   <div class="mk-actions"><button class="btn sm" id="qWatch" type="button">☆ Add to watchlist</button><a class="btn sm" id="qLink" target="_blank" rel="noopener" href="https://www.nseindia.com/">Check on NSE ↗</a></div>
+   <div class="mk-stats" id="qStats"></div>
+   <div class="mk-range" id="mkRange" role="group" aria-label="Chart range">
+    <button data-d="30" type="button">1M</button><button data-d="180" type="button">6M</button><button data-d="365" class="on" type="button">1Y</button><button data-d="1095" type="button">3Y</button><button data-d="1825" type="button">5Y</button>
+   </div>
+   <div class="mk-chart"><canvas id="priceChart"></canvas></div>
+   <p class="mk-mut mk-small">Charts and Python tools use NSE daily prices.</p>
+  </section>
+  <aside class="mk-panel" aria-label="Watchlist">
+   <h2 class="mk-h">Watchlist</h2>
+   <div class="mk-tablewrap"><table class="mk-table"><thead><tr><th>Stock</th><th>Price</th><th>Change</th></tr></thead><tbody id="wlBody"></tbody></table></div>
+   <p class="mk-mut mk-small">Your watchlist stays in this browser.</p>
+  </aside>
+ </div>
+
+ <section id="lab" class="mk-section">
+  <span class="eyebrow">Python Lab</span>
+  <h2 class="title">Analyse <span id="labStock">this stock</span> with Python</h2>
+  <p class="sub">These tools run real Python (pandas and NumPy) on your own device. The first run downloads Python once, which can take up to a minute. Prices keep updating while it loads.</p>
+  <div class="mk-tabs" id="labTabs" role="tablist">
+   <button data-t="indicators" class="on" type="button">Indicators</button>
+   <button data-t="risk" type="button">Risk & Return</button>
+   <button data-t="backtest" type="button">Backtest</button>
+   <button data-t="compare" type="button">Compare</button>
+   <button data-t="code" type="button">Write Python</button>
+  </div>
+  <div class="mk-panel">
+   <p id="labDesc" class="mk-mut"></p>
+   <div id="labParams" class="mk-params"></div>
+   <textarea id="labCode" class="mk-code" rows="12" spellcheck="false" aria-label="Python code" hidden></textarea>
+   <button class="btn fill" id="labRun" type="button">▶ Run in Python</button>
+   <span id="labMsg" class="mk-mut mk-small" role="status"></span>
+   <div id="labCards" class="mk-stats"></div>
+   <div id="labCharts"></div>
+   <pre id="labOut" class="mk-out" hidden></pre>
+   <details class="mk-src" id="labSrcWrap"><summary>View the Python code</summary><pre id="labSrc"></pre></details>
+  </div>
+ </section>
+
+ <section id="tools" class="mk-section">
+  <span class="eyebrow">Free & open source</span>
+  <h2 class="title">Best free Python tools for <span>market analysis</span></h2>
+  <p class="sub">Want to go further on your own computer or in Google Colab? These tools cover the full job at no cost.</p>
+  <div class="grid" id="toolGrid"></div>
+  <h3 class="subhead">Start in <span>five lines</span></h3>
+  <pre class="mk-out">pip install yfinance pandas
+
+import yfinance as yf
+df = yf.download("RELIANCE.NS", period="1y")   # use .BO for BSE
+df["SMA20"] = df["Close"].rolling(20).mean()
+print(df.tail())</pre>
+ </section>
+
+ <p class="mk-disclaimer"><strong>Important:</strong> for education and information only. Nothing here is investment advice or a recommendation to buy or sell any security. Prices come from Yahoo Finance through the open-source yfinance library, with the stock list and previous closes from NSE's and BSE's official public files. They are delayed, may be wrong, and are not for trading decisions. Check them with your broker or the exchange. Past results and backtests do not predict future returns. This site is not affiliated with Yahoo, NSE or BSE.</p>
+</main>
+
+<footer><div class="wrap"><div class="copy">© TRAASS · Vedant Pathak · <a href="mailto:pathakvedant001@gmail.com">pathakvedant001@gmail.com</a> · <a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" rel="noopener">LinkedIn</a></div></div></footer>
+</body>
+</html>
