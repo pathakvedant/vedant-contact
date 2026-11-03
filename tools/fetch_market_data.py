@@ -7,6 +7,10 @@ official public files. GitHub Actions runs this on a schedule; see
     pip install yfinance
     python tools/fetch_market_data.py          # prices, stock list and history
     python tools/fetch_market_data.py quotes   # prices only
+    python tools/fetch_market_data.py seed     # prices and a small starter history
+
+Every price is checked before it is saved. If an INDIANAPI_KEY environment variable
+exists, IndianAPI prices are used for a few stocks when they agree with Yahoo's.
 
 Writes data/market/symbols.json, quotes.json and history/<symbol>.json.
 """
@@ -14,6 +18,7 @@ import csv
 import io
 import json
 import math
+import os
 import re
 import sys
 import time
@@ -33,6 +38,12 @@ BSE_BHAV = "https://www.bseindia.com/download/BhavCopy/Equity/BhavCopy_BSE_CM_0_
 NSE_BHAV = "https://nsearchives.nseindia.com/content/cm/BhavCopy_NSE_CM_0_0_0_{}_F_0000.csv.zip"
 INDICES = {"NIFTY 50": "^NSEI", "SENSEX": "^BSESN", "NIFTY BANK": "^NSEBANK"}
 CHUNK = 100
+# Same limits as validRow() in assets/markets-cache.js
+MAX_PRICE = 10_000_000
+MAX_MOVE = 0.5
+STARTER = ["RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "SBIN", "ITC", "LT", "TATASTEEL"]
+INDIANAPI = "https://pro.indianapi.in/{}_stock_batch_live_price"
+AGREE_WITHIN = 0.03
 
 
 def save(path, data):
@@ -132,6 +143,50 @@ def quote_row(table):
             0 if math.isnan(last["Volume"]) else int(last["Volume"]), table.index[-1].strftime("%Y-%m-%d")]
 
 
+def valid_row(r, latest):
+    """Rejects a price that can't be real, so bad data never reaches the site."""
+    price, prev, open_, high, low, volume, day = r
+    ok = lambda v: isinstance(v, (int, float)) and not math.isnan(v) and 0 < v < MAX_PRICE
+    if not ok(price) or not isinstance(volume, int) or volume < 0 or day > latest:
+        return False
+    if any(v is not None and not ok(v) for v in (prev, open_, high, low)):
+        return False
+    if high is not None and low is not None and high < low:
+        return False
+    return prev is None or abs(price / prev - 1) <= MAX_MOVE
+
+
+def indianapi_prices(out, rows):
+    """Optional second source. A price is only used if it agrees with Yahoo's."""
+    key = os.environ.get("INDIANAPI_KEY", "").strip()
+    if not key:
+        return
+    codes = {r[0]: r[4] for r in rows}
+    for ex, section, names in (("nse", out["NSE"], {s: s for s in STARTER}),
+                               ("bse", out["BSE"], {codes[s]: s for s in STARTER if codes.get(s)})):
+        try:
+            req = urllib.request.Request(
+                INDIANAPI.format(ex), data=json.dumps({"stock_symbols": list(names)}).encode(),
+                headers={"X-API-Key": key, "Content-Type": "application/json", "User-Agent": "Mozilla/5.0"})
+            reply = json.loads(urllib.request.urlopen(req, timeout=20).read(2_000_000))
+        except Exception as err:
+            print(f"IndianAPI {ex}: not used ({type(err).__name__})")  # never print the error text: it could echo the key
+            continue
+        used = 0
+        for code, sym in names.items():
+            item, row = reply.get(code) if isinstance(reply, dict) else None, section.get(sym)
+            if not isinstance(item, dict) or row is None:
+                continue
+            new = [item.get(k) for k in ("ltp", "open", "high", "low", "volume")]
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in new):
+                continue
+            candidate = [round(float(new[0]), 2), row[1], round(float(new[1]), 2), round(float(new[2]), 2), round(float(new[3]), 2), int(new[4]), row[6]]
+            if valid_row(candidate, row[6]) and abs(candidate[0] / row[0] - 1) <= AGREE_WITHIN:
+                section[sym] = candidate
+                used += 1
+        print(f"IndianAPI {ex}: used {used} of {len(names)} prices")
+
+
 def fetch_quotes(rows):
     symbols = [r[0] for r in rows]
     tickers = [s + ".NS" for s in symbols] + [s + ".BO" for s in symbols] + list(INDICES.values())
@@ -161,6 +216,12 @@ def fetch_quotes(rows):
         r[4] = codes.get(r[3], r[4])
     save(OUT / "symbols.json", rows)
 
+    indianapi_prices(out, rows)
+    limit = (date.fromisoformat(today) + timedelta(days=1)).isoformat()
+    for section in out.values():
+        for name in [n for n, row in section.items() if not valid_row(row, limit)]:
+            print(f"Rejected a bad price for {name}: {section.pop(name)}")
+
     path = OUT / "quotes.json"
     old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     # An unchanged file means no commit, so holidays don't add noise to the repository
@@ -189,6 +250,8 @@ def main():
     fetch_quotes(rows)
     if mode == "all":
         fetch_history([r[0] for r in rows])
+    elif mode == "seed":
+        fetch_history(STARTER)
 
 
 if __name__ == "__main__":

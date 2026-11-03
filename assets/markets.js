@@ -4,33 +4,60 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:null};
 const fmt=(v,d=2)=>{const n=num(v);return n==null?'–':n.toLocaleString('en-IN',{minimumFractionDigits:d,maximumFractionDigits:d})};
-const SAFE_ID=/^[A-Za-z0-9&._-]+$/;
+const SAFE_ID=/^[A-Z0-9][A-Z0-9&._-]{0,24}$/;
 const fileKey=s=>s.replace(/[^A-Za-z0-9]/g,'_'); // same rule as file_key() in the fetch script
-
-async function getJSON(url,ms=10000){
- const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
- try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}
- finally{clearTimeout(t)}
-}
 
 // ===== Price provider =====
 const quoteFields=(r,sym,ex)=>({sym,ex,price:r[0],prev:r[1],open:r[2],high:r[3],low:r[4],vol:r[5],date:r[6],change:r[1]?r[0]-r[1]:null,pct:r[1]?(r[0]-r[1])/r[1]*100:null});
+const today=()=>new Date().toISOString().slice(0,10);
 const FEED={
- base:'data/market/',quotes:null,symbols:[],files:{},
+ base:'data/market/',quotes:null,symbols:[],files:{},fresh:false,
+ // Shows the visitor's saved copies at once; the network then replaces them
+ async loadSaved(){
+  const [q,sym]=await Promise.all([MarketData.read('quotes','quotes'),MarketData.read('symbols','symbols')]);
+  if(q)this.quotes=q.data;
+  if(sym)this.symbols=sym.data;
+  this.symbolsDay=sym&&sym.savedOn;
+ },
  // GitHub Pages caches files for about 10 minutes, so ask for a fresh copy each minute
- async refresh(){this.quotes=await getJSON(`${this.base}quotes.json?t=${Math.floor(Date.now()/60000)}`);return this.quotes},
- async loadSymbols(){this.symbols=await getJSON(`${this.base}symbols.json?d=${new Date().toISOString().slice(0,10)}`)},
+ async refresh(){
+  const q=await MarketData.download('quotes',`${this.base}quotes.json?t=${Math.floor(Date.now()/60000)}`);
+  // An older copy from a web cache must not replace newer prices
+  if(!this.quotes||Date.parse(q.updated)>=Date.parse(this.quotes.updated)){this.quotes=q;MarketData.write('quotes','quotes',q)}
+  this.fresh=true;
+  return this.quotes;
+ },
+ async loadSymbols(){
+  if(this.symbols.length&&this.symbolsDay===today())return;
+  try{this.symbols=await MarketData.download('symbols',`${this.base}symbols.json?d=${today()}`);this.symbolsDay=today();MarketData.write('symbols','symbols',this.symbols)}
+  catch(e){if(!this.symbols.length)throw e}
+ },
  info(sym){return this.symbols.find(x=>x[0]===sym)},
  quote(sym,ex){const r=this.quotes&&this.quotes[ex]&&this.quotes[ex][sym];if(!r)throw new Error('No price for '+sym);return quoteFields(r,sym,ex)},
  index(name){const r=this.quotes&&this.quotes.idx[name];if(!r)throw new Error('No price for '+name);return quoteFields(r,name,'')},
+ // Past prices: saved copy if it is from today, then the site, then any older saved copy
+ async pastPrices(key){
+  if(this.files[key])return this.files[key];
+  const saved=await MarketData.read('h:'+key,'history');
+  if(saved&&saved.savedOn===today())return this.files[key]=saved.data;
+  try{
+   const f=await MarketData.download('history',`${this.base}history/${key}.json?d=${today()}`);
+   MarketData.write('h:'+key,'history',f);
+   return this.files[key]=f;
+  }catch(e){
+   if(saved)return this.files[key]=saved.data;
+   throw new Error('Past prices for this stock are not ready yet.');
+  }
+ },
  async history(symbol,days,kind='stock'){
-  const key=(kind==='index'?'IDX_':'')+fileKey(symbol);
-  if(!this.files[key])this.files[key]=await getJSON(`${this.base}history/${key}.json?d=${new Date().toISOString().slice(0,10)}`,15000);
-  const f=this.files[key],from=Math.floor(Date.now()/1000)-days*86400,start=Math.max(0,f.t.findIndex(t=>t>=from));
+  const f=await this.pastPrices((kind==='index'?'IDX_':'')+fileKey(symbol));
+  const from=Math.floor(Date.now()/1000)-days*86400,start=Math.max(0,f.t.findIndex(t=>t>=from));
   const h=Object.fromEntries(['t','o','h','l','c','v'].map(k=>[k,f[k].slice(start)]));
   // The history file updates once a day, so add today's bar from the latest prices
   const q=kind==='index'?this.quotes.idx[symbol]:this.quotes.NSE[symbol];
-  if(q&&q[6]>new Date(h.t[h.t.length-1]*1000).toISOString().slice(0,10)){h.t.push(Date.parse(q[6])/1000);h.o.push(q[2]);h.h.push(q[3]);h.l.push(q[4]);h.c.push(q[0]);h.v.push(q[5])}
+  const last=h.t.length-1,lastDay=new Date(h.t[last]*1000).toISOString().slice(0,10);
+  if(q&&q[6]>lastDay){h.t.push(Date.parse(q[6])/1000);h.o.push(q[2]);h.h.push(q[3]);h.l.push(q[4]);h.c.push(q[0]);h.v.push(q[5])}
+  else if(q&&q[6]===lastDay){h.c[last]=q[0];h.h[last]=q[3];h.l[last]=q[4];h.v[last]=q[5]}
   return h;
  }
 };
@@ -52,6 +79,7 @@ function setStatus(ok){
  const el=$('mkStatus'),updated=FEED.quotes&&FEED.quotes.updated;
  if(!updated){el.className='mk-status err';el.lastElementChild.textContent=ok===false?'Price data is not available yet. Retrying…':'Connecting…';return}
  const when=new Date(updated),time=when.toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+ if(!FEED.fresh){el.className='mk-status'+(ok===false?' err':'');el.lastElementChild.textContent=ok===false?`Could not update · showing saved prices from ${time}`:`Showing saved prices from ${time} · updating…`;return}
  const open=marketOpen(),late=Date.now()-when.getTime()>45*60000;
  if(!ok||(open&&late)){el.className='mk-status err';el.lastElementChild.textContent=`Prices delayed · last update ${time}`;return}
  el.className='mk-status'+(open?' live':'');
@@ -101,12 +129,15 @@ async function selectStock(id,ex){
  link.href=S.ex==='NSE'?`https://www.nseindia.com/get-quotes/equity?symbol=${encodeURIComponent(id)}`:'https://www.bseindia.com/';
  link.textContent=`Check on ${S.ex} ↗`;
  $('qName').textContent='Loading…';$('qPrice').textContent='–';$('qChange').textContent='';
- try{await loadQuote();setStatus(true);await loadChart()}
+ $('qChartMsg').textContent='';
+ try{await loadQuote();setStatus(true)}
  catch(e){
   // A few shares have no price on one exchange
   if(!S.q&&!selectStock.retry){selectStock.retry=true;try{await selectStock(id,S.ex==='NSE'?'BSE':'NSE')}finally{selectStock.retry=false}return}
-  $('qName').textContent='Could not load this stock';$('qMeta').textContent='Its price data is not available right now. Please try again later.';setStatus(!!S.q);
+  $('qName').textContent='Could not load this stock';$('qMeta').textContent='Its price data is not available right now. Please try again later.';setStatus(!!S.q);return
  }
+ try{await loadChart()}
+ catch(e){if(priceChart){priceChart.destroy();priceChart=null}$('qChartMsg').textContent=e.message}
 }
 
 // ===== Watchlist =====
@@ -130,14 +161,14 @@ $('mkQ').addEventListener('input',()=>{
  if(typed.length<2){box.hidden=true;return}
  const rank=x=>{const sym=x[0].toLowerCase(),n=x[1].toLowerCase();return sym===typed||x[4]===typed?0:n.startsWith(typed)||sym.startsWith(typed)?1:n.includes(typed)?2:3};
  const list=FEED.symbols.map(x=>[rank(x),x]).filter(r=>r[0]<3).sort((a,b)=>a[0]-b[0]||a[1][1].length-b[1][1].length).slice(0,8).map(r=>r[1]);
- box.innerHTML=list.length?list.map(x=>`<button type="button" data-id="${esc(x[0])}">${esc(x[1])}<small>${[x[0],x[4],x[2]].filter(Boolean).map(esc).join(' · ')}</small></button>`).join(''):'<p class="mk-mut" style="padding:12px 14px">Not found. This page covers the Nifty 500 companies.</p>';
+ box.innerHTML=list.length?list.map(x=>`<button type="button" data-id="${esc(x[0])}">${esc(x[1])}<small>${[x[0],x[4],x[2]].filter(Boolean).map(esc).join(' · ')}</small></button>`).join(''):`<p class="mk-mut" style="padding:12px 14px">${FEED.symbols.length?'Not found. This page covers the Nifty 500 companies.':'The stock list has not loaded yet. Please try again in a moment.'}</p>`;
  box.hidden=false;
 });
 $('mkSug').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(!b)return;$('mkSug').hidden=true;$('mkQ').value='';selectStock(b.dataset.id,S.ex)});
 document.addEventListener('click',e=>{if(!e.target.closest('.mk-search'))$('mkSug').hidden=true});
 $('exNSE').onclick=()=>selectStock(S.id,'NSE');
 $('exBSE').onclick=()=>selectStock(S.id,'BSE');
-$('mkRange').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.days=+b.dataset.d;$('mkRange').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));loadChart().catch(()=>setStatus(false))});
+$('mkRange').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.days=+b.dataset.d;$('mkRange').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));loadChart().catch(e=>{$('qChartMsg').textContent=e.message})});
 
 // ===== Polling: looks for a newer price file once a minute. Paused when the tab is hidden. =====
 let busy=false;
@@ -145,8 +176,8 @@ async function poll(){
  if(document.hidden||busy)return;
  busy=true;
  try{
+  await FEED.loadSymbols().catch(()=>{}); // search still works from a saved list
   await FEED.refresh();
-  if(!FEED.symbols.length)await FEED.loadSymbols();
   loadIndices();loadWatch();
   if(S.q)await loadQuote();else await selectStock(S.id,S.ex);
   setStatus(true);
@@ -404,4 +435,8 @@ $('toolGrid').innerHTML=FREE_TOOLS.map(g=>`<article class="card mk-tool"><h3>${g
 // ===== Start =====
 showTab('indicators');
 Chart.defaults.font.family='Inter,sans-serif';
-poll();
+(async()=>{
+ await FEED.loadSaved().catch(()=>{});
+ if(FEED.quotes){loadIndices();loadWatch();await selectStock(S.id,S.ex)}
+ poll();
+})();

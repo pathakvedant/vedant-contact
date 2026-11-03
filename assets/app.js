@@ -14,8 +14,14 @@ const SITE='https://pathakvedant.github.io/vedant-contact/';
 // {years:['2022','2023','2024','2025','2026'],leads:[...],converted:[...]}
 const CONVERSION_HISTORY=null;
 
-async function sendForm(data){
- const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_template:'table',_captcha:'false',Page:location.href,Time:new Date().toLocaleString('en-IN'),...data})});
+// Form checks: strip hidden characters, cap lengths, and limit how often one browser can send
+const cleanText=(v,max=2000)=>String(v==null?'':v).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,'').trim().slice(0,max);
+const cleanLine=(v,max=120)=>cleanText(v,max).replace(/[\r\n]+/g,' ');
+function allowSend(){const now=Date.now(),sent=store.get('vp_sent',[]).filter(t=>typeof t==='number'&&now-t<6e5);if(sent.length>=5)return false;sent.push(now);store.set('vp_sent',sent);return true}
+async function sendForm(fields){
+ if(!allowSend())throw new Error('too many');
+ const data=Object.fromEntries(Object.entries(fields).map(([k,v])=>[k,k==='Message'?cleanText(v):cleanLine(v,k==='_subject'?160:120)]));
+ const r=await fetch(FORM_ENDPOINT,{method:'POST',credentials:'omit',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_template:'table',_captcha:'false',Page:location.href,Time:new Date().toLocaleString('en-IN'),...data})});
  if(!r.ok)throw new Error('send failed');return r.json();
 }
 
@@ -209,15 +215,17 @@ function showPhone(name){const wa=MY_PHONE.replace(/\D/g,''),tel=MY_PHONE.replac
  $('#phoneMask').innerHTML=`<a href="tel:${tel}">${MY_PHONE}</a>`;
  const txt=encodeURIComponent(`Hi Vedant, I'm ${name}. I found you through your TRAASS portfolio.`);
  $('#gate').innerHTML=`<p class="up">✅ Thanks ${esc(name)}! Call or WhatsApp anytime.</p><a class="btn sm" href="tel:${tel}" style="margin-top:10px">📞 Call now</a><a class="btn fill sm" style="margin-top:10px;background:#25D366" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${txt}">💬 Chat on WhatsApp</a>`}
-const known=store.get('vp_visitor',null);if(known)showPhone(known.name);
+const known=store.get('vp_visitor',null);if(known&&typeof known.name==='string')showPhone(cleanLine(known.name,80));
 $('#gateForm').onsubmit=async e=>{e.preventDefault();if(e.target._honey.value)return;
- const name=$('#vName').value.trim(),ph=$('#vPhone').value.trim(),msg=$('#gateMsg');
+ const name=cleanLine($('#vName').value,80),ph=$('#vPhone').value.trim(),msg=$('#gateMsg');
+ if(name.length<2){msg.textContent='Please enter your name.';return}
  if(!/^[6-9]\d{9}$/.test(ph)||fake(ph)){msg.textContent='Please enter your real 10-digit mobile number.';return}
  const b=$('#revealBtn');b.disabled=true;b.textContent='Please wait…';
  try{await sendForm({_subject:`📞 New lead: ${name} (+91 ${ph})`,Name:name,Phone:'+91 '+ph,Company:$('#vCo').value||'-',Source:'Phone reveal'})}catch(err){}
  store.set('vp_visitor',{name});showPhone(name)};
 
 // ===== Contact form =====
+$$('form input:not([maxlength]):not([type=range]),form textarea').forEach(el=>{el.maxLength=el.tagName==='TEXTAREA'?2000:120});
 $$('[data-topic]').forEach(a=>a.addEventListener('click',()=>{$('#cTopic').value=a.dataset.topic;setTimeout(()=>$('#cName').focus({preventScroll:true}),600)}));
 $('#cForm').onsubmit=async e=>{e.preventDefault();if(e.target._honey.value)return;const b=$('#cBtn'),out=$('#cMsgOut');b.disabled=true;b.textContent='Sending…';
  try{await sendForm({_subject:`[TRAASS] ${$('#cTopic').value}: ${$('#cName').value}`,_replyto:$('#cMail').value,Name:$('#cName').value,Email:$('#cMail').value,Company:$('#cCo').value||'-',Topic:$('#cTopic').value,Message:$('#cMsg').value});

@@ -10,6 +10,8 @@ Personal portfolio for Vedant Pathak: Business Analyst, Certified Data Analyst, 
 | `assets/style.css` | Design |
 | `assets/app.js` | All interactive features (dashboard, blog, forms) |
 | `markets.html`, `assets/markets.js`, `assets/markets-py.worker.js`, `assets/markets.css` | NSE/BSE prices and the Python Lab. Prices are read from `data/market` by `FEED` in `markets.js` |
+| `assets/markets-cache.js` | Checks every price file and saves good copies in the visitor's browser |
+| `assets/intro.js` | The 3D logo intro |
 | `tools/fetch_market_data.py`, `.github/workflows/market-data.yml` | Fetch prices with the free yfinance library. GitHub runs this about every 10 minutes in market hours and saves the results in `data/market` |
 | `blog/posts.js` | **Your blog posts. Edit this to add a daily post** |
 | `og-image.png` | Image shown when the link is shared on LinkedIn/WhatsApp |
@@ -40,9 +42,11 @@ The contact form, the phone-number form and the newsletter form all email **path
 
 ## Turn on Markets prices (one time)
 
-1. Upload the site, including the `.github` and `tools` folders. Don't upload a `data` folder: GitHub creates it, and it has more files than the upload page allows.
+1. Upload the site, including the `tools` and `data` folders. The small `data` folder gives the page starter prices; GitHub adds the rest. If `.github` doesn't upload, create `.github/workflows/market-data.yml` by hand with **Add file → Create new file**.
 2. In the repository, open **Actions → Market data → Run workflow**. The first run takes about 10 minutes.
 3. After that it runs by itself on weekdays. If a run shows a red cross, open it to see why; the page keeps showing the last good prices and says they are delayed.
+
+Optional second source: add an IndianAPI key under **Settings → Secrets and variables → Actions** as `INDIANAPI_KEY`. Never put a key in the website files: anyone can read those.
 
 To test on your own computer: `pip install yfinance`, `python tools/fetch_market_data.py`, then `python -m http.server` in this folder and open `http://localhost:8000/markets.html`.
 

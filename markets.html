@@ -2,6 +2,8 @@
 <html lang="en-IN">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NSE & BSE Stock Prices + Free Python Analysis | TRAASS</title>
 <meta name="description" content="NSE and BSE stock prices for the Nifty 500, refreshed through market hours, with free Python analysis tools that run in your browser: RSI, MACD, Bollinger Bands, risk and return, backtesting and correlation. Built by Vedant Pathak (VP), TRAASS.">
@@ -23,7 +25,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/markets.css">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script defer src="assets/markets-cache.js"></script>
 <script defer src="assets/markets.js"></script>
 </head>
 <body>
@@ -62,7 +65,8 @@
     <button data-d="30" type="button">1M</button><button data-d="180" type="button">6M</button><button data-d="365" class="on" type="button">1Y</button><button data-d="1095" type="button">3Y</button><button data-d="1825" type="button">5Y</button>
    </div>
    <div class="mk-chart"><canvas id="priceChart"></canvas></div>
-   <p class="mk-mut mk-small">Charts and Python tools use NSE daily prices.</p>
+   <p class="mk-mut mk-small" id="qChartMsg" role="status"></p>
+   <p class="mk-mut mk-small">Charts and Python tools use NSE daily prices. Prices you have seen are saved on this device, so they open instantly next time.</p>
   </section>
   <aside class="mk-panel" aria-label="Watchlist">
    <h2 class="mk-h">Watchlist</h2>
