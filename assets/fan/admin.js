@@ -51,6 +51,8 @@
       }
       try {
         await FanAuth.logIn(email, $('aPw').value);
+        const st = await FanAuth.rpc('fan_admin_status');
+        if (st && st.email_proven) { await route(); return; } // the email code is switched off in the database
         await FanAuth.logOut(); // the password only opens the next step
         await FanAuth.sendCode(email);
         codeView(email);
