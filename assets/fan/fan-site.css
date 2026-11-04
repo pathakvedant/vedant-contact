@@ -1,0 +1,33 @@
+/* Account screens, trial banner and pop-up for the fan software. Builds on styles.css. */
+.fan-back { font-size: 13px; color: var(--muted); text-decoration: none; }
+.fan-back:hover { color: var(--accent); }
+.fan-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; grid-column: 1 / -1; background: var(--accent-wash); border: 1px solid var(--accent); border-radius: 8px; padding: 9px 14px; font-size: 14px; }
+.fan-banner b { color: var(--ink); }
+.fan-modal { position: fixed; inset: 0; z-index: 50; background: rgba(6, 18, 24, 0.62); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.fan-dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 24px; width: min(480px, 100%); max-height: 92vh; overflow: auto; display: grid; gap: 12px; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.32); }
+.fan-dialog h2 { font-size: 24px; }
+.fan-dialog ul { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink-2); }
+.fan-auth { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px 16px; }
+.fan-auth .fan-dialog { box-shadow: none; }
+.fan-auth-brand { display: flex; align-items: center; gap: 10px; }
+.fan-auth-brand img { height: 34px; width: auto; }
+.fan-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.fan-tabs button { border: 1px solid var(--line); background: var(--panel-2); border-radius: 6px; padding: 8px; cursor: pointer; font-weight: 600; }
+.fan-tabs button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.fan-msg { font-size: 14px; min-height: 1.3em; }
+.fan-msg.err { color: var(--bad-ink); }
+.fan-msg.ok { color: var(--good-ink); }
+.fan-link { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-size: 14px; text-decoration: underline; }
+.btn-wide { width: 100%; padding: 10px 12px; font-size: 15px; }
+.tri-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.tri svg { display: block; width: 100%; height: auto; color: var(--ink); }
+.tri text { font: 13px var(--font-body); fill: currentColor; }
+.tri .val { font: 12px var(--font-data); fill: var(--muted); }
+.advice { display: grid; gap: 6px; }
+.advice-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; }
+.advice-row.best { border-color: var(--good); background: rgba(12, 163, 12, 0.06); }
+.advice-row small { display: block; color: var(--muted); font-size: 12.5px; }
+.admin-wrap { max-width: 1200px; margin: 0 auto; padding: 18px 16px 50px; display: grid; gap: 14px; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.admin-actions .btn { padding: 3px 8px; font-size: 13px; }
+.lock-note { font-size: 13px; color: var(--muted); }

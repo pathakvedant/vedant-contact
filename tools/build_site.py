@@ -99,7 +99,7 @@ def page(path, title, desc, schema, body, og_type="website"):
 <body>
 <header class="pagehead"><div class="wrap">
  <a href="{up}index.html" class="logo" aria-label="TRAASS home"><img src="{up}assets/traass-logo-reversed.svg" alt="TRAASS logo" width="156" height="40"><small>BY VEDANT PATHAK</small></a>
- <div class="links" role="navigation" aria-label="Main"><a href="{up}index.html">Home</a><a href="{up}vedant-pathak.html">About</a><a href="{up}markets.html">Markets</a><a href="{up}b2b-marketing-business-development.html">Marketing &amp; BD</a><a href="{up}apcd-consulting.html">APCD</a><a href="{up}blog/index.html">Blog</a><a href="{up}index.html#contact">Contact</a></div>
+ <div class="links" role="navigation" aria-label="Main"><a href="{up}index.html">Home</a><a href="{up}vedant-pathak.html">About</a><a href="{up}fan-software.html">Fan Software</a><a href="{up}markets.html">Markets</a><a href="{up}b2b-marketing-business-development.html">Marketing &amp; BD</a><a href="{up}apcd-consulting.html">APCD</a><a href="{up}blog/index.html">Blog</a><a href="{up}index.html#contact">Contact</a></div>
 </div></header>
 <main class="pagebody">
 {body}
@@ -290,7 +290,7 @@ def build_sitemap(posts):
     newest = posts[0]["date"]
     urls = [("", newest, "1.0"), ("vedant-pathak.html", newest, "0.9"),
             ("b2b-marketing-business-development.html", newest, "0.9"),
-            ("apcd-consulting.html", newest, "0.9"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
+            ("apcd-consulting.html", newest, "0.9"), ("fan-software.html", newest, "0.8"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
     urls += [(f"blog/{p['slug']}.html", p["date"], "0.7") for p in posts]
     rows = "\n".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     (ROOT / "sitemap.xml").write_text(
