@@ -53,7 +53,7 @@ To test on your own computer: `pip install yfinance`, `python tools/fetch_market
 
 ## Upload rule for Fan Pro
 
-Never upload the `.private-fan-engine` folder. Check that it isn't in the upload list before you commit.
+The private engine files are kept outside this folder, in `C:\ClaudeTmp\Fan-Pro-PRIVATE`. Never upload that folder.
 
 ## Add a daily blog post
 
