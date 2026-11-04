@@ -174,14 +174,15 @@
 
   /* ---------- Panel ---------- */
   let users = [];
-  const hasAccess = (u) => u.access_until && new Date(u.access_until).getTime() > Date.now();
+  const isSuper = (u) => u.email.toLowerCase() === String(window.FAN_CONFIG.adminEmail || '').toLowerCase();
+  const hasAccess = (u) => isSuper(u) || (u.access_until && new Date(u.access_until).getTime() > Date.now());
   function userRows(filter = '') {
     const f = filter.trim().toLowerCase();
     const list = users.filter((u) => !f || u.email.includes(f) || String(u.note || '').toLowerCase().includes(f));
     return list.map((u) => `<tr data-email="${esc(u.email)}"><td>${esc(u.email)}${u.note ? `<span class="why">${esc(u.note)}</span>` : ''}</td>
-      <td>${hasAccess(u) ? `<span class="pill ok">${esc(u.plan)}</span>` : '<span class="pill warn">No access</span>'}</td><td>${when(u.access_until)}</td><td>${when(u.created_at)}</td><td>${when(u.last_login)}</td>
+      <td>${isSuper(u) ? '<span class="pill ok">Superadmin</span>' : hasAccess(u) ? `<span class="pill ok">${esc(u.plan)}</span>` : '<span class="pill warn">No access</span>'}</td><td>${isSuper(u) ? 'Unlimited' : when(u.access_until)}</td><td>${when(u.created_at)}</td><td>${when(u.last_login)}</td>
       <td class="n"><button class="fan-link" data-warn="1">${Number(u.warnings) || 0}</button></td>
-      <td><div class="admin-actions"><button class="btn" data-days="1" data-plan="trial">1 day</button><button class="btn" data-days="7" data-plan="trial">7 days</button><button class="btn btn-primary" data-days="30" data-plan="pro">Pro 1 month</button><button class="btn" data-custom="1">Other…</button><button class="btn btn-danger" data-days="0" data-plan="none">End</button></div></td></tr>`).join('')
+      <td>${isSuper(u) ? 'Unlimited' : '<div class="admin-actions"><button class="btn" data-days="1" data-plan="trial">1 day</button><button class="btn" data-days="7" data-plan="trial">7 days</button><button class="btn btn-primary" data-days="30" data-plan="pro">Pro 1 month</button><button class="btn" data-custom="1">Other…</button><button class="btn btn-danger" data-days="0" data-plan="none">End</button></div>'}</td></tr>`).join('')
       || '<tr><td colspan="7">No accounts found.</td></tr>';
   }
 
