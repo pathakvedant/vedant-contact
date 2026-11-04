@@ -33,7 +33,7 @@ const FanAuth = (() => {
         signal: c.signal,
         credentials: 'omit',
         referrerPolicy: 'no-referrer',
-        headers: { apikey: cfg.anonKey, 'Content-Type': 'application/json', Authorization: `Bearer ${token || cfg.anonKey}` },
+        headers: { apikey: cfg.anonKey, 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body),
       });
       const text = await r.text();
