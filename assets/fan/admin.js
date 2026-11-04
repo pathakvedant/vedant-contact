@@ -12,7 +12,7 @@
     clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 4000);
   }
   function box(title, inner) {
-    root.innerHTML = `<div class="fan-dialog" style="margin:40px auto"><h2>${esc(title)}</h2>${inner}<a class="fan-back" href="fan-software.html">← Back to the fan software</a></div>`;
+    root.innerHTML = `<div class="fan-dialog" style="margin:40px auto"><h2>${esc(title)}</h2>${inner}<a class="fan-back" href="index.html">← Back to the website</a></div>`;
   }
   function checkNew(pw, again, min = MIN_PASSWORD) {
     if (pw.length < min) return `Use at least ${min} characters.`;
@@ -33,8 +33,7 @@
         <button class="btn btn-primary btn-wide">Log in</button>
         <button class="fan-link" id="aForgot" type="button">Forgot password?</button>
         <p class="fan-msg err" id="aMsg" role="alert">${esc(msg)}</p>
-      </form>
-      <a class="btn btn-wide" style="text-align:center;text-decoration:none" href="fan-pro.html#signup">Create a new account</a>`);
+      </form>`);
     $('aForgot').onclick = () => forgotView();
     $('adminLogin').onsubmit = async (e) => {
       e.preventDefault();
@@ -180,9 +179,9 @@
     const f = filter.trim().toLowerCase();
     const list = users.filter((u) => !f || u.email.includes(f) || String(u.note || '').toLowerCase().includes(f));
     return list.map((u) => `<tr data-email="${esc(u.email)}"><td>${esc(u.email)}${u.note ? `<span class="why">${esc(u.note)}</span>` : ''}</td>
-      <td>${isSuper(u) ? '<span class="pill ok">Superadmin</span>' : hasAccess(u) ? `<span class="pill ok">${esc(u.plan)}</span>` : '<span class="pill warn">No access</span>'}</td><td>${isSuper(u) ? 'Unlimited' : when(u.access_until)}</td><td>${when(u.created_at)}</td><td>${when(u.last_login)}</td>
+      <td>${isSuper(u) ? '<span class="pill ok">Superadmin</span>' : hasAccess(u) ? `<span class="pill ok">${u.plan === 'pro' ? 'Pro' : 'Basic'}</span>` : '<span class="pill warn">No access</span>'}</td><td>${isSuper(u) ? 'Unlimited' : when(u.access_until)}</td><td>${when(u.created_at)}</td><td>${when(u.last_login)}</td>
       <td class="n"><button class="fan-link" data-warn="1">${Number(u.warnings) || 0}</button></td>
-      <td>${isSuper(u) ? 'Unlimited' : '<div class="admin-actions"><button class="btn" data-days="1" data-plan="trial">1 day</button><button class="btn" data-days="7" data-plan="trial">7 days</button><button class="btn btn-primary" data-days="30" data-plan="pro">Pro 1 month</button><button class="btn" data-custom="1">Other…</button><button class="btn btn-danger" data-days="0" data-plan="none">End</button></div>'}</td></tr>`).join('')
+      <td>${isSuper(u) ? 'Unlimited' : '<div class="admin-actions"><button class="btn" data-days="1" data-plan="trial">Basic 1 day</button><button class="btn" data-days="7" data-plan="trial">Basic 7 days</button><button class="btn btn-primary" data-days="30" data-plan="pro">Pro 1 month</button><button class="btn" data-custom="1">Other…</button><button class="btn btn-danger" data-days="0" data-plan="none">End</button></div>'}</td></tr>`).join('')
       || '<tr><td colspan="7">No accounts found.</td></tr>';
   }
 
@@ -211,9 +210,13 @@
       </table></div></div>
       <div class="card" id="warnBox" hidden></div>
       <div class="admin-grid">
-        <form class="card fields" id="aTrial"><h3>Free trial length</h3>
-          <div class="field"><label for="aDays">Days for each new account</label><input id="aDays" class="text" type="number" min="0" max="365" step="1" value="${Number(settings.trial_days)}" required></div>
-          <button class="btn btn-primary">Save</button><p class="lock-note">Use 0 to stop free trials. People who already have time keep it.</p></form>
+        <form class="card fields" id="aNewUser" autocomplete="off"><h3>Create a user</h3>
+          <div class="field"><label for="nuEmail">Email (their login ID)</label><input id="nuEmail" class="text" type="email" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
+          <div class="field"><label for="nuPw">Password</label><input id="nuPw" class="text" type="password" autocomplete="new-password" maxlength="72" required></div>
+          <div class="field"><label for="nuPlan">Level</label><select id="nuPlan" class="text"><option value="trial">Basic: up to 1,000 kW</option><option value="pro" selected>Pro: up to 10,000 kW</option></select></div>
+          <div class="field"><label for="nuDays">Access days</label><input id="nuDays" class="text" type="number" min="1" max="3650" step="1" value="30" required></div>
+          <div class="field"><label for="nuNote">Note (optional)</label><input id="nuNote" class="text" maxlength="200" autocomplete="off"></div>
+          <button class="btn btn-primary">Create user</button><p class="lock-note">At least 10 characters in the password, with letters and numbers. Only people you create here can log in.</p><p class="fan-msg err" id="nuMsg" role="alert"></p></form>
         <form class="card fields" id="aPwForm"><h3>Change my password</h3>${newPasswordFields}
           <button class="btn btn-primary">Change password</button><p class="fan-msg err" id="aPwMsg" role="alert"></p></form>
         <form class="card fields" id="aQForm"><h3>Change my login question</h3>
@@ -233,11 +236,15 @@
     $('aSearch').oninput = (e) => { $('aUsers').innerHTML = userRows(e.target.value); };
     $('aAllWarn').onclick = () => showWarnings('');
     $('aUsers').onclick = onUserAction;
-    $('aTrial').onsubmit = async (e) => {
+    $('aNewUser').onsubmit = async (e) => {
       e.preventDefault();
-      const days = Number($('aDays').value);
-      if (!Number.isInteger(days) || days < 0 || days > 365) { toast('Enter between 0 and 365 days.'); return; }
-      try { await FanAuth.rpc('fan_admin_set_trial_days', { p_days: days }); toast(`New accounts now get ${days} days.`); panel(); } catch (err) { toast(err.message); }
+      const email = $('nuEmail').value.trim().toLowerCase(), pw = $('nuPw').value, days = Number($('nuDays').value), msg = $('nuMsg');
+      const problem = FanAuth.checkEmail(email) || FanAuth.checkPassword(pw);
+      if (problem) { msg.textContent = problem; return; }
+      if (!Number.isInteger(days) || days < 1 || days > 3650) { msg.textContent = 'Enter between 1 and 3650 days.'; return; }
+      if (users.some((u) => u.email === email)) { msg.textContent = 'This email already has an account.'; return; }
+      msg.textContent = 'Creating…';
+      try { await FanAuth.rpc('fan_admin_create_user', { p_email: email, p_password: pw, p_plan: $('nuPlan').value, p_days: days, p_note: $('nuNote').value }); toast(`${email}: account created for ${days} days.`); panel(); } catch (err) { msg.textContent = err.message; }
     };
     $('aPwForm').onsubmit = async (e) => {
       e.preventDefault();

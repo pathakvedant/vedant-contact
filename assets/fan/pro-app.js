@@ -19,15 +19,15 @@
   function shell(title, body, foot = '') {
     auth.hidden = false; app.hidden = true;
     auth.innerHTML = `${brand}<div class="fan-dialog"><h2>${title}</h2>${body}</div>
-      <a class="fan-back" href="fan-software.html">← Back to the trial version</a>${foot}`;
+      <a class="fan-back" href="index.html">← Back to the website</a>${foot}`;
   }
   const setMsg = (text, kind = 'err') => { const m = $('#msg'); if (m) { m.textContent = text; m.className = `fan-msg ${kind}`; } };
   function busy(form, on) { form.querySelectorAll('button').forEach((b) => { b.disabled = on; }); }
 
-  function entry(mode = location.hash === '#signup' ? 'signup' : 'login', notice = '') {
-    const signup = mode === 'signup';
+  function entry(mode = 'login', notice = '') {
+    const signup = false; // accounts are created only by the admin
     shell(signup ? 'Create your Fan Pro account' : 'Log in to Fan Pro', `
-      <div class="fan-tabs"><button type="button" id="tabLogin" aria-pressed="${!signup}">Log in</button><button type="button" id="tabSignup" aria-pressed="${signup}">Create account</button></div>
+      
       ${signup ? '<p class="lock-note">Your first day of Fan Pro is free. We email you a code to confirm your address.</p>' : ''}
       <form id="entryForm" class="fields" novalidate>
         <div class="field"><label for="email">Email</label><input id="email" class="text" type="email" autocomplete="username" required maxlength="254"></div>
@@ -36,8 +36,6 @@
         <p class="fan-msg ${notice ? 'ok' : 'err'}" id="msg" role="alert">${esc(notice)}</p>
       </form>
       ${signup ? '' : '<button class="fan-link" id="forgot" type="button">Forgot your password?</button>'}`);
-    $('#tabLogin').onclick = () => entry('login');
-    $('#tabSignup').onclick = () => entry('signup');
     if (!signup) $('#forgot').onclick = forgot;
     $('#entryForm').onsubmit = async (e) => {
       e.preventDefault();
@@ -129,6 +127,7 @@
   /* ---------- Access and engine ---------- */
 
   let access = null;
+  const BASIC_KW = 1000;
   async function sha256(text) {
     const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
     return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -271,7 +270,7 @@
     if (access.plan === 'superadmin') { el.textContent = 'Admin: full access'; return; }
     const left = new Date(access.access_until).getTime() - new Date(access.server_time || Date.now()).getTime();
     const hours = Math.max(left / 36e5, 0);
-    el.textContent = `${access.plan === 'pro' ? 'Pro' : 'Pro trial'}: ${hours < 48 ? `${Math.ceil(hours)} hours` : `${Math.ceil(hours / 24)} days`} left`;
+    el.textContent = `${access.plan === 'pro' ? 'Pro' : 'Basic'}: ${hours < 48 ? `${Math.ceil(hours)} hours` : `${Math.ceil(hours / 24)} days`} left`;
   }
 
   function bind() {
@@ -333,6 +332,7 @@
 
   function update() {
     result = F.design({ ...state, hz: Number(state.hz), shaftMm: state.shaftMm, sizes: state.sizes });
+    if (access && access.plan === 'trial' && result.row && result.row.kw > BASIC_KW) result.errors = [...result.errors, `Your Basic level covers fans up to ${BASIC_KW.toLocaleString('en-IN')} kW. This duty needs about ${Math.round(result.row.kw).toLocaleString('en-IN')} kW. Contact the admin for Pro.`];
     saveState();
     renderSide();
     renderSummary();
@@ -537,7 +537,7 @@ t = b √(0.5 p / σ) + wear and corrosion allowance</div>
   /* ---------- Start ---------- */
 
   if (!FanAuth.ready()) {
-    shell('Fan Pro is being set up', '<p>Accounts open soon. You can use the trial version now, or contact the admin for early access.</p>');
+    shell('Fan Pro is being set up', '<p>Please contact the admin for access.</p>');
   } else if (FanAuth.hasSession()) afterLogin();
   else entry();
 })();

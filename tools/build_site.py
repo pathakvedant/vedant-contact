@@ -290,7 +290,7 @@ def build_sitemap(posts):
     newest = posts[0]["date"]
     urls = [("", newest, "1.0"), ("vedant-pathak.html", newest, "0.9"),
             ("b2b-marketing-business-development.html", newest, "0.9"),
-            ("apcd-consulting.html", newest, "0.9"), ("fan-software.html", newest, "0.8"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
+            ("apcd-consulting.html", newest, "0.9"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
     urls += [(f"blog/{p['slug']}.html", p["date"], "0.7") for p in posts]
     rows = "\n".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     (ROOT / "sitemap.xml").write_text(
