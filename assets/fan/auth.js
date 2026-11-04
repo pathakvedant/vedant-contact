@@ -100,3 +100,31 @@ const FanAuth = (() => {
     rpc: async (name, args = {}) => call(`/rest/v1/rpc/${name}`, { body: args, token: await token() }),
   };
 })();
+
+/* Adds a show/hide eye to every password box, including ones drawn later. */
+(() => {
+  const EYE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+  function addEye(input) {
+    if (input.dataset.eye) return;
+    input.dataset.eye = '1';
+    const wrap = document.createElement('span');
+    wrap.className = 'pw-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.append(input);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pw-eye';
+    b.innerHTML = EYE;
+    b.setAttribute('aria-label', 'Show password');
+    b.onclick = () => {
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      b.classList.toggle('on', show);
+    };
+    wrap.append(b);
+  }
+  const scan = () => document.querySelectorAll('input[type="password"]').forEach(addEye);
+  new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });
+  scan();
+})();

@@ -56,7 +56,10 @@
         await FanAuth.logOut(); // the password only opens the next step
         await FanAuth.sendCode(email);
         codeView(email);
-      } catch (err) { out.textContent = /wrong/i.test(err.message) ? 'Wrong email, ID or password.' : err.message; }
+      } catch (err) {
+        if (/confirm your email/i.test(err.message)) { out.textContent = 'This account is not ready yet. It must be confirmed in the database.'; return; }
+        out.textContent = /wrong/i.test(err.message) ? 'Wrong email, ID or password.' : err.message;
+      }
     };
   }
 
@@ -158,7 +161,7 @@
   async function route() {
     let s;
     try { s = await FanAuth.rpc('fan_admin_status'); } catch (err) {
-      if (err.status === 401 || err.status === 403) { await FanAuth.logOut(); loginView('Please log in again.'); return; }
+      if ([400, 401, 403].includes(err.status)) { await FanAuth.logOut(); loginView('Please log in again.'); return; }
       root.innerHTML = `<p class="notice">${esc(err.message)}</p>`;
       return;
     }

@@ -42,7 +42,7 @@
     $('#entryForm').onsubmit = async (e) => {
       e.preventDefault();
       const email = $('#email').value, pw = $('#pw').value;
-      if (!signup && FanAuth.adminEmail(email)) { location.href = 'fan-admin.html'; return; } // this account has its own login steps
+      if (FanAuth.adminEmail(email)) { location.href = 'fan-admin.html'; return; } // the superadmin is made in the database: no signup, no confirmation email
       const problem = FanAuth.checkEmail(email) || (signup ? FanAuth.checkPassword(pw) : (pw ? '' : 'Enter your password.'));
       if (problem) { setMsg(problem); return; }
       busy(e.target, true); setMsg('Please wait…', 'ok');

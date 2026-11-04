@@ -35,3 +35,7 @@
 .admin-stats b { display: block; font-size: 26px; }
 .admin-stats span { font-size: 13px; color: var(--muted); }
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; align-items: start; }
+.pw-wrap { position: relative; display: block; }
+.pw-wrap input { width: 100%; padding-right: 40px; box-sizing: border-box; }
+.pw-eye { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); background: none; border: 0; padding: 6px; color: var(--muted); cursor: pointer; display: flex; }
+.pw-eye:hover, .pw-eye.on { color: var(--accent); }
