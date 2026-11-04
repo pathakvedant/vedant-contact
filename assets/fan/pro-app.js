@@ -42,6 +42,7 @@
     $('#entryForm').onsubmit = async (e) => {
       e.preventDefault();
       const email = $('#email').value, pw = $('#pw').value;
+      if (!signup && FanAuth.adminEmail(email)) { location.href = 'fan-admin.html'; return; } // this account has its own login steps
       const problem = FanAuth.checkEmail(email) || (signup ? FanAuth.checkPassword(pw) : (pw ? '' : 'Enter your password.'));
       if (problem) { setMsg(problem); return; }
       busy(e.target, true); setMsg('Please wait…', 'ok');
@@ -108,6 +109,13 @@
   }
 
   function expired(info) {
+    if (info && info.admin_login_needed) {
+      shell('Login needed', `<p>This account opens Fan Pro only after its full login.</p>
+        <a class="btn btn-primary btn-wide" style="text-align:center;text-decoration:none" href="fan-admin.html">Go to login</a>
+        <button class="btn btn-wide" id="logoutBtn" type="button">Log out</button>`);
+      $('#logoutBtn').onclick = async () => { await FanAuth.logOut(); entry('login'); };
+      return;
+    }
     const subject = encodeURIComponent('Fan Pro: please extend my access');
     const body = encodeURIComponent(`Hello,\n\nPlease extend Fan Pro access for ${FanAuth.email() || ''}.\n\nCompany:\nWhat I am designing:\n`);
     shell('Your Fan Pro time has ended', `
@@ -260,6 +268,7 @@
   function renderAccess() {
     const el = $('#accessPill');
     if (!el || !access) return;
+    if (access.plan === 'superadmin') { el.textContent = 'Admin: full access'; return; }
     const left = new Date(access.access_until).getTime() - new Date(access.server_time || Date.now()).getTime();
     const hours = Math.max(left / 36e5, 0);
     el.textContent = `${access.plan === 'pro' ? 'Pro' : 'Pro trial'}: ${hours < 48 ? `${Math.ceil(hours)} hours` : `${Math.ceil(hours / 24)} days`} left`;

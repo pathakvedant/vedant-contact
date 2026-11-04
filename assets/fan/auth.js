@@ -57,6 +57,7 @@ const FanAuth = (() => {
     if (/already registered|already exists/i.test(m)) return 'This email already has an account. Please log in.';
     if (/expired|invalid.*(otp|token)|otp.*invalid/i.test(m)) return 'That code is wrong or has expired. Request a new one.';
     if (/disposable/i.test(m)) return 'Please use your work or regular email, not a temporary one.';
+    if (/different from the old|same.*password/i.test(m)) return 'Choose a password different from the current one.';
     if (status === 429 || /rate limit|security purposes/i.test(m)) return 'Too many attempts. Please wait a few minutes and try again.';
     return 'Something went wrong. Please try again.';
   }
@@ -86,9 +87,16 @@ const FanAuth = (() => {
     resend: (email) => call('/auth/v1/resend', { body: { type: 'signup', email: email.trim().toLowerCase() } }),
     verify: async (email, code, type = 'signup') => take(await call('/auth/v1/verify', { body: { type, email: email.trim().toLowerCase(), token: code.trim() } })),
     logIn: async (email, password) => take(await call('/auth/v1/token?grant_type=password', { body: { email: email.trim().toLowerCase(), password } })),
+    // The superadmin logs in with an ID that stands for the admin email. Any other ID is not an admin.
+    adminEmail: (id) => {
+      const v = String(id || '').trim().toLowerCase();
+      const admin = String(cfg.adminEmail || '').toLowerCase();
+      return v === 'superadmin' || v === admin ? admin : '';
+    },
+    sendCode: (email) => call('/auth/v1/otp', { body: { email: email.trim().toLowerCase(), create_user: false } }),
     recover: (email) => call('/auth/v1/recover', { body: { email: email.trim().toLowerCase() } }),
     setPassword: async (password) => call('/auth/v1/user', { method: 'PUT', body: { password }, token: await token() }),
-    logOut: async () => { const t = session && session.access; session = null; save(null); if (t) await call('/auth/v1/logout', { token: t }).catch(() => {}); },
+    logOut: async () => { const t = session && session.access; session = null; save(null); if (t) await call('/auth/v1/logout?scope=local', { token: t }).catch(() => {}); },
     rpc: async (name, args = {}) => call(`/rest/v1/rpc/${name}`, { body: args, token: await token() }),
   };
 })();

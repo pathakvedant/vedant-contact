@@ -13,7 +13,7 @@ Personal portfolio for Vedant Pathak: Business Analyst, Certified Data Analyst, 
 | `assets/markets-cache.js` | Checks every price file and saves good copies in the visitor's browser |
 | `assets/intro.js` | The 3D logo intro |
 | `tools/fetch_market_data.py`, `.github/workflows/market-data.yml` | Fetch prices with the free yfinance library. GitHub runs this about every 10 minutes in market hours and saves the results in `data/market` |
-| `fan-software.html`, `fan-pro.html`, `fan-admin.html`, `assets/fan/` | Fan selection trial, Fan Pro login and tool, and the admin panel. Fan Pro needs its private setup first |
+| `fan-software.html`, `fan-pro.html`, `fan-admin.html`, `assets/fan/` | Fan selection trial, Fan Pro tool, and the Login page with the admin panel. Fan Pro needs its private setup first |
 | `blog/posts.js` | **Your blog posts. Edit this to add a daily post** |
 | `og-image.png` | Image shown when the link is shared on LinkedIn/WhatsApp |
 | `favicon.svg`, `apple-touch-icon.png` | Browser tab and phone home-screen icons (your emblem) |
