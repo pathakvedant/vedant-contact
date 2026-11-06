@@ -98,6 +98,7 @@ const FanAuth = (() => {
     setPassword: async (password) => call('/auth/v1/user', { method: 'PUT', body: { password }, token: await token() }),
     logOut: async () => { const t = session && session.access; session = null; save(null); if (t) await call('/auth/v1/logout?scope=local', { token: t }).catch(() => {}); },
     rpc: async (name, args = {}) => call(`/rest/v1/rpc/${name}`, { body: args, token: await token() }),
+    accessToken: () => token(),
   };
 })();
 

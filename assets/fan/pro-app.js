@@ -1,5 +1,5 @@
 /* Fan Pro screens: account forms first, then the design tool once the server grants access.
-   The calculation engine is not on this website. The database hands it only to people with active access. */
+   No calculation is on this website. Every number comes from the private server, for logged-in people with access. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const auth = $('#authScreen');
@@ -127,26 +127,32 @@
   /* ---------- Access and engine ---------- */
 
   let access = null;
-  const BASIC_KW = 1000;
-  async function sha256(text) {
-    const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-    return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const apiBase = () => String((window.FAN_CONFIG && window.FAN_CONFIG.apiUrl) || '').replace(/\/+$/, '');
+  /* One call to the private server. asBlob returns a file. */
+  async function api(path, body, asBlob = false) {
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 90000); // a sleeping server can take a while to wake
+    try {
+      const r = await fetch(apiBase() + path, {
+        method: body === undefined ? 'GET' : 'POST', signal: c.signal, credentials: 'omit', referrerPolicy: 'no-referrer',
+        headers: { Authorization: `Bearer ${await FanAuth.accessToken()}`, 'Content-Type': 'application/json' },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        const err = new Error(typeof d.detail === 'string' ? d.detail : 'The server could not answer. Please try again.');
+        err.status = r.status;
+        throw err;
+      }
+      return asBlob ? r.blob() : r.json();
+    } catch (e) {
+      if (e.name === 'AbortError' || e instanceof TypeError) throw new Error('Could not reach the calculation server. It may be starting up, so please try again in a minute.');
+      throw e;
+    } finally { clearTimeout(t); }
   }
   async function loadEngine() {
-    if (window.FanProCore) return;
-    const rows = await FanAuth.rpc('fan_get_engine');
-    const code = rows && rows.code;
-    if (!code) throw new Error('The engine could not be loaded.');
-    // Run the engine only if it is exactly the release this page was built for.
-    if ((await sha256(code)) !== window.FAN_ENGINE_SHA256) throw new Error('The engine failed its safety check. Please contact the admin.');
-    await new Promise((res, rej) => {
-      const url = URL.createObjectURL(new Blob([`${code}\nwindow.FanProCore = FanProCore;`], { type: 'text/javascript' }));
-      const s = document.createElement('script');
-      s.src = url;
-      s.onload = () => { URL.revokeObjectURL(url); res(); };
-      s.onerror = () => rej(new Error('The engine could not start.'));
-      document.head.append(s);
-    });
+    if (!apiBase()) throw new Error('The calculation server is not connected yet. Please contact the admin.');
+    if (!F) F = await api('/api/meta');
   }
   async function afterLogin() {
     let info;
@@ -185,6 +191,15 @@
   let F, result = null, tab = 'selection', timer = 0;
   const logged = new Set();
   const TABS = [['selection', 'Selection'], ['triangles', 'Velocity diagrams'], ['impeller', 'Impeller and stress'], ['shaft', 'Shaft and motor'], ['casing', 'Casing'], ['cad', 'CAD'], ['log', 'Warning record'], ['method', 'Method']];
+  const tabList = () => [['full', 'Full design'], ...TABS.slice(0, 6), ['curve', 'Performance curve'], ['start', 'Start conditions'], ['standards', 'Standards checks'], ['outputs', '3D and reports'], ...TABS.slice(6)];
+  // What each view needs from the server, so a change only recalculates what is on screen.
+  const SECTIONS = { curve: ['analysis'], start: ['start'], standards: ['analysis', 'standards'], outputs: ['analysis', 'outputs'], cad: ['cad'], full: ['sheet'] };
+  const SECTION_KEY = { analysis: 'analysis', start: 'start', standards: 'standards', outputs: 'outputs', cad: 'cadSvg', sheet: 'sheet' };
+  let bundle = {}, seq = 0, inFlight = false;
+  const FA_KEY = 'traass_fan_analysis_options';
+  let faOpts = { slip: 'legacy', casingType: 'volute', category: 'D', gapRatio: '', sefCoefficient: '', fixedPa: '', diffuserAreaRatio: '', profile: '', rhPct: '', baroPa: '', bearingType: 'roller', cA: '', cB: '', volute: 'constantMomentum', stGas: 'cold', stDust: 'clean', stDamper: 'closed', stMethod: 'dol', stDustLoad: '', stClosedPct: '', mLrt: '', mPut: '', mBdt: '', mLrc: '', mJ: '', mV: '', mStallHot: '', mStallCold: '', stSoft: '', stRamp: '', stVfdT: '', dBox: 'no', dBoxK: '', dBoxArea: '', dDamper: 'none', dDamperK: '', dSil: 'none', dSilFill: 'rock', dSilMoc: 'ms', dSilLen: '', dSilOpen: '', dSilGap: '', dSilFace: '', dSilDb: '', dMoc: '', dOver: '', dSpan: '', dTail: '', dCoupKg: '', dWheelD: '', dNdeD: '', dDeD: '', dBodyD: '', dCoupD: '', dMargin: '', dHub: '', dHubOd: '', dHubLen: '', dHubRating: '', dHubInterf: '', dLocating: 'de', dTarget: '', dHours: '', dThrust: '', deType: 'srb', deBrand: 'SKF', deDes: '', deC: '', deC0: '', deN: '', deY: '', deOd: '', deW: '', ndeType: 'srb', ndeBrand: 'SKF', ndeDes: '', ndeC: '', ndeC0: '', ndeN: '', ndeY: '', ndeOd: '', ndeW: '', dLube: '', dBrgTemp: '', cLabour: '', cGrease: '', cOil: '', cBearing: '', cPower: '' };
+  try { faOpts = { ...faOpts, ...JSON.parse(localStorage.getItem(FA_KEY) || '{}') }; } catch { /* defaults */ }
+  let faCoefficients = null;
 
   function loadState() {
     try {
@@ -206,7 +221,6 @@
   }
 
   function startTool() {
-    F = window.FanProCore;
     loadState();
     app.hidden = false;
     auth.hidden = true;
@@ -215,7 +229,7 @@
     app.innerHTML = `<div class="app">
       <header class="topbar">
         <div class="brand"><img src="favicon.svg" alt="TRAASS" style="height:34px;width:auto"><div><h1>Fan Pro</h1><p>Centrifugal fan design up to 10,000 kW</p></div></div>
-        <div class="toolbar"><span id="accessPill" class="lock-note"></span>
+        <div class="toolbar"><span id="calcStatus" class="lock-note" aria-live="polite"></span><span id="accessPill" class="lock-note"></span>
           <button class="btn" id="saveJson" type="button">Save project</button><button class="btn" id="openJson" type="button">Open project</button><input id="jsonFile" type="file" accept=".json,application/json" hidden>
           ${(FanAuth.email() || '').toLowerCase() === ADMIN.toLowerCase() ? '<a class="btn" href="fan-admin.html">Admin</a>' : ''}
           <button class="btn" id="logout" type="button">Log out</button></div>
@@ -255,7 +269,7 @@
       </aside>
       <main class="main">
         <section class="card summary" id="summary" aria-live="polite"></section>
-        <div><div class="tabs" role="tablist" aria-label="Design views">${TABS.map(([k, t]) => `<button class="tab" role="tab" data-tab="${k}" aria-selected="${k === tab}">${t}</button>`).join('')}</div></div>
+        <div><div class="tabs" role="tablist" aria-label="Design views">${tabList().map(([k, t]) => `<button class="tab" role="tab" data-tab="${k}" aria-selected="${k === tab}">${t}</button>`).join('')}</div></div>
         <section class="panel" id="panel"></section>
         <p class="notice"><b>Preliminary estimates only.</b> A failed wheel or shaft can kill people. A qualified engineer must check every result, with test data and FEA, before you quote, build or run a fan.</p>
       </main></div>`;
@@ -281,6 +295,13 @@
       if (['flow', 'pressure', 'tempC', 'dustId', 'appId', 'bladeId', 'inletMode', 'driveMode', 'hz', 'sizes'].includes(k)) state.pick = null;
       schedule();
     });
+    app.addEventListener('change', (e) => {
+      const key = e.target.dataset.fa;
+      if (!key) return;
+      faOpts[key] = e.target.value;
+      try { localStorage.setItem(FA_KEY, JSON.stringify(faOpts)); } catch { /* lasts this visit only */ }
+      update();
+    });
     app.addEventListener('click', (e) => {
       const t = e.target;
       const tb = t.closest('[data-tab]');
@@ -294,11 +315,37 @@
         case 'logout': FanAuth.logOut().then(() => { app.hidden = true; entry('login'); }); break;
         case 'saveJson': saveFile(`${stem()}.json`, JSON.stringify(state, null, 2), 'application/json'); break;
         case 'openJson': $('#jsonFile').click(); break;
-        case 'saveDxf': saveFile(`${stem()}-GA.dxf`, F.toDxf(cad()), 'application/dxf'); break;
-        case 'saveSvg': saveFile(`${stem()}-GA.svg`, F.toSvg(cad(), { background: '#ffffff' }), 'image/svg+xml'); break;
+        case 'saveDxf': serverFile('ga-dxf', `${stem()}-GA.dxf`); break;
+        case 'saveSvg': serverFile('ga-svg', `${stem()}-GA.svg`); break;
         case 'printSheet': window.print(); break;
+        case 'saveStl': serverFile('stl', `${stem()}-impeller.stl`); break;
+        case 'saveStep': serverFile('step', `${stem()}-impeller.stp`); break;
+        case 'saveFlat': serverFile('flat', `${stem()}-flat-patterns.dxf`); break;
+        case 'saveFea': serverFile('fea', `${stem()}-fea-handoff.json`); break;
+        case 'saveXlsx': serverFile('xlsx', `${stem()}-calculation.xlsx`); break;
+        case 'saveDocx': serverFile('docx', `${stem()}-report.docx`); break;
+        case 'loadCoef': $('#coefFile').click(); break;
+        case 'clearCoef': faCoefficients = null; update(); break;
         default:
       }
+    });
+    app.addEventListener('change', (e) => {
+      if (e.target.id !== 'coefFile' || !e.target.files[0]) return;
+      const f = e.target.files[0];
+      if (f.size > 200000) { toast('That file is too large to be a coefficient set.'); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const raw = JSON.parse(String(reader.result));
+          const set = raw.coefficientSet || raw;
+          const terms = F.LOSS_TERMS;
+          if (!set.multipliers || !terms.every((t) => Number.isFinite(set.multipliers[t]) && set.multipliers[t] > 0 && set.multipliers[t] < 10)) throw new Error('bad');
+          faCoefficients = { version: String(set.version || ''), datasetHash: String(set.datasetHash || ''), multipliers: Object.fromEntries(terms.map((t) => [t, set.multipliers[t]])), hold: raw.metrics?.hold, intervals: raw.intervals };
+          toast(`Loaded coefficient set ${faCoefficients.version}`);
+          update();
+        } catch { toast('That file is not a Fan Pro coefficient set.'); }
+      };
+      reader.readAsText(f);
     });
     $('#jsonFile').addEventListener('change', (e) => {
       const f = e.target.files[0];
@@ -328,16 +375,39 @@
     setTimeout(() => URL.revokeObjectURL(url), 2000);
     toast(`Saved ${name}`);
   }
-  function schedule() { clearTimeout(timer); timer = setTimeout(update, 120); }
+  async function serverFile(kind, name) {
+    toast('Preparing the file…');
+    try { saveFile(name, await api(`/api/file/${kind}`, faPayload([]), true)); } catch (err) { toast(err.message); }
+  }
+  function schedule() { clearTimeout(timer); timer = setTimeout(update, 350); }
 
-  function update() {
-    result = F.design({ ...state, hz: Number(state.hz), shaftMm: state.shaftMm, sizes: state.sizes });
-    if (access && access.plan === 'trial' && result.row && result.row.kw > BASIC_KW) result.errors = [...result.errors, `Your Basic level covers fans up to ${BASIC_KW.toLocaleString('en-IN')} kW. This duty needs about ${Math.round(result.row.kw).toLocaleString('en-IN')} kW. Contact the admin for Pro.`];
-    saveState();
-    renderSide();
-    renderSummary();
-    renderPanel();
-    logWarnings();
+  /* Sends the inputs to the server and shows the answer. Only the newest answer is used. */
+  async function update() {
+    const mine = ++seq;
+    inFlight = true;
+    const status = $('#calcStatus');
+    if (status) status.textContent = 'Calculating…';
+    try {
+      const out = await api('/api/compute', faPayload(SECTIONS[tab] || []));
+      if (mine !== seq) return;
+      bundle = out;
+      result = out.design;
+      if (status) status.textContent = '';
+      saveState();
+      renderSide();
+      renderSummary();
+      renderPanel();
+      logWarnings();
+    } catch (err) {
+      if (mine !== seq) return;
+      if (status) status.textContent = '';
+      if (err.status === 401) { await FanAuth.logOut(); app.hidden = true; entry('login', 'Please log in again.'); return; }
+      if (err.status === 403) { recheck(); return; }
+      toast(err.message);
+      if (!result) $('#panel').innerHTML = `<div class="card"><p class="panel-lead">${esc(err.message)}</p><button class="btn btn-primary" type="button" id="retryCalc">Try again</button></div>`;
+      const retry = $('#retryCalc');
+      if (retry) retry.onclick = update;
+    } finally { if (mine === seq) inFlight = false; }
   }
 
   // Keep the record to the choices a person made and to real safety issues, once each per visit.
@@ -398,6 +468,7 @@
 
   function renderPanel() {
     const el = $('#panel');
+    if (!result) { el.innerHTML = '<div class="card"><p class="panel-lead">Calculating…</p></div>'; return; }
     if (result.errors.length || !result.row) {
       if (tab === 'selection' && !result.errors.length) { el.innerHTML = adviceCard(); return; }
       if (tab === 'log') { renderLog(el); return; }
@@ -405,7 +476,251 @@
       el.innerHTML = '<div class="card"><p class="panel-lead">Fix the duty above to see this view.</p></div>';
       return;
     }
-    ({ selection: viewSelection, triangles: viewTriangles, impeller: viewImpeller, shaft: viewShaft, casing: viewCasing, cad: viewCad, log: renderLog, method: (x) => { x.innerHTML = methodHtml(); } }[tab])(el);
+    const missing = (SECTIONS[tab] || []).some((s) => bundle[SECTION_KEY[s]] === undefined);
+    if (missing) {
+      el.innerHTML = '<div class="card"><p class="panel-lead">Calculating…</p></div>';
+      if (!inFlight) update();
+      return;
+    }
+    ({ full: viewFull, selection: viewSelection, triangles: viewTriangles, impeller: viewImpeller, shaft: viewShaft, casing: viewCasing, cad: viewCad, curve: viewCurve, start: viewStart, standards: viewStandards, outputs: viewOutputs, log: renderLog, method: (x) => { x.innerHTML = methodHtml(); } }[tab])(el);
+  }
+
+  /* ---------- Performance curve, standards checks, 3D and reports ---------- */
+  const faNum = (v) => { const n = Number(v); return v !== '' && Number.isFinite(n) ? n : undefined; };
+  function faOptions() {
+    return {
+      slip: faOpts.slip, casingType: faOpts.casingType, category: faOpts.category,
+      ...(faNum(faOpts.gapRatio) ? { gapRatio: faNum(faOpts.gapRatio) / 100 } : {}),
+      ...(faNum(faOpts.diffuserAreaRatio) ? { diffuserAreaRatio: faNum(faOpts.diffuserAreaRatio) } : {}),
+      sefCoefficient: faNum(faOpts.sefCoefficient) ?? 0, fixedPa: faNum(faOpts.fixedPa) ?? 0, bearingType: faOpts.bearingType,
+      catalogueC: { ...(faNum(faOpts.cA) ? { 'A (wheel end)': faNum(faOpts.cA) } : {}), ...(faNum(faOpts.cB) ? { B: faNum(faOpts.cB) } : {}) },
+    };
+  }
+  function faSheet() {
+    const v = (k) => faNum(faOpts[k]);
+    const brg = (p) => ({ type: faOpts[`${p}Type`], brand: faOpts[`${p}Brand`], designation: faOpts[`${p}Des`], c: v(`${p}C`), c0: v(`${p}C0`), nLimit: v(`${p}N`), y: v(`${p}Y`), od: v(`${p}Od`), width: v(`${p}W`), bore: undefined });
+    const temp = v('dBrgTemp');
+    return {
+      inletBox: faOpts.dBox, boxK: v('dBoxK'), boxAreaM2: v('dBoxArea'), damper: faOpts.dDamper, damperK: v('dDamperK'), silencer: faOpts.dSil, silFill: faOpts.dSilFill, silMoc: faOpts.dSilMoc, silLength: v('dSilLen'), silOpen: v('dSilOpen'), silGap: v('dSilGap'), silFaceV: v('dSilFace'), silMakerDb: v('dSilDb'),
+      shaftMoc: faOpts.dMoc, overhang: v('dOver'), span: v('dSpan'), tail: v('dTail'), couplingKg: v('dCoupKg'), dWheel: v('dWheelD'), dNde: v('dNdeD'), dDe: v('dDeD'), dBody: v('dBodyD'), dCoupling: v('dCoupD'), minMargin: v('dMargin'),
+      hubType: faOpts.dHub, hubOd: v('dHubOd'), hubLen: v('dHubLen'), hubBushRatingNm: v('dHubRating'), hubInterference: v('dHubInterf'),
+      locating: faOpts.dLocating, target: v('dTarget'), hoursYear: v('dHours'), thrustN: v('dThrust'), de: brg('de'), nde: brg('nde'), lube: faOpts.dLube, ...(temp === undefined ? {} : { bearingTempC: temp }),
+      labourRate: v('cLabour'), greaseRate: v('cGrease'), oilRate: v('cOil'), bearingCost: v('cBearing'), powerRate: v('cPower'),
+    };
+  }
+  /* Everything the server needs for one answer. */
+  function faPayload(sections) {
+    const v = (k) => faNum(faOpts[k]);
+    return {
+      state: { ...state, hz: Number(state.hz) }, sections, opts: faOptions(), profile: faOpts.profile, sheet: faSheet(), standards: { rhPct: v('rhPct'), baroPa: v('baroPa'), volute: faOpts.volute },
+      startSel: { gas: faOpts.stGas, dust: faOpts.stDust, damper: faOpts.stDamper, method: faOpts.stMethod },
+      startOpts: { startDustLoad: v('stDustLoad') ?? (Number(state.dustLoad) || 0), closedPowerPct: v('stClosedPct'), softLimit: v('stSoft'), vfdRamp: v('stRamp'), vfdTorqueLimit: v('stVfdT'), motor: { lrt: v('mLrt'), put: v('mPut'), bdt: v('mBdt'), lrc: v('mLrc'), inertia: v('mJ'), voltage: v('mV'), stallHot: v('mStallHot'), stallCold: v('mStallCold') } },
+      ...(faCoefficients ? { coefficients: faCoefficients } : {}),
+    };
+  }
+  const faText = (key, label, placeholder = '') => `<div class="field"><label for="fa_${key}">${esc(label)}</label><input id="fa_${key}" class="text" data-fa="${key}" maxlength="40" value="${esc(faOpts[key])}" placeholder="${esc(placeholder)}"></div>`;
+  const faPairs = (o) => Object.entries(o);
+
+  /* ---------- One page: every selection, its effect and its warnings ---------- */
+  function viewFull(el) {
+    const d = bundle.sheet, s = bundle.start, acc = d.accessories, sh = d.shaft, hub = d.hub, br = d.bearings, lu = d.lube, mt = d.maintenance;
+    const word = { ok: 'OK', warn: 'Check', reject: 'Not suitable' };
+    const money = (v) => (v === null || v === undefined ? 'Enter rates' : `₹ ${fmt(v, 0)}`);
+    const bearingInputs = (p, b) => `<div class="fields"><h3>${esc(b.name)}</h3><div class="two">
+        ${faSelect(`${p}Type`, 'Bearing type', faPairs(F.BEARING_TYPES))}${faSelect(`${p}Brand`, 'Make', F.BEARING_BRANDS.map((x) => [x, x]))}
+        ${faText(`${p}Des`, 'Designation', b.candidates[0] || 'from catalogue')}${faInput(`${p}C`, 'C, dynamic rating (kN)', 'from catalogue')}
+        ${faInput(`${p}C0`, 'C0, static rating (kN)', 'from catalogue')}${faInput(`${p}N`, 'Limiting speed (rpm)', 'from catalogue')}
+        ${faInput(`${p}Y`, 'Axial factor Y', String(b.y))}${faInput(`${p}Od`, 'Outer diameter D (mm)', 'from catalogue')}${faInput(`${p}W`, 'Width B (mm)', 'from catalogue')}
+      </div><p class="lock-note">Seat ${fmt(b.seatMm)} mm. Series that fit this bore: ${esc(b.candidates.join(', ') || 'none in the usual numbering')}. Check the exact designation and suffix in your catalogue.</p></div>`;
+    const bearingResult = (b) => [b.name, `${b.brand} ${b.typeLabel} ${b.designation}`.trim(), fmt(b.frN / 1000, 1), fmt(b.faN / 1000, 1), fmt(b.pN / 1000, 1), fmt(b.needCkN, 0), b.cKn ? fmt(b.cKn, 0) : 'Enter C', b.l10h ? fmt(b.l10h, 0) : 'Not calculated', b.l10Years ? fmt(b.l10Years, 1) : '–', b.s0 ? fmt(b.s0, 1) : '–', b.speedRatio ? `${fmt(b.speedRatio * 100, 0)} %` : '–'];
+    el.innerHTML = `<div class="card fields"><h3>All warnings on this page (${d.flags.length})</h3>${d.flags.length ? `<ul class="flags">${d.flags.map((f) => `<li class="${esc(f.level)}">${esc(f.text)}</li>`).join('')}</ul>` : '<p class="lock-note">No warnings.</p>'}
+      <p class="notice"><b>Estimated.</b> Values marked from catalogue or data sheet are not held here, so a blank box gives a warning rather than a guess. A qualified engineer must confirm every value.</p></div>
+    <div class="card fields"><h3>1. Inlet box, damper and silencer</h3><div class="two">
+        ${faSelect('dBox', 'Inlet box', [['no', 'Not included'], ['yes', 'Included']])}${faSelect('dDamper', 'Damper', [['none', 'No damper'], ['inlet', 'Inlet louvre damper'], ['outlet', 'Outlet louvre damper'], ['viv', 'Inlet vane control']])}
+        ${faSelect('dSil', 'Silencer', [['none', 'No silencer'], ['inlet', 'Inlet side'], ['outlet', 'Outlet side']])}${faSelect('dSilFill', 'Silencer fill', faPairs(F.SILENCER_FILL))}
+        ${faSelect('dSilMoc', 'Silencer casing MOC', faPairs(F.SILENCER_MOC))}${faInput('dSilLen', 'Silencer length (m)', acc.silencer ? fmt(acc.silencer.L, 2) : '')}
+        ${faInput('dSilFace', 'Face velocity (m/s)', '12')}${faInput('dSilOpen', 'Open area ratio', '0.45')}${faInput('dSilGap', 'Gap between splitters (m)', '0.15')}${faInput('dSilDb', 'Maker insertion loss (dB)', 'from data sheet')}
+        ${faInput('dBoxK', 'Inlet box K (your value)', 'Assumed 0.8')}${faInput('dDamperK', 'Damper K, fully open', 'maker curve')}
+      </div>
+      ${acc.rows.length ? faTable(['Item', 'Velocity (m/s)', 'K', 'Loss (Pa)', 'Basis'], acc.rows.map((r) => [r.name, fmt(r.velocity, 1), fmt(r.k, 2), fmt(r.lossPa), r.basis])) : ''}
+      <p class="lock-note">${esc(acc.note)}${acc.included ? ` Total ${fmt(acc.totalPa)} Pa adds about ${fmt(acc.extraKw, 1)} kW, so ${fmt(acc.newKw, 1)} kW and ${fmt(acc.newPa)} Pa in all.` : ''}${acc.silencer ? ` Silencer face about ${fmt(acc.silencer.side, 2)} m square, gap velocity ${fmt(acc.silencer.vGap, 1)} m/s.` : ''}</p></div>
+    <div class="card fields"><h3>2. Start</h3><div class="two">
+        ${faSelect('stGas', 'Gas temperature', faPairs(F.START_GAS))}${faSelect('stDust', 'Dust at start', faPairs(F.START_DUST))}${faSelect('stDamper', 'Damper at start', faPairs(F.START_DAMPER))}${faSelect('stMethod', 'Start method', faPairs(F.START_METHODS))}
+      </div>
+      ${faTable(['Method', 'Time (s)', 'Peak current (x FLC)', 'Result'], s.methods.map((m) => [F.START_METHODS[m.method], m.reached ? fmt(m.seconds, 0) : 'Cannot start', fmt(m.peakCurrent, 1), word[m.status]]))}
+      <p class="lock-note">Motor data, and all 32 combinations, are on the Start conditions tab. ${esc(s.note)}</p></div>
+    <div class="card fields"><h3>3. Shaft, diameter by diameter</h3><div class="two">
+        ${faSelect('dMoc', 'Shaft MOC', [['', `Suggested: ${sh.material.label}`], ...faPairs(F.SHAFT_MOC)])}${faInput('dMargin', 'Critical speed margin (%)', '30')}
+        ${faInput('dOver', 'Overhang (m)', fmt(sh.overhang, 3))}${faInput('dSpan', 'Bearing span (m)', fmt(sh.span, 3))}${faInput('dTail', 'Drive end length (m)', fmt(sh.tail, 3))}${faInput('dCoupKg', 'Coupling or pulley mass (kg)', '0')}
+        ${faInput('dWheelD', 'Wheel seat dia (mm)', String(sh.auto.wheel))}${faInput('dNdeD', 'NDE seat dia (mm)', String(sh.auto.nde))}${faInput('dBodyD', 'Body dia (mm)', String(sh.auto.body))}${faInput('dDeD', 'DE seat dia (mm)', String(sh.auto.de))}${faInput('dCoupD', 'Coupling end dia (mm)', String(sh.auto.coupling))}
+      </div>
+      ${faTable(['Station', 'Dia (mm)', 'Needed (mm)', 'Moment (Nm)', 'Torque (Nm)', 'Bending (MPa)', 'Torsion (MPa)', 'Von Mises (MPa)', 'Fatigue safety', 'I (cm⁴)', 'J (cm⁴)'], sh.stations.map((t) => [t.name, fmt(t.dMm), fmt(t.needMm), fmt(t.momentNm), fmt(t.torqueNm), fmt(t.sigmaMPa, 1), fmt(t.tauMPa, 1), fmt(t.vonMisesMPa, 1), Number.isFinite(t.safetyFatigue) ? fmt(t.safetyFatigue, 1) : '–', fmt(t.I * 1e8, 0), fmt(t.J * 1e8, 0)]))}
+      <p class="lock-note">First critical speed ${fmt(sh.criticalRpm)} rpm, ${fmt(sh.marginPct)} % above running speed. Wheel deflection ${fmt(sh.deflectionMm, 2)} mm. Slope at NDE ${fmt(sh.slopeNde * 1000, 2)} and DE ${fmt(sh.slopeDe * 1000, 2)} mrad. Shaft ${fmt(sh.shaftKg)} kg, inertia ${fmt(sh.shaftInertia, 2)} kg m². ${esc(sh.note)}</p></div>
+    <div class="card fields"><h3>4. Rotor CG and bearing loads</h3>
+      ${faTable(['Item', 'Value'], [['Arrangement', sh.arrangement === 'overhung' ? 'Overhung' : 'Between bearings'], ['Shaft length', `${fmt(sh.cg.shaftLengthM, 3)} m`], ['Wheel and hub mass, from the 3D model', `${fmt(sh.wheelKg)} kg`], ['Wheel CG from the backplate', `${fmt(sh.cg.wheelFromBackplateM * 1000)} mm`], ['Whole rotor mass', `${fmt(sh.cg.rotorKg)} kg`], ['Rotor CG from NDE bearing', `${fmt(sh.cg.fromNde * 1000)} mm`], ['Rotor CG from DE bearing', `${fmt(sh.cg.fromDe * 1000)} mm`], ['NDE radial load, with dynamic factor', `${fmt(sh.reactions.nde / 1000, 1)} kN`], ['DE radial load, with dynamic factor', `${fmt(sh.reactions.de / 1000, 1)} kN`]])}</div>
+    <div class="card fields"><h3>5. Hub</h3><div class="two">
+        ${faSelect('dHub', 'Hub type', [['', `Suggested: ${F.HUB_TYPES[hub.suggested]}`], ...faPairs(F.HUB_TYPES)])}${faInput('dHubOd', 'Hub OD (mm)', fmt(hub.od))}${faInput('dHubLen', 'Hub length (mm)', fmt(hub.len))}${faInput('dHubRating', 'Taper bush rating (Nm)', 'from maker')}${faInput('dHubInterf', 'Shrink interference (mm)', fmt(sh.dia.wheel * 0.001, 2))}
+      </div>
+      ${faTable(['Check', 'Value', 'Allowed', 'Used (%)'], hub.checks.map((c) => [c.name, `${fmt(c.value, 0)} ${c.unit}`, `${fmt(c.allow, 0)} ${c.unit}`, fmt(c.ratio * 100, 0)]))}
+      <p class="lock-note">Key ${hub.key.b} x ${hub.key.h} mm, about ${fmt(hub.keyLen)} mm long. Hub about ${fmt(hub.massKg)} kg. ${esc(hub.note)}</p>
+      ${faTable(['Hub types, best match first', 'Why'], hub.ranked.map((h) => [h.label, h.why[0] || 'No strong reason for or against.']))}</div>
+    <div class="card fields"><h3>6. Bearings, DE and NDE</h3>
+      <div class="two">${faSelect('dLocating', 'Locating bearing, takes the thrust', [['de', 'DE'], ['nde', 'NDE']])}${faInput('dTarget', 'Target L10h (h)', '40000')}${faInput('dThrust', 'Axial thrust (N)', fmt(br.faN))}${faInput('dHours', 'Running hours a year', '8000')}</div>
+      ${bearingInputs('de', br.de)}${bearingInputs('nde', br.nde)}
+      ${faTable(['Bearing', 'Selected', 'Fr (kN)', 'Fa (kN)', 'P (kN)', 'C needed (kN)', 'C entered (kN)', 'L10h', 'L10 years', 'Static safety', 'Speed used'], [bearingResult(br.de), bearingResult(br.nde)])}
+      ${br.de.reliability || br.nde.reliability ? faTable(['Life at reliability', ...((br.de.reliability || br.nde.reliability).map((x) => `${x.pct} %`))], [br.de, br.nde].filter((b) => b.reliability).map((b) => [b.name, ...b.reliability.map((x) => `${fmt(x.hours, 0)} h`)])) : ''}
+      <p class="lock-note">${br.systemL10h ? `System L10h for both bearings together: ${fmt(br.systemL10h)} h. ` : ''}${esc(br.thrustNote)} ${esc(br.basis)}</p>
+      ${faTable(['Which type suits this speed and load', 'Suitable', 'Why'], br.advice.list.map((a) => [a.label, a.ok ? 'Yes' : 'Check', a.why]))}
+      <p class="lock-note">n x dm about ${fmt(br.advice.ndm)} rpm mm. ${esc(br.advice.source)} The make does not change the calculation: the values you enter from that make's catalogue do.</p></div>
+    <div class="card fields"><h3>7. Lubrication</h3><div class="two">
+        ${faSelect('dLube', 'Lubricant', [['', `Suggested: ${lu.de.lube.label}`], ...faPairs(F.LUBES)])}${faInput('dBrgTemp', 'Bearing temperature (°C)', '70')}
+      </div>
+      ${faTable(['Bearing', 'Lubricant', 'Viscosity at temp (mm²/s)', 'Rated viscosity', 'Ratio κ', 'Relube every (h)', 'Grease each time (g)', 'Grease a year (g)'], [lu.de, lu.nde].map((l) => [l.name, l.lube.label, fmt(l.nu, 0), fmt(l.nu1, 0), fmt(l.kappa, 1), l.intervalH !== undefined ? fmt(l.intervalH, 0) : 'Oil', l.gramsEach !== undefined ? fmt(l.gramsEach, 0) : '–', l.gramsYear ? fmt(l.gramsYear, 0) : '–']))}
+      <p class="lock-note">${esc(lu.basis)}</p></div>
+    <div class="card fields"><h3>8. Maintenance schedule and cost</h3><div class="two">
+        ${faInput('cLabour', 'Labour rate (₹/h)', 'your rate')}${faInput('cGrease', 'Grease (₹/kg)', 'your rate')}${faInput('cOil', 'Oil (₹/litre)', 'your rate')}${faInput('cBearing', 'Bearing, each (₹)', 'your price')}${faInput('cPower', 'Power (₹/kWh)', 'your rate')}
+      </div>
+      ${faTable(['Task', 'Every', 'Times a year', 'Cost each', 'Cost a year', 'Basis'], mt.rows.map((r) => [r.task, typeof r.every === 'number' ? `${fmt(r.every, 0)} ${r.unit}` : r.every, fmt(r.perYear, 1), money(r.costEach), money(r.costYear), r.tag]))}
+      <p class="lock-note">Grease about ${fmt(mt.greaseKgYear, 1)} kg a year. ${mt.energyKwh ? `Accessory pressure loss uses about ${fmt(mt.energyKwh)} kWh a year${mt.energyYear ? `, ${money(mt.energyYear)}` : ''}. ` : ''}${mt.totalYear !== null && mt.totalYear !== undefined ? `Total of the costs entered: <b>${money(mt.totalYear)}</b> a year${mt.costComplete ? '' : ', with some rates still missing'}. ` : 'Enter your rates to see cost. '}${esc(mt.note)}</p></div>`;
+  }
+  function viewStart(el) {
+    const FA = F;
+    const s = bundle.start, x = s.selected;
+    const word = { ok: 'OK', warn: 'Check', reject: 'Not suitable' };
+    const opts = (o) => Object.entries(o);
+    el.innerHTML = `<div class="card fields"><h3>Your start</h3><div class="two">
+        ${faSelect('stGas', 'Gas temperature at start', opts(FA.START_GAS))}${faSelect('stDust', 'Dust at start', opts(FA.START_DUST))}
+        ${faSelect('stDamper', 'Damper at start', opts(FA.START_DAMPER))}${faSelect('stMethod', 'Start method', opts(FA.START_METHODS))}
+      </div>
+      <p class="notice"><b>${pill(x.status, { ok: 'OK', warn: 'Check', reject: 'Not suitable' })} ${esc(x.label)}.</b> ${x.reached ? `Reaches speed in about <b>${fmt(x.seconds, 0)} s</b>, with a peak of <b>${fmt(x.peakCurrent, 1)} x full-load current</b> (about ${fmt(x.peakAmps, 0)} A).` : `<b>The motor cannot start the fan this way.</b> Torque runs out at ${fmt(x.stuckAt * 100, 0)} % speed.`}</p>
+      ${faTable(['Item', 'Value'], [['Gas temperature', `${fmt(x.tempC, 0)} °C`], ['Density at start', `${fmt(x.rho, 3)} kg/m³`], ['Fan power during start', `${fmt(x.startKw, 1)} kW`], ['How that was set', x.loadBasis], ['Power at full flow with this gas, at the motor', `${fmt(x.runningKw, 1)} kW, against a ${x.motorKw} kW motor`], ...(x.changeoverAt !== null ? [['Star to delta changeover', `${fmt(x.changeoverAt * 100, 0)} % speed, about ${fmt(x.changeoverCurrent, 1)} x full-load current`]] : [])])}
+      ${faFlags(x.flags)}<p class="lock-note">${esc(s.note)}</p></div>
+    <div class="card fields"><h3>All four start methods, for this start</h3>
+      ${faTable(['Method', 'Time (s)', 'Starting current (x FLC)', 'Peak current (x FLC)', 'Peak (A)', 'Result'], s.methods.map((m) => [FA.START_METHODS[m.method], m.reached ? fmt(m.seconds, 0) : 'Cannot start', fmt(m.startCurrent, 1), fmt(m.peakCurrent, 1), fmt(m.peakAmps, 0), word[m.status]]))}
+      <p>${s.best ? `Lowest current that completes this start: <b>${esc(FA.START_METHODS[s.best.method])}</b>. Cost, supply limits and the need for speed control may still decide otherwise.` : '<b>No method completes this start.</b> Use a larger motor, or close the damper.'}</p></div>
+    <div class="card fields"><h3>Motor and starter data</h3><p class="lock-note">Enter your motor data sheet values. Blank boxes use Assumed values.</p><div class="two">
+      ${faInput('mLrt', 'Locked-rotor torque (x rated)', String(s.motor.lrt))}${faInput('mPut', 'Pull-up torque (x rated)', String(s.motor.put))}
+      ${faInput('mBdt', 'Breakdown torque (x rated)', String(s.motor.bdt))}${faInput('mLrc', 'Locked-rotor current (x FLC)', String(s.motor.lrc))}
+      ${faInput('mJ', 'Motor inertia (kg m²)', fmt(s.motor.inertia, 1))}${faInput('mV', 'Motor voltage (V)', String(s.motor.voltage))}
+      ${faInput('mStallHot', 'Safe stall time, hot (s)', 'data sheet')}${faInput('mStallCold', 'Safe stall time, cold (s)', 'data sheet')}
+      ${faInput('stDustLoad', 'Dust at start (g/m³)', String(Number(state.dustLoad) || 0))}${faInput('stClosedPct', 'Closed-damper power (% of open)', 'from your test curve')}
+      ${faInput('stSoft', 'Soft starter current limit (x FLC)', '3.5')}${faInput('stRamp', 'VFD ramp time (s)', '60')}
+      ${faInput('stVfdT', 'VFD torque limit (x rated)', '1.5')}
+    </div></div>
+    <details class="card"><summary>Every combination (32 starts)</summary><div class="fields">
+      ${faTable(['Gas', 'Dust', 'Damper', 'Method', 'Power at start (kW)', 'Time (s)', 'Peak (x FLC)', 'Result'], s.matrix.map((m) => [FA.START_GAS[m.gas], FA.START_DUST[m.dust], FA.START_DAMPER[m.damper], FA.START_METHODS[m.method], fmt(m.startKw, 1), m.reached ? fmt(m.seconds, 0) : 'Cannot start', fmt(m.peakCurrent, 1), word[m.status]]))}
+      <p class="lock-note">The worst running case is ${esc(s.worstRunning.label.split(', ').slice(0, 2).join(', ').toLowerCase())} at full flow: about ${fmt(s.worstRunning.runningKw, 0)} kW at the motor.</p></div></details>`;
+  }
+  const faSelect = (key, label, options) => `<div class="field"><label for="fa_${key}">${esc(label)}</label><select id="fa_${key}" data-fa="${key}">${options.map(([v, t]) => `<option value="${esc(v)}"${String(faOpts[key]) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></div>`;
+  const faInput = (key, label, placeholder = '', hint = '') => `<div class="field"><label for="fa_${key}">${esc(label)}</label><input id="fa_${key}" class="text" data-fa="${key}" inputmode="decimal" value="${esc(faOpts[key])}" placeholder="${esc(placeholder)}">${hint ? `<small>${esc(hint)}</small>` : ''}</div>`;
+  const faFlags = (flags) => (flags.length ? `<div class="fields">${flags.map((f) => `<p class="notice"><b>${f.level === 'reject' ? 'Reject' : 'Warning'}:</b> ${esc(f.text)}</p>`).join('')}</div>` : '<p class="lock-note">No warnings from these checks.</p>');
+  const faTable = (head, rows) => `<div class="table-wrap"><table><thead><tr>${head.map((h, i) => `<th${i ? ' class="n"' : ''}>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c, i) => `<td${i ? ' class="n"' : ''}>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+
+  function curveSvg(a) {
+    const W = 860, H = 360, L = 66, R = 60, T = 16, B = 44;
+    const pts = a.curve.points;
+    const qMax = pts[pts.length - 1].q, pMax = Math.max(...pts.map((p) => p.pt)) * 1.15, kMax = Math.max(...pts.map((p) => p.power)) * 1.15 / 1000;
+    const X = (q) => L + (q / qMax) * (W - L - R), Y = (v, m) => H - B - (Math.max(v, 0) / m) * (H - T - B);
+    const line = (get, m, cls) => `<polyline fill="none" class="${cls}" points="${pts.map((p) => `${X(p.q).toFixed(1)},${Y(get(p), m).toFixed(1)}`).join(' ')}"/>`;
+    const band = a.curve.bands ? (() => {
+      const up = [], dn = [];
+      pts.forEach((p, i) => { const b = a.curve.bands[i]; if (b?.ptPct) { up.push(`${X(p.q).toFixed(1)},${Y(p.pt * (1 + b.ptPct / 100), pMax).toFixed(1)}`); dn.unshift(`${X(p.q).toFixed(1)},${Y(p.pt * (1 - b.ptPct / 100), pMax).toFixed(1)}`); } });
+      return `<polygon points="${[...up, ...dn].join(' ')}" fill="var(--accent-wash)"/>`;
+    })() : '';
+    const grid = [0, 1, 2, 3, 4, 5].map((i) => {
+      const y = T + ((H - T - B) * i) / 5, x = L + ((W - L - R) * i) / 5;
+      return `<line x1="${L}" x2="${W - R}" y1="${y}" y2="${y}" stroke="var(--line)"/><line y1="${T}" y2="${H - B}" x1="${x}" x2="${x}" stroke="var(--line)"/><text x="${L - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="currentColor">${fmt((pMax * (5 - i)) / 5, 0)}</text><text x="${W - R + 6}" y="${y + 4}" font-size="11" fill="currentColor">${fmt((kMax * (5 - i)) / 5, kMax < 10 ? 1 : 0)}</text><text x="${x}" y="${H - B + 16}" text-anchor="middle" font-size="11" fill="currentColor">${fmt((qMax * i) / 5, qMax < 20 ? 1 : 0)}</text>`;
+    }).join('');
+    const stall = `<rect x="${L}" y="${T}" width="${Math.max(X(a.stall.stallQ) - L, 0)}" height="${H - T - B}" fill="var(--bad-ink)" opacity="0.08"/>`;
+    const op = a.operating?.found ? `<circle cx="${X(a.operating.q)}" cy="${Y(a.operating[a.operating.pressureUsed], pMax)}" r="5" fill="var(--accent)"/>` : '';
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fan curve from shut-off to free delivery" style="width:100%;height:auto;color:var(--ink)"><style>.c-pt{stroke:var(--accent);stroke-width:3}.c-ps{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:6 4}.c-kw{stroke:#d9772b;stroke-width:2}.c-eta{stroke:#3f9e4d;stroke-width:2}</style>${stall}${band}${grid}${line((p) => p.pt, pMax, 'c-pt')}${line((p) => p.ps, pMax, 'c-ps')}${line((p) => p.power / 1000, kMax, 'c-kw')}${line((p) => p.etaT * pMax, pMax, 'c-eta')}<line x1="${X(a.curve.qDesign)}" x2="${X(a.curve.qDesign)}" y1="${T}" y2="${H - B}" stroke="currentColor" stroke-dasharray="3 3"/>${op}<text x="${(W - R + L) / 2}" y="${H - 8}" text-anchor="middle" font-size="12" fill="currentColor">Flow (m³/s)</text></svg>
+      <p class="lock-note"><b style="color:var(--accent)">Solid blue:</b> total pressure (Pa, left). <b style="color:var(--accent)">Dashed blue:</b> static pressure. <b style="color:#d9772b">Orange:</b> shaft power (kW, right). <b style="color:#3f9e4d">Green:</b> total efficiency (top of the chart is 115 %). Shaded red: estimated unstable zone. Dotted line: design flow. Dot: operating point.</p>`;
+  }
+
+  function viewCurve(el) {
+    const a = bundle.analysis, p = a.point;
+    const cat = a.categoryWarning;
+    const total = Object.values(p.losses).reduce((s, x) => s + x, 0);
+    el.innerHTML = `<div class="card fields"><h3>Performance curve</h3>
+      <p class="notice"><b>Estimated.</b> ${esc(a.curve.label)} ${esc(a.statement)}</p>
+      ${curveSvg(a)}
+      ${faTable(['Point', 'Flow (m³/s)', 'Total pressure (Pa)', 'Static pressure (Pa)', 'Shaft power (kW)', 'Total eff. (%)', 'Static eff. (%)'], a.table.map((x) => [x.name, fmt(x.q, 2), fmt(x.pt, 0), fmt(x.ps, 0), fmt(x.power / 1000, 1), fmt(x.etaT * 100, 0), fmt(x.etaS * 100, 0)]))}
+      <p class="lock-note">Against the engine at design flow: pressure ${fmt((p.pt / result.dp - 1) * 100, 0)} % and power ${fmt((p.power / 1000 / result.row.kw - 1) * 100, 0)} %. This compares two estimates; it is not an error measured against a test.</p>
+      ${faFlags([...a.stall.flags, ...(a.overload?.flags ?? []), ...(cat ? [cat] : []), ...a.scope.flags])}</div>
+    <div class="card fields"><h3>Method options</h3><div class="two">
+      ${faSelect('slip', 'Slip model', [['legacy', 'Existing engine method (default)'], ['wiesner', 'Wiesner as written'], ['stodola', 'Stodola'], ['pfleiderer', 'Pfleiderer (UNVERIFIED coefficient)']])}
+      ${faSelect('casingType', 'Casing', [['volute', 'Volute'], ['plug', 'Plug fan, no casing']])}
+      ${faSelect('category', 'Installation category', [['A', 'A: free inlet, free outlet'], ['B', 'B: free inlet, ducted outlet'], ['C', 'C: ducted inlet, free outlet'], ['D', 'D: ducted inlet, ducted outlet']])}
+      ${faInput('gapRatio', 'Inlet gap (% of inlet diameter)', '1')}
+      ${faInput('diffuserAreaRatio', 'Outlet diffuser area ratio', 'none')}
+      ${faInput('fixedPa', 'System fixed pressure (Pa)', '0')}
+      ${faInput('sefCoefficient', 'System effect factor', '0', 'Multiple of outlet velocity pressure, from your AMCA 201 copy.')}
+    </div><p class="lock-note">Slip models disagree by about ${fmt(p.spreadPct, 0)} % on whirl velocity here, which is one measure of the uncertainty. Active: ${esc(a.methodText[faOpts.slip] || '')}</p></div>
+    <div class="card fields"><h3>Where the energy goes at design flow</h3>
+      ${faTable(['Term', 'J/kg', 'Share of Euler work (%)', 'Calibration multiplier'], Object.entries(p.losses).map(([k, v]) => [k, fmt(v, 0), fmt((v / (p.eulerPa / result.rho)) * 100, 1), fmt(a.multipliers[k], 2)]))}
+      <p class="lock-note">Hydraulic losses total ${fmt(total, 0)} J/kg of ${fmt(p.eulerPa / result.rho, 0)} J/kg Euler work. Disc friction ${fmt(p.discW / 1000, 2)} kW (regime ${esc(p.discRegime)}), bearing ${fmt(p.bearingW / 1000, 2)} kW, inlet leakage ${fmt((p.qLeak / result.qTotal) * 100, 1)} % of flow. Blockage from blade thickness: inlet ${fmt(p.blockage.inlet, 3)}, outlet ${fmt(p.blockage.outlet, 3)}.</p></div>
+    <div class="card fields"><h3>Operating point and VFD</h3>
+      <p>${a.operating.found ? `With the system curve through the duty, the fan runs at <b>${fmt(a.operating.q, 2)} m³/s</b> and <b>${fmt(a.operating[a.operating.pressureUsed], 0)} Pa</b> (${a.operating.pressureUsed === 'pt' ? 'total' : 'static'} pressure), taking ${fmt(a.operating.power / 1000, 1)} kW.` : esc(a.operating.text)}</p>
+      ${faTable(['Speed', 'rpm', 'Flow (m³/s)', 'Total pressure (Pa)', 'Power (kW)', 'Eff. after Reynolds (%)', 'Flags'], a.vfd.rows.map((r) => [`${r.speedRatio * 100} %`, fmt(r.rpm, 0), fmt(r.q, 2), fmt(r.pt, 0), fmt(r.power / 1000, 1), fmt(r.etaRe * 100, 0), r.flags.join('; ') || '–']))}</div>
+    <div class="card fields"><h3>What moves the answer most (±20 % change)</h3>
+      ${faTable(['Item', 'Pressure (%)', 'Power (%)', 'Efficiency (points)'], a.sensitivity.slice(0, 8).map((s) => [s.name, fmt(s.ptPct, 1), fmt(s.powerPct, 1), fmt(s.etaPts, 1)]))}</div>`;
+  }
+
+  function viewStandards(el) {
+    const a = bundle.analysis, air = bundle.standards.air, volute = bundle.standards.volute;
+    const g = result.geo;
+    const blade = F.BLADES[result.bladeId];
+    el.innerHTML = `<div class="card fields"><h3>Air density</h3><div class="two">${faInput('rhPct', 'Relative humidity (%)', '0')}${faInput('baroPa', 'Barometric pressure (Pa)', 'from altitude')}</div>
+      ${faTable(['Item', 'Value'], [['Density with humidity', `${fmt(air.rho, 3)} kg/m³`], ['Dry air density', `${fmt(air.rhoDry, 3)} kg/m³`], ['Engine working density, used for design', `${fmt(result.rho, 3)} kg/m³`], ['Pressure scaled to humid density', `${fmt((result.dp * air.rho) / result.rho, 0)} Pa`]])}
+      <p class="lock-note">The design above still uses the engine density. These are extra fields, and they change nothing.</p>${faFlags(air.flags)}</div>
+    <div class="card fields"><h3>Specific speed</h3>
+      ${faTable(['Measure', 'Value', 'Convention'], [['Cordier σ', fmt(a.sim.sigma, 3), 'φ^0.5/ψ^0.75 = 2.108 n√Q/Y^0.75'], ['Cordier δ', fmt(a.sim.delta, 2), 'ψ^0.25/φ^0.5 = 1.054 D Y^0.25/√Q'], ['Balje Ns', fmt(a.sim.Ns, 2), 'ω√Q/Y^0.75'], ['Balje Ds', fmt(a.sim.Ds, 2), 'D Y^0.25/√Q'], ['nq', fmt(a.sim.nq, 0), 'n[rpm]√Q/H[m]^0.75'], ['Nominal σ of this wheel type', fmt(a.cordier.nominalSigma, 3), 'From the engine type values']])}
+      <p class="lock-note">${a.cordier.cordierLoaded ? 'Compared with your Cordier line.' : 'No Cordier or Balje line is held, so position is checked against this wheel type only. Supply a digitised line to compare with one.'}</p>${faFlags(a.cordier.flags)}</div>
+    <div class="card fields"><h3>Wheel proportions</h3>
+      ${faTable(['Item', 'This design', 'Range for this type (engine, Assumed)'], [['Blade count', String(g.z), `${blade.z[0]} to ${blade.z[1]}`], ['Width ratio b2/D2', fmt(g.b2 / g.D2, 3), `${blade.bD[0]} to ${blade.bD[1]}`], ['Blade outlet angle', `${fmt(g.beta2, 0)}°`, 'Fixed by type'], ['Diameter ratio D1/D2', fmt(g.D1 / g.D2, 3), bladeRatioNote()], ['Wiesner valid to D1/D2', fmt(p2Limit(a), 3), a.point.wiesnerInRange ? 'Within range' : 'Outside range: slip is less reliable']])}
+      ${g.z < blade.z[0] || g.z > blade.z[1] ? '<p class="notice"><b>Warning:</b> blade count is outside the usual range for this type.</p>' : ''}</div>
+    <div class="card fields"><h3>Volute</h3>${faSelect('volute', 'Method', [['constantMomentum', 'Constant angular momentum'], ['constantVelocity', 'Constant velocity']])}
+      ${faTable(['Angle from cut-off', 'Area (m²)', 'Radius (m)', 'Mean velocity (m/s)'], volute.rows.filter((_, i) => i % 3 === 0).map((r) => [`${r.thetaDeg}°`, fmt(r.areaM2, 3), fmt(r.radiusM, 3), r.meanV ? fmt(r.meanV, 1) : '–']))}
+      <p class="lock-note">Cut-off clearance from the engine: ${fmt(result.casing.cutoffClearance * 1000, 0)} mm. Other values are shown for comparison and do not replace the engine scroll.</p></div>
+    <div class="card fields"><h3>Mechanical checks</h3>
+      ${faTable(['Check', 'Result', 'Limit or target', 'Basis'], [
+        ['Tip speed, plain-disc screening', `${fmt(a.tip.tipSpeed, 0)} m/s`, `${fmt(a.tip.uMax, 0)} m/s`, 'Timoshenko disc, at overspeed'],
+        ['Blade weld shear', `${fmt(a.joint.tauMPa, 0)} MPa`, `${fmt(a.joint.allowMPa, 0)} MPa`, 'Screening, Assumed weld size and limit'],
+        ['First critical speed', `${fmt(result.shaft.criticalRpm, 0)} rpm`, `${fmt(result.shaft.marginPct, 0)} % above running speed`, 'Existing engine'],
+        ['Balance grade', a.balance.grade, `${fmt(a.balance.uPerGmm, 0)} g mm allowed, ${fmt(a.balance.perPlaneGmm, 0)} per plane`, 'ISO 1940-1. Confirm the grade with ISO 14694'],
+        ...a.bearing.rows.map((b) => [`Bearing ${b.name}`, b.l10h ? `L10 ${fmt(b.l10h, 0)} h` : `Needs C ≥ ${fmt(b.requiredCkN, 1)} kN`, `${fmt(a.bearing.targetHours, 0)} h target`, `ISO 281, load ${fmt(b.loadN / 1000, 1)} kN`]),
+        ['Motor', `${a.motor.kw ?? '–'} kW, ${esc(a.motor.voltage)}`, `${a.motor.serviceMarginPct === null ? '–' : fmt(a.motor.serviceMarginPct, 0)} % above required`, a.motor.frame4Pole ? `4-pole frame ${a.motor.frame4Pole}, UNVERIFIED` : 'Frame from your maker'],
+      ])}
+      <div class="two">${faSelect('bearingType', 'Bearing type', [['roller', 'Roller'], ['ball', 'Ball']])}${faInput('cA', 'Catalogue C, bearing A (kN)', 'from your catalogue')}${faInput('cB', 'Catalogue C, bearing B (kN)', 'from your catalogue')}</div>
+      <p class="lock-note">${esc(a.bearing.note)} ${esc(a.joint.note)}</p>
+      <p class="lock-note">ISO 12759 efficiency grade: not calculated. The coefficients held are UNVERIFIED, so they stay out until checked against your copy.</p>${faFlags([...a.tip.flags, ...a.joint.flags])}</div>`;
+  }
+  const bladeRatioNote = () => (result.bladeId === 'forward' ? 'Up to 0.9' : '0.32 to 0.82');
+  const p2Limit = (a) => a.point.limitRatio;
+
+  function viewOutputs(el) {
+    const o = bundle.outputs, a = bundle.analysis;
+    const checks = o.checks, rt = o.trip, c = o.vs, flat = { bladeDevelopedLength: o.bladeDevelopedLength }, die = o.die, model = { hollowNote: o.hollowNote };
+    el.innerHTML = `<div class="card fields"><h3>3D model and flat patterns</h3>
+      ${faSelect('profile', 'Blade profile', [['', 'Automatic for this wheel type'], ['single-arc', 'Single arc'], ['double-arc', 'Double arc'], ['airfoil', 'Airfoil']])}
+      <div class="row"><button class="btn btn-primary" id="saveStl" type="button">Save STL</button><button class="btn" id="saveStep" type="button">Save STEP</button><button class="btn" id="saveFlat" type="button">Save flat patterns (DXF)</button><button class="btn" id="saveFea" type="button">Save FEA hand-off</button></div>
+      <p class="lock-note">STEP holds faceted solids, which read into CAD as solids made of flat triangles. Rebuild smooth surfaces there before manufacture. Parts touch but are not merged. Not for manufacture.</p>
+      ${pill(checks.ok ? 'ok' : 'warn', { ok: 'Geometry checks passed', warn: 'Geometry check problem' })}
+      ${faTable(['Check', 'Result'], [['Every solid watertight', checks.watertight ? 'Yes' : `No: ${checks.notClosed.slice(0, 3).join(', ')}`], ['Blade count', `${checks.blades} of ${checks.expected}`], ['Neighbouring blades clear at the inlet', checks.noBladeClash ? 'Yes' : 'No'], ['Blade developed length', `${fmt(flat.bladeDevelopedLength, 0)} mm`]])}</div>
+    <div class="card fields"><h3>Round-trip check: measured from the 3D model</h3>
+      ${faTable(['Quantity', 'Design', 'Measured', 'Result'], rt.rows.map((r) => [r.name, fmt(r.design, 3), fmt(r.measured, 3), r.pass ? 'Pass' : 'FAIL']))}</div>
+    <div class="card fields"><h3>Mass and inertia from the 3D model</h3>
+      ${faTable(['Quantity', '3D model', 'Engine estimate', 'Difference (%)'], [['Wheel mass (kg)', fmt(c.cadKg, 0), fmt(c.engineKg, 0), fmt(c.massDiffPct, 0)], ['Polar inertia (kg m²)', fmt(c.cadInertia, 1), fmt(c.engineInertia, 1), fmt(c.inertiaDiffPct, 0)], ['Starting time (s)', c.startSecondsCad ? fmt(c.startSecondsCad, 1) : '–', c.startSecondsEngine ? fmt(c.startSecondsEngine, 1) : '–', '']])}
+      <p class="lock-note">Stress, shaft and starting results elsewhere still use the engine estimate. Use this difference to judge how far to trust them. ${esc(model.hollowNote)}</p></div>
+    <div class="card fields"><h3>Reports</h3>
+      <div class="row"><button class="btn btn-primary" id="saveXlsx" type="button">Save Excel calculation</button><button class="btn" id="saveDocx" type="button">Save Word report</button></div>
+      <p class="notice">${esc(a.statement)}</p></div>
+    <div class="card fields"${o.isAdmin ? '' : ' hidden'}><h3>Calibration coefficients</h3>
+      <p>${faCoefficients ? `Loaded set <b>${esc(faCoefficients.version)}</b>, dataset ${esc(faCoefficients.datasetHash.slice(0, 12))}. Curves now use these multipliers.` : 'None loaded. Curves use the published coefficients with every multiplier at 1.'}</p>
+      <div class="row"><button class="btn" id="loadCoef" type="button">Load coefficient set</button>${faCoefficients ? '<button class="btn" id="clearCoef" type="button">Remove</button>' : ''}<input id="coefFile" type="file" accept=".json,application/json" hidden></div></div>
+    <div class="card fields"><h3>Die-cast rules</h3>
+      ${faTable(['Rule', 'Value'], [['Minimum blade thickness', `${die.rules.minThickness} mm`], ['Draft angle', `${die.rules.draftDeg}°`], ['Hub fillet', `${die.rules.filletMm} mm`]])}
+      <p class="lock-note">${esc(die.note)}</p></div>`;
   }
 
   function adviceCard() {
@@ -495,11 +810,10 @@
         <h3>Construction</h3><p>${esc(c.liner)}</p><ul class="flags">${c.accessories.map((a) => `<li style="border-left-color:var(--axis)">${esc(a)}</li>`).join('')}</ul></div></div>
       <p class="notice">Plate thickness uses a flat-plate bending formula between stiffeners. Check buckling, the frame, nozzle loads and any explosion-rated requirement separately.</p>`;
   }
-  const cad = () => F.fanCad(result, [`${F.APPLICATIONS.find((a) => a.id === state.appId).name}: ${fmt(result.row.rpm)} rpm, ${fmt(result.qTotal * 3600)} m3/h, ${fmt(result.dp)} Pa, ${state.tempC} C`]);
   function viewCad(el) {
     el.innerHTML = `<div class="card fields"><div class="row space-between"><p class="panel-lead">General arrangement drawn to scale from this calculation: front view with the blades and scroll, and a section through the shaft.</p>
         <div class="row"><button class="btn btn-primary" id="saveDxf" type="button">Save DXF for CAD</button><button class="btn" id="saveSvg" type="button">Save SVG</button></div></div>
-        <div class="drawing">${F.toSvg(cad(), { stroke: 'currentColor', textFill: 'currentColor' })}</div>
+        <div class="drawing">${bundle.cadSvg}</div>
         <p class="notice"><b>Not for manufacture.</b> This is a preliminary layout. Blade shape, scroll and welds still need detail design. DXF layers: CASING, IMPELLER, BLADES, SHAFT, CENTRE, DIMS and TEXT.</p></div>`;
   }
   async function renderLog(el) {

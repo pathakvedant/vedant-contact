@@ -4,4 +4,6 @@ window.FAN_CONFIG = {
   supabaseUrl: 'https://efpfaexqzhyactbkqcfw.supabase.co',
   anonKey: 'sb_publishable_4UDtHUbr3wnYWEcP0vqaJw_XNWZ2f4F',
   adminEmail: 'pathakvedant001@gmail.com',
+  // The private Python server's address (Render). Not a secret.
+  apiUrl: 'https://fan-pro-server.onrender.com',
 };
