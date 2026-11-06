@@ -2,6 +2,8 @@
 (function(){
  var L=document.getElementById('loader'),H=document.documentElement,seen=false;
  try{seen=sessionStorage.getItem('traass_intro')==='1'}catch(e){}
+ // The menu builds itself on every home page visit (navbuild.js); not when arriving at a section link
+ if(!location.hash&&!matchMedia('(prefers-reduced-motion:reduce)').matches)H.classList.add('navbuild');
  if(seen||matchMedia('(prefers-reduced-motion:reduce)').matches){L.remove();return}
  H.classList.add('intro');
  // Stack copies of each logo part along Z to give it real thickness

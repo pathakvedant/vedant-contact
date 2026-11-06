@@ -292,4 +292,28 @@ html.intro{overflow:hidden}
 @keyframes ldR1{from{transform:rotateX(72deg) rotateZ(0)}to{transform:rotateX(72deg) rotateZ(360deg)}}
 @keyframes ldR2{from{transform:rotateY(68deg) rotateZ(0)}to{transform:rotateY(68deg) rotateZ(-360deg)}}
 @keyframes ldR3{from{transform:rotateX(60deg) rotateY(50deg) rotateZ(0)}to{transform:rotateX(60deg) rotateY(50deg) rotateZ(360deg)}}
+/* Home menu: pointers build it after the intro, and a selection box on hover (assets/navbuild.js) */
+@media(min-width:961px){html.navbuild #nav .logo,html.navbuild #menu>li{opacity:0;animation:nbSafe 0s 14s forwards}}
+html.navbuild #nav .logo.nb-in,html.navbuild #menu>li.nb-in{opacity:1;animation:nbPop .45s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes nbSafe{to{opacity:1}}
+@keyframes nbPop{from{opacity:0;transform:translateY(-6px) scale(.7)}}
+.nb-layer{position:fixed;inset:0;z-index:55;pointer-events:none;transition:opacity .45s}
+.nb-layer.nb-gone{opacity:0}
+.nb-box{--c:var(--a1);position:fixed;left:0;top:0;width:0;height:0;border:1px solid var(--c);border-radius:3px;opacity:0;transition:opacity .2s}
+.nb-box.on{opacity:1}
+.nb-box.fill{background:rgba(0,229,255,.07)}
+.nb-hov{transition:opacity .2s,left .18s ease,top .18s ease,width .18s ease,height .18s ease}
+.nb-drag.grow{transition:opacity .2s,width .6s cubic-bezier(.5,0,.2,1),height .6s cubic-bezier(.5,0,.2,1),background .3s}
+.nb-box i{position:absolute;width:7px;height:7px;background:var(--bg);border:1px solid var(--c);border-radius:1px}
+.nb-box i:nth-child(1){left:-4px;top:-4px}.nb-box i:nth-child(2){right:-4px;top:-4px}
+.nb-box i:nth-child(3){left:-4px;bottom:-4px}.nb-box i:nth-child(4){right:-4px;bottom:-4px}
+.nb-box span{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;font:600 10px/1 Inter,sans-serif;padding:3px 6px;border-radius:3px;background:var(--c);color:var(--bg)}
+.nb-box span:empty{display:none}
+.nb-cur{position:fixed;left:0;top:0;display:flex;align-items:flex-start;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))}
+.nb-cur svg{fill:var(--cc);stroke:var(--bg);stroke-width:1.2}
+.nb-cur b{margin:14px 0 0 -2px;font:700 10px/1 Inter,sans-serif;padding:3px 6px;border-radius:2px 8px 8px 8px;background:var(--cc);color:var(--bg)}
+.nb-cur.bye{opacity:0}
+.nb-page{position:absolute;left:0;top:0;width:0;height:0;z-index:45;pointer-events:none}
+.nb-page>.nb-box,.nb-page>.nb-cur{position:absolute}
+.nb-page>.nb-box{transition:opacity .35s}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
