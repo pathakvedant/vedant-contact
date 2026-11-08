@@ -6,10 +6,11 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v)
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600)};
 
 // ===== Settings =====
-const EMAIL='pathakvedant001@gmail.com';
-const FORM_ENDPOINT='https://formsubmit.co/ajax/'+EMAIL; // first submission sends you an activation email: click it once
+const EMAIL='vedant@traass.in';                           // the address visitors see (links, email-app fallback)
+const INBOX=atob('cGF0aGFrdmVkYW50MDAxQGdtYWlsLmNvbQ=='); // main inbox where enquiries are delivered (Gmail), Base64 so it isn't plain text in the page
+const FORM_ENDPOINT='https://formsubmit.co/ajax/'+INBOX;  // already activated for this inbox
 const MY_PHONE=atob('KzkxIDYzOTI1IDM3NDU0');            // +91 phone, Base64 so it isn't plain text in the page
-const SITE='https://pathakvedant.github.io/vedant-contact/';
+const SITE='https://traass.in/';
 // Your real client conversion history. Fill in all three lists to show the chart on the site, e.g.
 // {years:['2022','2023','2024','2025','2026'],leads:[...],converted:[...]}
 const CONVERSION_HISTORY=null;

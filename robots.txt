@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pathakvedant.github.io/vedant-contact/sitemap.xml
+Sitemap: https://traass.in/sitemap.xml

@@ -30,8 +30,9 @@
  function close(){if(done)return;done=true;try{sessionStorage.setItem('traass_intro','1')}catch(e){}
   L.classList.add('out');H.classList.remove('intro');setTimeout(function(){L.remove()},750)}
  L.addEventListener('click',close);
- setTimeout(close,6000); // never hold the site back on a slow connection
- (function tick(){if(done)return;var p=Math.min((performance.now()-t0)/3200,loaded?1:.92);
+ setTimeout(close,4000); // never hold the site back on a slow connection
+ // About 2 s: long enough for the logo and the letters to land, then straight into the site
+ (function tick(){if(done)return;var p=Math.min((performance.now()-t0)/2000,loaded?1:.92);
   F.style.width=(p*100)+'%';P.textContent=Math.round(p*100)+'%';
-  if(p>=1)return void setTimeout(close,250);requestAnimationFrame(tick)})();
+  if(p>=1)return void setTimeout(close,150);requestAnimationFrame(tick)})();
 })();

@@ -28,7 +28,7 @@ Personal portfolio for Vedant Pathak: Business Analyst, Certified Data Analyst, 
 1. Open the repository **pathakvedant/vedant-contact** on github.com.
 2. Click **Add file → Upload files**. Select everything in this folder and **drag it onto the page**, so the `assets` and `blog` folders are included ("choose your files" can't add folders). Click **Commit changes**.
 3. Pages is already switched on for this repository. Wait for the green tick in the **Actions** tab before uploading again.
-4. After 1–2 minutes the site is live at `https://pathakvedant.github.io/vedant-contact/`.
+4. After 1–2 minutes the site is live at `https://traass.in/`.
 
 ## Site address
 
@@ -36,7 +36,7 @@ The address above is already set in `index.html`, `assets/app.js`, `sitemap.xml`
 
 ## Turn on the forms (one time)
 
-The contact form, the phone-number form and the newsletter form all email **pathakvedant001@gmail.com** through FormSubmit (free).
+The contact form, the phone-number form and the newsletter form all email **vedant@traass.in** through FormSubmit (free).
 1. Once the site is live, fill in the contact form yourself.
 2. FormSubmit emails you an **activation link**. Click it.
 3. From then on, every lead (name, phone, company, message) arrives in your Gmail.
@@ -62,7 +62,7 @@ The private engine files are kept outside this folder, in `C:\ClaudeTmp\Fan-Pro-
 3. In this folder, run `python tools/build_site.py`. This makes the post's own page and updates `sitemap.xml`.
 4. Upload the changed files to GitHub in one commit.
 
-Share the post's own link, for example `https://pathakvedant.github.io/vedant-contact/blog/your-slug.html`.
+Share the post's own link, for example `https://traass.in/blog/your-slug.html`.
 
 ## Add your real client conversion numbers
 

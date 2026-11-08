@@ -6,6 +6,9 @@
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const when = (v) => (v ? new Date(v).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '–');
   const MIN_PASSWORD = 12;
+  // Wake the free Fan Pro server during the admin login, so Open Fan Pro is quick afterwards
+  const api = String((window.FAN_CONFIG && window.FAN_CONFIG.apiUrl) || '').replace(/\/+$/, '');
+  if (api) fetch(api + '/health', { credentials: 'omit', referrerPolicy: 'no-referrer' }).catch(() => {});
   function toast(m) {
     const el = $('toast');
     el.textContent = m; el.hidden = false;

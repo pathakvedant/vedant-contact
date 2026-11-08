@@ -42,7 +42,7 @@
   fonts.then(function(){setTimeout(function(){
    if(scrollY>80){H.classList.remove('navbuild');return} // reopened lower down the page: just show the menu
    build();
-  },300)});
+  },100)});
  }
  if(!H.classList.contains('intro'))start();
  else new MutationObserver(function(m,o){if(!H.classList.contains('intro')){o.disconnect();start()}}).observe(H,{attributes:true,attributeFilter:['class']});
@@ -66,8 +66,8 @@
   var cx=vw/2,cy=Math.min(vh*.42,320),crew=[0,1,2,3].map(function(j){return cur(layer,j,cx,cy)});
   var t0=performance.now();
   requestAnimationFrame(function spin(now){
-   var t=now-t0;if(done||t>1000)return;
-   var rad=46*Math.min(1,t/300);
+   var t=now-t0;if(done||t>700)return;
+   var rad=46*Math.min(1,t/250);
    crew.forEach(function(c,j){var a=t/900*2*Math.PI+j*Math.PI/2;go(c,cx+Math.cos(a)*rad,cy+Math.sin(a)*rad*.8,0)});
    requestAnimationFrame(spin);
   });
@@ -76,34 +76,34 @@
   // The crew breaks up: the lead heads for the top-left corner of the bar, the rest wait just below it
   var lead=crew[0],bar=box(layer,'nb-drag');
   later(function(){
-   go(lead,W.left+4,W.top+6,550);
-   [.3,.55,.8].forEach(function(f,i){go(crew[i+1],W.left+W.width*f,W.bottom+70,650)});
-  },1000);
+   go(lead,W.left+4,W.top+6,450);
+   [.3,.55,.8].forEach(function(f,i){go(crew[i+1],W.left+W.width*f,W.bottom+70,500)});
+  },700);
   // The lead drags out the menu bar
   later(function(){
    frame(bar,{left:W.left+4,top:W.top+6,width:0,height:0},'');bar.classList.add('on');bar.getBoundingClientRect();
    bar.classList.add('grow');frame(bar,{left:W.left+4,top:W.top+6,width:W.width-8,height:W.height-12},'nav · '+size(W));
-   go(lead,W.right-4,W.bottom-6,700);
-  },1600);
-  later(function(){bar.classList.add('fill')},2350);
-  later(function(){bar.classList.remove('on')},2700);
+   go(lead,W.right-4,W.bottom-6,550);
+  },1150);
+  later(function(){bar.classList.add('fill')},1700);
+  later(function(){bar.classList.remove('on')},1950);
 
   // Each pointer drops its share of the links, each in a box of its own colour
   items.forEach(function(it,k){
-   var j=k%4,c=crew[j],t=2500+j*130+Math.floor(k/4)*450;
-   later(function(){var r=it.getBoundingClientRect();go(c,r.right-8,r.bottom-6,340)},t);
+   var j=k%4,c=crew[j],t=1750+j*100+Math.floor(k/4)*320;
+   later(function(){var r=it.getBoundingClientRect();go(c,r.right-8,r.bottom-6,300)},t);
    later(function(){
     var r=it.getBoundingClientRect(),b=box(layer,'',j);
     frame(b,r,size(r));b.classList.add('on');it.classList.add('nb-in');
-    later(function(){b.classList.remove('on')},520);
-   },t+340);
+    later(function(){b.classList.remove('on')},450);
+   },t+300);
   });
 
-  // The pointers leave
+  // The pointers leave (about 3.7 s in all)
   later(function(){
-   [[vw*.5,vh+60],[vw+60,-60],[-60,vh*.3],[vw*.9,vh+60]].forEach(function(p,i){go(crew[i],p[0],p[1],700);crew[i].classList.add('bye')});
-  },4350);
-  later(finish,5000);
+   [[vw*.5,vh+60],[vw+60,-60],[-60,vh*.3],[vw*.9,vh+60]].forEach(function(p,i){go(crew[i],p[0],p[1],600);crew[i].classList.add('bye')});
+  },3150);
+  later(finish,3700);
  }
 
  // 3. Everything on the page: as each part scrolls into view, a pointer marks it with a selection box.

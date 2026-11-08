@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>TRAASS email signature</title>
+<style>
+  body{margin:0;padding:32px 16px;background:#f3f4f7;font-family:Arial,Helvetica,sans-serif;color:#1f2430}
+  .page{max-width:640px;margin:0 auto}
+  .frame{background:#fff;border:1px solid #e3e5ea;border-radius:10px;padding:28px 24px;overflow-x:auto}
+  h1{font-size:18px;margin:0 0 14px}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 10px}
+  button{font:600 14px Arial,Helvetica,sans-serif;padding:10px 16px;border-radius:6px;border:1px solid #6b0f0b;background:#6b0f0b;color:#fff;cursor:pointer}
+  button.alt{background:#fff;color:#6b0f0b}
+  #done{font-size:13px;color:#1a7f37;align-self:center}
+  ol{font-size:14px;line-height:1.6;padding-left:20px;color:#3a3f4b}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Your email signature</h1>
+<div class="frame">
+
+<!-- SIGNATURE START: everything between START and END is the signature -->
+<div id="sig">
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;color:#1f2430">
+  <tr>
+    <td style="padding:0 16px 0 0;border-right:3px solid #fd7f00;vertical-align:middle">
+      <a href="https://traass.in" target="_blank" style="text-decoration:none"><img src="https://pathakvedant.github.io/vedant-contact/assets/traass-logo.png" width="150" height="38" alt="TRAASS" style="display:block;border:0;width:150px;height:38px"></a>
+    </td>
+    <td style="padding:0 0 0 16px;vertical-align:middle">
+      <p style="margin:0;font-size:17px;line-height:22px;font-weight:bold;color:#6b0f0b">Vedant Pathak</p>
+      <p style="margin:0 0 8px 0;font-size:13px;line-height:18px;font-weight:bold;color:#e8212a">Founder &amp; MD, TRAASS</p>
+      <p style="margin:0"><span style="color:#fd7f00;font-weight:bold">M</span>&nbsp;&nbsp;<a href="tel:+916392537454" style="color:#1f2430;text-decoration:none">+91 6392537454</a></p>
+      <p style="margin:0"><span style="color:#fd7f00;font-weight:bold">E</span>&nbsp;&nbsp;&nbsp;<a href="mailto:vedant@traass.in" style="color:#1f2430;text-decoration:none">vedant@traass.in</a></p>
+      <p style="margin:0"><span style="color:#fd7f00;font-weight:bold">W</span>&nbsp;&nbsp;<a href="https://traass.in" target="_blank" style="color:#1f2430;text-decoration:none">traass.in</a>&nbsp;&nbsp;<span style="color:#c9ccd3">|</span>&nbsp;&nbsp;<a href="https://www.linkedin.com/in/vedant-pathak-65915b160/" target="_blank" style="color:#0a66c2;text-decoration:none;font-weight:bold">LinkedIn</a></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding:12px 0 0 0;font-size:11px;line-height:15px;color:#8a8f9c">B2B Marketing &middot; Business Analysis &middot; Air Pollution Control &amp; Industrial Fans</td>
+  </tr>
+</table>
+</div>
+<!-- SIGNATURE END -->
+
+</div>
+<div class="bar">
+  <button id="copy" type="button">Copy signature</button>
+  <button id="copyCode" class="alt" type="button">Copy HTML code</button>
+  <span id="done" role="status"></span>
+</div>
+<ol>
+  <li>Click <b>Copy signature</b>.</li>
+  <li>Open your email's signature settings (GoDaddy webmail: <b>Settings → Signature</b>; Gmail: <b>Settings → See all settings → Signature</b>; Outlook: <b>Settings → Mail → Compose and reply</b>).</li>
+  <li>Paste with <b>Ctrl+V</b> and save. Send yourself a test email to check.</li>
+</ol>
+</div>
+<script>
+(function(){
+  var sig=document.getElementById('sig'),done=document.getElementById('done');
+  function say(t){done.textContent=t;setTimeout(function(){done.textContent=''},3000)}
+  function selectSig(){var r=document.createRange();r.selectNodeContents(sig);var s=getSelection();s.removeAllRanges();s.addRange(r);return s}
+  document.getElementById('copy').onclick=function(){
+    var html=sig.innerHTML.trim(),text=sig.innerText.trim();
+    if(navigator.clipboard&&window.ClipboardItem){
+      navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([text],{type:'text/plain'})})])
+        .then(function(){say('Copied. Now paste it into your signature settings.')},fallback);
+    } else fallback();
+    function fallback(){var s=selectSig();try{document.execCommand('copy');say('Copied. Now paste it into your signature settings.')}catch(e){say('Press Ctrl+C to copy the selected signature.')}if(document.queryCommandSupported&&document.execCommand)s.removeAllRanges()}
+  };
+  document.getElementById('copyCode').onclick=function(){
+    var html=sig.innerHTML.trim();
+    if(navigator.clipboard)navigator.clipboard.writeText(html).then(function(){say('HTML code copied.')},function(){say('Could not copy. Open this file in Notepad instead.')});
+  };
+})();
+</script>
+</body>
+</html>

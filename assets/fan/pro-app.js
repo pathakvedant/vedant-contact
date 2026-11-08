@@ -5,6 +5,7 @@
   const auth = $('#authScreen');
   const app = $('#appScreen');
   const ADMIN = (window.FAN_CONFIG && window.FAN_CONFIG.adminEmail) || '';
+  const SUPPORT = (window.FAN_CONFIG && window.FAN_CONFIG.supportEmail) || ADMIN;
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmt = (v, d = 0) => (Number.isFinite(v) ? v.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d }) : '–');
   function toast(m) {
@@ -119,7 +120,7 @@
     shell('Your Fan Pro time has ended', `
       <p>${info && info.access_until ? `Your access ended on ${esc(new Date(info.access_until).toLocaleString('en-IN'))}.` : 'This account does not have access yet.'} Your warnings and account are kept safely.</p>
       <p>Contact the admin for more time. The admin can give you the time you agree on, including a full month of Pro.</p>
-      <a class="btn btn-primary btn-wide" style="text-align:center;text-decoration:none" href="mailto:${esc(ADMIN)}?subject=${subject}&body=${body}">Email the admin</a>
+      <a class="btn btn-primary btn-wide" style="text-align:center;text-decoration:none" href="mailto:${esc(SUPPORT)}?subject=${subject}&body=${body}">Email the admin</a>
       <button class="btn btn-wide" id="logoutBtn" type="button">Log out</button>`);
     $('#logoutBtn').onclick = async () => { await FanAuth.logOut(); entry('login'); };
   }
@@ -197,7 +198,7 @@
   const SECTION_KEY = { analysis: 'analysis', start: 'start', standards: 'standards', outputs: 'outputs', cad: 'cadSvg', sheet: 'sheet' };
   let bundle = {}, seq = 0, inFlight = false;
   const FA_KEY = 'traass_fan_analysis_options';
-  let faOpts = { slip: 'legacy', casingType: 'volute', category: 'D', gapRatio: '', sefCoefficient: '', fixedPa: '', diffuserAreaRatio: '', profile: '', rhPct: '', baroPa: '', bearingType: 'roller', cA: '', cB: '', volute: 'constantMomentum', stGas: 'cold', stDust: 'clean', stDamper: 'closed', stMethod: 'dol', stDustLoad: '', stClosedPct: '', mLrt: '', mPut: '', mBdt: '', mLrc: '', mJ: '', mV: '', mStallHot: '', mStallCold: '', stSoft: '', stRamp: '', stVfdT: '', dBox: 'no', dBoxK: '', dBoxArea: '', dDamper: 'none', dDamperK: '', dSil: 'none', dSilFill: 'rock', dSilMoc: 'ms', dSilLen: '', dSilOpen: '', dSilGap: '', dSilFace: '', dSilDb: '', dMoc: '', dOver: '', dSpan: '', dTail: '', dCoupKg: '', dWheelD: '', dNdeD: '', dDeD: '', dBodyD: '', dCoupD: '', dMargin: '', dHub: '', dHubOd: '', dHubLen: '', dHubRating: '', dHubInterf: '', dLocating: 'de', dTarget: '', dHours: '', dThrust: '', deType: 'srb', deBrand: 'SKF', deDes: '', deC: '', deC0: '', deN: '', deY: '', deOd: '', deW: '', ndeType: 'srb', ndeBrand: 'SKF', ndeDes: '', ndeC: '', ndeC0: '', ndeN: '', ndeY: '', ndeOd: '', ndeW: '', dLube: '', dBrgTemp: '', cLabour: '', cGrease: '', cOil: '', cBearing: '', cPower: '' };
+  let faOpts = { slip: 'legacy', casingType: 'volute', category: 'D', gapRatio: '', sefCoefficient: '', fixedPa: '', diffuserAreaRatio: '', profile: '', rhPct: '', baroPa: '', bearingType: 'roller', cA: '', cB: '', volute: 'constantMomentum', stGas: 'cold', stDust: 'clean', stDamper: 'closed', stMethod: 'dol', stDustLoad: '', stClosedPct: '', mLrt: '', mPut: '', mBdt: '', mLrc: '', mJ: '', mV: '', mStallHot: '', mStallCold: '', stSoft: '', stRamp: '', stVfdT: '', dBox: 'no', dBoxK: '', dBoxArea: '', dDamper: 'none', dDamperK: '', dSil: 'none', dSilFill: 'rock', dSilMoc: 'ms', dSilLen: '', dSilOpen: '', dSilGap: '', dSilFace: '', dSilDb: '', dMoc: '', dOver: '', dSpan: '', dTail: '', dBelt: '', dPulley: '', dCoupKg: '', dWheelD: '', dNdeD: '', dDeD: '', dBodyD: '', dCoupD: '', dMargin: '', dHub: '', dHubOd: '', dHubLen: '', dHubRating: '', dHubInterf: '', dLocating: 'de', dTarget: '', dHours: '', dThrust: '', deType: 'srb', deBrand: 'SKF', deDes: '', deC: '', deC0: '', deN: '', deY: '', deOd: '', deW: '', ndeType: 'srb', ndeBrand: 'SKF', ndeDes: '', ndeC: '', ndeC0: '', ndeN: '', ndeY: '', ndeOd: '', ndeW: '', dLube: '', dBrgTemp: '', cLabour: '', cGrease: '', cOil: '', cBearing: '', cPower: '' };
   try { faOpts = { ...faOpts, ...JSON.parse(localStorage.getItem(FA_KEY) || '{}') }; } catch { /* defaults */ }
   let faCoefficients = null;
 
@@ -502,7 +503,7 @@
     const temp = v('dBrgTemp');
     return {
       inletBox: faOpts.dBox, boxK: v('dBoxK'), boxAreaM2: v('dBoxArea'), damper: faOpts.dDamper, damperK: v('dDamperK'), silencer: faOpts.dSil, silFill: faOpts.dSilFill, silMoc: faOpts.dSilMoc, silLength: v('dSilLen'), silOpen: v('dSilOpen'), silGap: v('dSilGap'), silFaceV: v('dSilFace'), silMakerDb: v('dSilDb'),
-      shaftMoc: faOpts.dMoc, overhang: v('dOver'), span: v('dSpan'), tail: v('dTail'), couplingKg: v('dCoupKg'), dWheel: v('dWheelD'), dNde: v('dNdeD'), dDe: v('dDeD'), dBody: v('dBodyD'), dCoupling: v('dCoupD'), minMargin: v('dMargin'),
+      shaftMoc: faOpts.dMoc, overhang: v('dOver'), span: v('dSpan'), tail: v('dTail'), beltPullN: v('dBelt'), pulleyMm: v('dPulley'), couplingKg: v('dCoupKg'), dWheel: v('dWheelD'), dNde: v('dNdeD'), dDe: v('dDeD'), dBody: v('dBodyD'), dCoupling: v('dCoupD'), minMargin: v('dMargin'),
       hubType: faOpts.dHub, hubOd: v('dHubOd'), hubLen: v('dHubLen'), hubBushRatingNm: v('dHubRating'), hubInterference: v('dHubInterf'),
       locating: faOpts.dLocating, target: v('dTarget'), hoursYear: v('dHours'), thrustN: v('dThrust'), de: brg('de'), nde: brg('nde'), lube: faOpts.dLube, ...(temp === undefined ? {} : { bearingTempC: temp }),
       labourRate: v('cLabour'), greaseRate: v('cGrease'), oilRate: v('cOil'), bearingCost: v('cBearing'), powerRate: v('cPower'),
@@ -528,11 +529,13 @@
     const money = (v) => (v === null || v === undefined ? 'Enter rates' : `₹ ${fmt(v, 0)}`);
     const bearingInputs = (p, b) => `<div class="fields"><h3>${esc(b.name)}</h3><div class="two">
         ${faSelect(`${p}Type`, 'Bearing type', faPairs(F.BEARING_TYPES))}${faSelect(`${p}Brand`, 'Make', F.BEARING_BRANDS.map((x) => [x, x]))}
-        ${faText(`${p}Des`, 'Designation', b.candidates[0] || 'from catalogue')}${faInput(`${p}C`, 'C, dynamic rating (kN)', 'from catalogue')}
-        ${faInput(`${p}C0`, 'C0, static rating (kN)', 'from catalogue')}${faInput(`${p}N`, 'Limiting speed (rpm)', 'from catalogue')}
-        ${faInput(`${p}Y`, 'Axial factor Y', String(b.y))}${faInput(`${p}Od`, 'Outer diameter D (mm)', 'from catalogue')}${faInput(`${p}W`, 'Width B (mm)', 'from catalogue')}
-      </div><p class="lock-note">Seat ${fmt(b.seatMm)} mm. Series that fit this bore: ${esc(b.candidates.join(', ') || 'none in the usual numbering')}. Check the exact designation and suffix in your catalogue.</p></div>`;
-    const bearingResult = (b) => [b.name, `${b.brand} ${b.typeLabel} ${b.designation}`.trim(), fmt(b.frN / 1000, 1), fmt(b.faN / 1000, 1), fmt(b.pN / 1000, 1), fmt(b.needCkN, 0), b.cKn ? fmt(b.cKn, 0) : 'Enter C', b.l10h ? fmt(b.l10h, 0) : 'Not calculated', b.l10Years ? fmt(b.l10Years, 1) : '–', b.s0 ? fmt(b.s0, 1) : '–', b.speedRatio ? `${fmt(b.speedRatio * 100, 0)} %` : '–'];
+        ${faText(`${p}Des`, 'Designation', b.autoPick ? `${b.designation} (auto)` : b.candidates[0] || 'from catalogue')}${faInput(`${p}C`, 'C, dynamic rating (kN)', b.autoPick ? `${b.cKn} (auto)` : 'from catalogue')}
+        ${faInput(`${p}C0`, 'C0, static rating (kN)', b.autoPick ? `${b.c0Kn} (auto)` : 'from catalogue')}${faInput(`${p}N`, 'Limiting speed (rpm)', b.autoPick ? `${b.nLimit} (auto)` : 'from catalogue')}
+        ${faInput(`${p}Y`, 'Axial factor Y', String(b.y))}${faInput(`${p}Od`, 'Outer diameter D (mm)', b.autoPick ? `${b.od} (auto)` : 'from catalogue')}${faInput(`${p}W`, 'Width B (mm)', b.autoPick ? `${b.width} (auto)` : 'from catalogue')}
+      </div><p class="lock-note">Seat ${fmt(b.seatMm)} mm. Series that fit this bore: ${esc(b.candidates.join(', ') || 'none in the usual numbering')}. Check the exact designation and suffix in your catalogue.</p>
+      ${b.pickNote ? `<p class="lock-note"><b>${b.autoPick ? 'Auto-selected.' : 'Catalogue.'}</b> ${esc(b.pickNote)}</p>` : ''}
+      ${b.options && b.options.length ? `<p class="lock-note">SKF bearings of this type on this seat: ${b.options.map((o) => `${esc(o.designation)} (C ${fmt(o.C, 1)} kN${o.meetsLife && o.meetsSpeed ? ', meets life and speed' : ''})`).join(', ')}. Type any designation above to use it instead.</p>` : ''}</div>`;
+    const bearingResult = (b) => [b.name, `${b.brand} ${b.typeLabel} ${b.designation}${b.housing ? ` in ${b.housing.housing}` : ''}`.trim(), fmt(b.frN / 1000, 1), fmt(b.faN / 1000, 1), fmt(b.pN / 1000, 1), fmt(b.needCkN, 0), b.cKn ? fmt(b.cKn, 0) : 'Enter C', b.l10h ? fmt(b.l10h, 0) : 'Not calculated', b.l10Years ? fmt(b.l10Years, 1) : '–', b.s0 ? fmt(b.s0, 1) : '–', b.speedRatio ? `${fmt(b.speedRatio * 100, 0)} %` : '–'];
     el.innerHTML = `<div class="card fields"><h3>All warnings on this page (${d.flags.length})</h3>${d.flags.length ? `<ul class="flags">${d.flags.map((f) => `<li class="${esc(f.level)}">${esc(f.text)}</li>`).join('')}</ul>` : '<p class="lock-note">No warnings.</p>'}
       <p class="notice"><b>Estimated.</b> Values marked from catalogue or data sheet are not held here, so a blank box gives a warning rather than a guess. A qualified engineer must confirm every value.</p></div>
     <div class="card fields"><h3>1. Inlet box, damper and silencer</h3><div class="two">
@@ -551,7 +554,7 @@
       <p class="lock-note">Motor data, and all 32 combinations, are on the Start conditions tab. ${esc(s.note)}</p></div>
     <div class="card fields"><h3>3. Shaft, diameter by diameter</h3><div class="two">
         ${faSelect('dMoc', 'Shaft MOC', [['', `Suggested: ${sh.material.label}`], ...faPairs(F.SHAFT_MOC)])}${faInput('dMargin', 'Critical speed margin (%)', '30')}
-        ${faInput('dOver', 'Overhang (m)', fmt(sh.overhang, 3))}${faInput('dSpan', 'Bearing span (m)', fmt(sh.span, 3))}${faInput('dTail', 'Drive end length (m)', fmt(sh.tail, 3))}${faInput('dCoupKg', 'Coupling or pulley mass (kg)', '0')}
+        ${faInput('dOver', 'Overhang (m)', fmt(sh.overhang, 3))}${faInput('dSpan', 'Bearing span (m)', fmt(sh.span, 3))}${faInput('dTail', 'Drive end length (m)', fmt(sh.tail, 3))}${faInput('dCoupKg', 'Coupling or pulley mass (kg)', '0')}${sh.beltPullN ? faInput('dBelt', 'Belt shaft load (N)', fmt(sh.beltPullN, 0)) + faInput('dPulley', 'Fan pulley diameter (mm)', 'from your drive') : ''}
         ${faInput('dWheelD', 'Wheel seat dia (mm)', String(sh.auto.wheel))}${faInput('dNdeD', 'NDE seat dia (mm)', String(sh.auto.nde))}${faInput('dBodyD', 'Body dia (mm)', String(sh.auto.body))}${faInput('dDeD', 'DE seat dia (mm)', String(sh.auto.de))}${faInput('dCoupD', 'Coupling end dia (mm)', String(sh.auto.coupling))}
       </div>
       ${faTable(['Station', 'Dia (mm)', 'Needed (mm)', 'Moment (Nm)', 'Torque (Nm)', 'Bending (MPa)', 'Torsion (MPa)', 'Von Mises (MPa)', 'Fatigue safety', 'I (cm⁴)', 'J (cm⁴)'], sh.stations.map((t) => [t.name, fmt(t.dMm), fmt(t.needMm), fmt(t.momentNm), fmt(t.torqueNm), fmt(t.sigmaMPa, 1), fmt(t.tauMPa, 1), fmt(t.vonMisesMPa, 1), Number.isFinite(t.safetyFatigue) ? fmt(t.safetyFatigue, 1) : '–', fmt(t.I * 1e8, 0), fmt(t.J * 1e8, 0)]))}
@@ -576,7 +579,7 @@
         ${faSelect('dLube', 'Lubricant', [['', `Suggested: ${lu.de.lube.label}`], ...faPairs(F.LUBES)])}${faInput('dBrgTemp', 'Bearing temperature (°C)', '70')}
       </div>
       ${faTable(['Bearing', 'Lubricant', 'Viscosity at temp (mm²/s)', 'Rated viscosity', 'Ratio κ', 'Relube every (h)', 'Grease each time (g)', 'Grease a year (g)'], [lu.de, lu.nde].map((l) => [l.name, l.lube.label, fmt(l.nu, 0), fmt(l.nu1, 0), fmt(l.kappa, 1), l.intervalH !== undefined ? fmt(l.intervalH, 0) : 'Oil', l.gramsEach !== undefined ? fmt(l.gramsEach, 0) : '–', l.gramsYear ? fmt(l.gramsYear, 0) : '–']))}
-      <p class="lock-note">${esc(lu.basis)}</p></div>
+      <p class="lock-note">${esc(lu.basis)}${lu.de.relubBasis ? ` Relubrication interval: ${esc(lu.de.relubBasis)}.` : ''}</p></div>
     <div class="card fields"><h3>8. Maintenance schedule and cost</h3><div class="two">
         ${faInput('cLabour', 'Labour rate (₹/h)', 'your rate')}${faInput('cGrease', 'Grease (₹/kg)', 'your rate')}${faInput('cOil', 'Oil (₹/litre)', 'your rate')}${faInput('cBearing', 'Bearing, each (₹)', 'your price')}${faInput('cPower', 'Power (₹/kWh)', 'your rate')}
       </div>
@@ -598,10 +601,10 @@
     <div class="card fields"><h3>All four start methods, for this start</h3>
       ${faTable(['Method', 'Time (s)', 'Starting current (x FLC)', 'Peak current (x FLC)', 'Peak (A)', 'Result'], s.methods.map((m) => [FA.START_METHODS[m.method], m.reached ? fmt(m.seconds, 0) : 'Cannot start', fmt(m.startCurrent, 1), fmt(m.peakCurrent, 1), fmt(m.peakAmps, 0), word[m.status]]))}
       <p>${s.best ? `Lowest current that completes this start: <b>${esc(FA.START_METHODS[s.best.method])}</b>. Cost, supply limits and the need for speed control may still decide otherwise.` : '<b>No method completes this start.</b> Use a larger motor, or close the damper.'}</p></div>
-    <div class="card fields"><h3>Motor and starter data</h3><p class="lock-note">Enter your motor data sheet values. Blank boxes use Assumed values.</p><div class="two">
+    <div class="card fields"><h3>Motor and starter data</h3><p class="lock-note">${s.motor.catalogueNote ? `<b>From the maker catalogue.</b> ${esc(s.motor.catalogueNote)}` : 'Enter your motor data sheet values. Blank boxes use Assumed values.'}</p><div class="two">
       ${faInput('mLrt', 'Locked-rotor torque (x rated)', String(s.motor.lrt))}${faInput('mPut', 'Pull-up torque (x rated)', String(s.motor.put))}
       ${faInput('mBdt', 'Breakdown torque (x rated)', String(s.motor.bdt))}${faInput('mLrc', 'Locked-rotor current (x FLC)', String(s.motor.lrc))}
-      ${faInput('mJ', 'Motor inertia (kg m²)', fmt(s.motor.inertia, 1))}${faInput('mV', 'Motor voltage (V)', String(s.motor.voltage))}
+      ${faInput('mJ', `Motor inertia (kg m²)${s.motor.inertiaBasis && s.motor.inertiaBasis !== 'Entered' ? `, ${s.motor.inertiaBasis.startsWith('ABB') ? 'catalogue' : s.motor.inertiaBasis.startsWith('Fit') ? 'catalogue fit' : 'typical'}` : ''}`, fmt(s.motor.inertia, s.motor.inertia < 1 ? 3 : 1))}${faInput('mV', 'Motor voltage (V)', String(s.motor.voltage))}
       ${faInput('mStallHot', 'Safe stall time, hot (s)', 'data sheet')}${faInput('mStallCold', 'Safe stall time, cold (s)', 'data sheet')}
       ${faInput('stDustLoad', 'Dust at start (g/m³)', String(Number(state.dustLoad) || 0))}${faInput('stClosedPct', 'Closed-damper power (% of open)', 'from your test curve')}
       ${faInput('stSoft', 'Soft starter current limit (x FLC)', '3.5')}${faInput('stRamp', 'VFD ramp time (s)', '60')}
@@ -687,9 +690,14 @@
         ['Tip speed, plain-disc screening', `${fmt(a.tip.tipSpeed, 0)} m/s`, `${fmt(a.tip.uMax, 0)} m/s`, 'Timoshenko disc, at overspeed'],
         ['Blade weld shear', `${fmt(a.joint.tauMPa, 0)} MPa`, `${fmt(a.joint.allowMPa, 0)} MPa`, 'Screening, Assumed weld size and limit'],
         ['First critical speed', `${fmt(result.shaft.criticalRpm, 0)} rpm`, `${fmt(result.shaft.marginPct, 0)} % above running speed`, 'Existing engine'],
-        ['Balance grade', a.balance.grade, `${fmt(a.balance.uPerGmm, 0)} g mm allowed, ${fmt(a.balance.perPlaneGmm, 0)} per plane`, 'ISO 1940-1. Confirm the grade with ISO 14694'],
+        ['Balance grade', `${a.balance.grade}${a.balance.category ? ` (${a.balance.category})` : ''}`, `${fmt(a.balance.uPerGmm, 0)} g mm allowed, ${fmt(a.balance.perPlaneGmm, 0)} per plane`, a.balance.category ? a.balance.source : 'ISO 1940-1. Confirm the grade with ISO 14694'],
+        ...(a.balance.vibration ? [
+          ['Vibration in service, fixed mounting', `start-up ${fmt(a.balance.vibration.fixed.startUp, 1)} / alarm ${fmt(a.balance.vibration.fixed.alarm, 1)} / trip ${fmt(a.balance.vibration.fixed.trip, 1)} mm/s`, `factory test ${fmt(a.balance.vibration.factoryFixed, 1)} mm/s`, `ISO 14694 ${a.balance.category}, rms`],
+          ['Vibration in service, flexible mounting', `start-up ${fmt(a.balance.vibration.flexible.startUp, 1)} / alarm ${fmt(a.balance.vibration.flexible.alarm, 1)} / trip ${fmt(a.balance.vibration.flexible.trip, 1)} mm/s`, `factory test ${fmt(a.balance.vibration.factoryFlexible, 1)} mm/s`, `ISO 14694 ${a.balance.category}, rms`],
+        ] : []),
+        ...(a.scope && a.scope.bladePassHz ? [['Blade passing frequency', `${fmt(a.scope.bladePassHz, 0)} Hz (2nd harmonic ${fmt(a.scope.bladePass2Hz, 0)} Hz)`, `running speed ${fmt(a.scope.runningHz, 1)} Hz`, 'Blades × rpm ÷ 60. Tonal noise and pulsation; keep duct and silencer resonances away']] : []),
         ...a.bearing.rows.map((b) => [`Bearing ${b.name}`, b.l10h ? `L10 ${fmt(b.l10h, 0)} h` : `Needs C ≥ ${fmt(b.requiredCkN, 1)} kN`, `${fmt(a.bearing.targetHours, 0)} h target`, `ISO 281, load ${fmt(b.loadN / 1000, 1)} kN`]),
-        ['Motor', `${a.motor.kw ?? '–'} kW, ${esc(a.motor.voltage)}`, `${a.motor.serviceMarginPct === null ? '–' : fmt(a.motor.serviceMarginPct, 0)} % above required`, a.motor.frame4Pole ? `4-pole frame ${a.motor.frame4Pole}, UNVERIFIED` : 'Frame from your maker'],
+        ['Motor', `${a.motor.kw ?? '–'} kW, ${esc(a.motor.voltage)}`, `${a.motor.serviceMarginPct === null ? '–' : fmt(a.motor.serviceMarginPct, 0)} % above required`, a.motor.frame ? `Frame ${esc(a.motor.frameType)} ${esc(a.motor.frame)}. ${esc(a.motor.frameTag)}` : a.motor.frame4Pole ? `4-pole frame ${a.motor.frame4Pole}, UNVERIFIED` : 'Frame from your maker'],
       ])}
       <div class="two">${faSelect('bearingType', 'Bearing type', [['roller', 'Roller'], ['ball', 'Ball']])}${faInput('cA', 'Catalogue C, bearing A (kN)', 'from your catalogue')}${faInput('cB', 'Catalogue C, bearing B (kN)', 'from your catalogue')}</div>
       <p class="lock-note">${esc(a.bearing.note)} ${esc(a.joint.note)}</p>
@@ -805,7 +813,7 @@
   function viewCasing(el) {
     const c = result.casing;
     el.innerHTML = `<div class="split"><div class="card fields"><h3>Casing material</h3>${materialPicker('iMatC', 'casingMat', result.materialSuggestion.casing)}
-        <h3>Plate thickness</h3>${rows([['Scroll, with wear allowance', `${c.tScroll} mm`], ['Side plates', `${c.tSide} mm`], ['Pressure case', `${fmt(c.pDesign)} Pa`], ['Thickness from pressure alone', `${fmt(c.tPressure, 1)} mm`], ['Stiffener spacing', `${fmt(c.stiffenerSpacing * 1000)} mm`], ['Allowance for wear and corrosion', `${fmt(c.wearAllowance, 0)} mm`], ['Casing weight, with stiffeners', `${fmt(c.casingKg)} kg`]])}</div>
+        <h3>Plate thickness</h3>${rows([['Scroll, with wear allowance', `${c.tScroll} mm`], ['Side plates', `${c.tSide} mm`], ['Pressure case', `${fmt(c.pDesign)} Pa`], ['Thickness from pressure alone', `${fmt(c.tPressure, 1)} mm`], ['Stiffener spacing', `${fmt(c.stiffenerSpacing * 1000)} mm`], ['Allowance for wear and corrosion', `${fmt(c.wearAllowance, 0)} mm`], ['Casing weight, with stiffeners', `${fmt(c.casingKg)} kg`], ...(c.stiffener ? [['Scroll stiffener, minimum Z', `${fmt(c.stiffener.scrollZcm3, 1)} cm³ over ${fmt(c.stiffener.scrollSpanM, 2)} m`], ['Side stiffener, minimum Z', `${fmt(c.stiffener.sideZcm3, 1)} cm³ over ${fmt(c.stiffener.sideSpanM, 2)} m`]] : [])])}${c.stiffener ? `<p class="lock-note">${esc(c.stiffener.note)}</p>` : ''}</div>
       <div class="card fields"><h3>Scroll proportions</h3>${rows([['Inside width', `${fmt(c.width * 1000)} mm`], ['Start radius at the cut-off', `${fmt(c.r3 * 1000)} mm`], ['Largest radius', `${fmt(c.rOut * 1000)} mm`], ['Outlet', `${fmt(c.outletH * 1000)} × ${fmt(c.width * 1000)} mm`], ['Outlet velocity', `${fmt(c.outletV, 1)} m/s`], ['Cut-off clearance', `${fmt(c.cutoffClearance * 1000)} mm`]])}
         <h3>Construction</h3><p>${esc(c.liner)}</p><ul class="flags">${c.accessories.map((a) => `<li style="border-left-color:var(--axis)">${esc(a)}</li>`).join('')}</ul></div></div>
       <p class="notice">Plate thickness uses a flat-plate bending formula between stiffeners. Check buckling, the frame, nozzle loads and any explosion-rated requirement separately.</p>`;
@@ -849,6 +857,9 @@ t = b √(0.5 p / σ) + wear and corrosion allowance</div>
   }
 
   /* ---------- Start ---------- */
+
+  // Wake the free server now, so it is ready by the time the person has logged in (it sleeps after 15 idle minutes)
+  if (apiBase()) fetch(apiBase() + '/health', { credentials: 'omit', referrerPolicy: 'no-referrer' }).catch(() => {});
 
   if (!FanAuth.ready()) {
     shell('Fan Pro is being set up', '<p>Please contact the admin for access.</p>');

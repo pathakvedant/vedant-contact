@@ -12,9 +12,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE = "https://pathakvedant.github.io/vedant-contact/"
+SITE = "https://traass.in/"
 LINKEDIN = "https://www.linkedin.com/in/vedant-pathak-65915b160/"
-EMAIL = "pathakvedant001@gmail.com"
+EMAIL = "vedant@traass.in"
 PERSON_ID = SITE + "#vedant"
 ORG_ID = SITE + "#traass"
 FONTS = "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap"
