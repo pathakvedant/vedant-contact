@@ -9,6 +9,7 @@ pages, blog/pages.js and sitemap.xml, and refreshes the article links in index.h
 import html
 import json
 import re
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -35,12 +36,34 @@ def read_posts():
     return sorted(posts, key=lambda p: p["date"], reverse=True)
 
 
-def md(text):
+# One picture per line: ![alt text|caption](images/file.jpg){position}. Position: full, center, left, right or cover.
+# Only pictures stored in blog/images/ are allowed. The blog editor (blog-admin.html) writes this line for you.
+IMG_LINE = re.compile(r"^!\[([^\]|]*)(?:\|([^\]]*))?\]\((images/[a-z0-9][a-z0-9-]{0,80}\.(?:jpg|jpeg|png|webp))\)(?:\{(full|center|left|right|cover)\})?$")
+
+
+def first_cover(body):
+    """The picture marked {cover}, else the first picture in the post, else None."""
+    pics = [IMG_LINE.match(x.strip()) for x in body.splitlines()]
+    pics = [m for m in pics if m]
+    cover = next((m for m in pics if m.group(4) == "cover"), pics[0] if pics else None)
+    return cover.group(3) if cover else None
+
+
+def md(text, img_prefix=""):
     def inline(s):
         return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", e(s, quote=False))
     out, in_list = [], False
     for line in text.strip().splitlines():
         line = line.strip()
+        pic = IMG_LINE.match(line)
+        if pic:
+            if in_list:
+                out.append("</ul>")
+                in_list = False
+            alt, cap, src, pos = pic.group(1).strip(), (pic.group(2) or "").strip(), pic.group(3), pic.group(4) or "center"
+            fig = f'<figure class="pimg pimg-{pos}"><img src="{img_prefix}{src}" alt="{e(alt)}" loading="lazy" decoding="async">'
+            out.append(fig + (f"<figcaption>{e(cap)}</figcaption>" if cap else "") + "</figure>")
+            continue
         if line.startswith("- "):
             if not in_list:
                 out.append("<ul>")
@@ -63,8 +86,9 @@ def md(text):
     return "\n".join(out)
 
 
-def page(path, title, desc, schema, body, og_type="website"):
+def page(path, title, desc, schema, body, og_type="website", og_image=None):
     """Writes one standalone page. `path` is relative to the site root."""
+    og_image = og_image or SITE + "og-image.png"
     up = "../" * path.count("/")
     url = SITE + path.replace("index.html", "")
     ld = json.dumps({"@context": "https://schema.org", "@graph": schema}, ensure_ascii=False).replace("</", "<\\/")
@@ -88,7 +112,7 @@ def page(path, title, desc, schema, body, og_type="website"):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE}og-image.png">
+<meta property="og:image" content="{og_image}">
 <meta property="og:locale" content="en_IN">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{ld}</script>
@@ -157,12 +181,14 @@ def build_posts(posts):
 <p style="margin-top:24px"><a class="btn fill" href="../index.html#contact">Talk to me about this →</a></p>"""
         schema = [
             {"@type": "BlogPosting", "headline": p["title"], "description": p["excerpt"], "datePublished": p["date"],
-             "dateModified": p["date"], "url": url, "mainEntityOfPage": url, "image": SITE + "og-image.png",
+             "dateModified": p["date"], "url": url, "mainEntityOfPage": url, "image": (SITE + "blog/" + first_cover(p["body"])) if first_cover(p["body"]) else SITE + "og-image.png",
              "keywords": p["tags"], "articleSection": p["cat"], "author": person_ref(),
              "publisher": {"@type": "Organization", "@id": ORG_ID, "name": "TRAASS", "logo": {"@type": "ImageObject", "url": SITE + "assets/traass-logo.png"}}},
             crumb_schema([("Blog", SITE + "blog/"), (p["title"], url)]),
         ]
-        page(f"blog/{p['slug']}.html", f"{p['title']} | Vedant Pathak", p["excerpt"], schema, body, "article")
+        cov = first_cover(p["body"])
+        page(f"blog/{p['slug']}.html", f"{p['title']} | Vedant Pathak", p["excerpt"], schema, body, "article",
+             og_image=(SITE + "blog/" + cov) if cov else None)
 
 
 def build_blog_index(posts):
@@ -180,11 +206,45 @@ def build_blog_index(posts):
          schema, body)
 
 
+# Questions people (and AI assistants) ask about Vedant Pathak. Shown on the profile page and marked up as FAQPage.
+# Every answer uses only facts already stated elsewhere on the site.
+PROFILE_FAQ = [
+    ("Who is Vedant Pathak (VP)?",
+     "Vedant Pathak, known as VP, is the founder of TRAASS (traass.in). He is a B.Tech Mechanical Engineer and Certified Data Analyst who works as a "
+     "Business Analyst in the mechanical domain, in B2B marketing and business development for manufacturers, and as an APCD and industrial fan expert "
+     "with 5+ years in dust collection systems."),
+    ("Which Vedant Pathak is the founder of TRAASS?",
+     "The Vedant Pathak who founded TRAASS is the mechanical engineer and business analyst who works with manufacturing companies on B2B marketing, "
+     "business development, APCD (air pollution control devices), dust collection and industrial fans. His website is traass.in and his email is vedant@traass.in."),
+    ("What is TRAASS?",
+     "TRAASS is Vedant Pathak's practice for B2B marketing, business development, business analysis, dashboards, ERP implementation, digital transformation, "
+     "and APCD and dust collection consulting, for companies from steel to FMCG. It also publishes TRAASS Fan Pro, a centrifugal fan design tool."),
+    ("What is Vedant Pathak an expert in?",
+     "Air pollution control devices (bag filters, cyclones, wet scrubbers and ESPs), dust collection systems and their root cause analysis, industrial "
+     "centrifugal fan selection and design, B2B marketing and business development for manufacturers, and business analysis with dashboards and ERP."),
+    ("How can I contact Vedant Pathak?",
+     "Email vedant@traass.in, connect on LinkedIn, or use the contact form on traass.in."),
+]
+
+
 def build_profile():
+    faq_html = "".join(f"<h3>{e(q)}</h3><p>{e(a)}</p>" for q, a in PROFILE_FAQ)
+    posts = read_posts()
+    article_links = "".join(f'<li><a href="blog/{p["slug"]}.html">{e(p["title"])}</a></li>' for p in posts)
     body = f"""{crumbs("", [("About Vedant Pathak", "")])}
 <div class="profile-top"><img src="assets/vedant-pathak.jpg" alt="Vedant Pathak (VP), founder of TRAASS" width="170" height="170">
 <div><h1>Vedant Pathak (VP)</h1><p class="answer" style="margin:0">{e(BIO)}</p></div></div>
 <div class="content">
+<h2>Quick facts</h2>
+<ul>
+<li><strong>Name:</strong> Vedant Pathak, also known as VP</li>
+<li><strong>Role:</strong> Founder of TRAASS (traass.in)</li>
+<li><strong>Education:</strong> B.Tech, Mechanical Engineering; Certified Data Analyst</li>
+<li><strong>Known for:</strong> APCD and dust collection systems, industrial fan design, B2B marketing and business development for manufacturers, business analysis</li>
+<li><strong>Industries:</strong> manufacturing, from steel to FMCG</li>
+<li><strong>Country:</strong> India</li>
+<li><strong>Contact:</strong> <a href="mailto:{EMAIL}">{EMAIL}</a></li>
+</ul>
 <h2>What I do</h2>
 <ul>
 <li><strong>B2B marketing and branding</strong> for manufacturing companies</li>
@@ -200,10 +260,16 @@ def build_profile():
 <li><strong>5+ years:</strong> Air Pollution Control Devices and dust collection systems, consulting customers on the best-suited APCD</li>
 <li><strong>Expert</strong> in industrial fan design software</li>
 </ul>
+<h2>Software: TRAASS Fan Pro</h2>
+<p>Vedant Pathak builds <a href="fan-software.html">TRAASS Fan Pro</a>, a centrifugal fan design tool for industrial fans: duty point, wheel geometry, blade and disc stresses, shaft and critical speed, bearings, motor and start-up, built on textbook methods and maker catalogue data.</p>
 <h2>Education and certification</h2>
 <ul><li>B.Tech, Mechanical Engineering</li><li>Certified Data Analyst</li></ul>
 <h2>Services</h2>
 <ul><li><a href="b2b-marketing-business-development.html">B2B Marketing &amp; Business Development for Manufacturers</a></li><li><a href="apcd-consulting.html">APCD &amp; Dust Collection Consulting</a></li><li><a href="index.html#services">All services</a></li></ul>
+<h2>Articles by Vedant Pathak</h2>
+<ul>{article_links}</ul>
+<h2>Frequently asked questions</h2>
+{faq_html}
 <h2>Contact</h2>
 <p>Email <a href="mailto:{EMAIL}">{EMAIL}</a>, connect on <a href="{LINKEDIN}" target="_blank" rel="noopener">LinkedIn</a>, or use the <a href="index.html#contact">contact form</a>.</p>
 </div>"""
@@ -212,9 +278,14 @@ def build_profile():
               "worksFor": {"@type": "ProfessionalService", "@id": ORG_ID, "name": "TRAASS"},
               "knowsAbout": ["B2B Marketing", "Business Development", "Branding", "Business Analysis", "Power BI", "ERP Implementation", "Digital Transformation", "APCD", "Dust Collection Systems", "Industrial Fan Design", "Steel Industry", "FMCG", "Manufacturing"]}
     url = SITE + "vedant-pathak.html"
-    schema = [{"@type": "ProfilePage", "url": url, "name": "Vedant Pathak (VP)", "mainEntity": person},
+    person["alternateName"] = ["VP", "Vedant Pathak VP", "Vedant Pathak TRAASS"]
+    person["hasCredential"] = [{"@type": "EducationalOccupationalCredential", "name": "B.Tech, Mechanical Engineering", "credentialCategory": "degree"},
+                               {"@type": "EducationalOccupationalCredential", "name": "Certified Data Analyst", "credentialCategory": "certificate"}]
+    person["nationality"] = {"@type": "Country", "name": "India"}
+    schema = [{"@type": "ProfilePage", "url": url, "name": "Vedant Pathak (VP)", "dateModified": date.today().isoformat(), "mainEntity": person},
+              {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in PROFILE_FAQ]},
               crumb_schema([("About Vedant Pathak", url)])]
-    page("vedant-pathak.html", "Vedant Pathak (VP): Founder of TRAASS | Profile", BIO, schema, body, "profile")
+    page("vedant-pathak.html", "Vedant Pathak (VP): Founder of TRAASS, APCD Consultant and Fan Software | Profile", BIO, schema, body, "profile")
 
 
 def service_page(path, h1, title, answer, content, service):
@@ -233,12 +304,58 @@ def service_page(path, h1, title, answer, content, service):
     page(path, title, answer, schema, body)
 
 
+def build_fan_software():
+    """Public product page for TRAASS Fan Pro (the tool itself is behind the login at fan-pro.html)."""
+    path, url = "fan-software.html", SITE + "fan-software.html"
+    h1 = "TRAASS Fan Pro: Centrifugal Fan Design Software"
+    answer = ("TRAASS Fan Pro is centrifugal fan design software by Vedant Pathak (VP): from the duty point to the wheel, blades, "
+              "shaft, bearings, motor, start-up and casing, for industrial fans in clean air, dust and hot gas.")
+    body = f"""{crumbs("", [("Centrifugal fan software", "")])}
+<h1>{e(h1)}</h1>
+<p class="answer">{e(answer)}</p>
+<p><a class="btn fill" href="fan-pro.html">Log in to Fan Pro →</a> <a class="btn" href="mailto:{EMAIL}?subject=Fan%20Pro%20access">Request access</a></p>
+<div class="content">
+<h2>What the centrifugal fan software designs</h2>
+<ul>
+<li><strong>Fan selection:</strong> size, speed and wheel type (backward curved, backward inclined, airfoil, radial tip, radial, paddle, forward curved) for your flow, pressure, temperature, altitude and dust</li>
+<li><strong>Aerodynamics:</strong> velocity triangles, slip, losses, performance curve, stall margin and the operating point on your system curve</li>
+<li><strong>Impeller strength:</strong> blade, backplate and shroud thickness, with stress checked along the whole blade, overspeed, temperature and wear allowance</li>
+<li><strong>Shaft and critical speed:</strong> stepped shaft, deflection, fatigue and first critical speed with margin</li>
+<li><strong>Bearings and housings:</strong> spherical roller or ball bearings and SNL plummer blocks picked from maker catalogue data, life, lubrication and regreasing interval</li>
+<li><strong>Motor and start-up:</strong> motor from catalogue data, start time for direct-on-line, star-delta, soft starter and VFD, hot and cold gas, damper open or closed</li>
+<li><strong>Casing, hub and accessories:</strong> volute, plate and stiffeners, hub and key, inlet box, damper and silencer</li>
+<li><strong>Balance and vibration:</strong> balance grade and vibration limits by fan category</li>
+<li><strong>Outputs:</strong> CAD drawings (DXF, SVG, STL, STEP), an Excel calculation sheet and a Word report</li>
+</ul>
+<h2>Built on published engineering</h2>
+<p>The calculations follow textbook fluid mechanics and strength of materials, AMCA fan standards and bearing and motor maker catalogue data, and each method is checked against its source. Every value the software picks can be overridden by the engineer.</p>
+<h2>Who it is for</h2>
+<p>Fan manufacturers, APCD and dust collection companies, consultants and plant engineers who design or check centrifugal fans and blowers.</p>
+<h2>Access</h2>
+<p>Fan Pro runs in the browser. Access is by login, given by the admin. <a href="mailto:{EMAIL}?subject=Fan%20Pro%20access">Email {EMAIL}</a> for access or a demo.</p>
+<h2>Related reading</h2>
+<ul>
+<li><a href="blog/how-to-select-industrial-fan-duty-point.html">How to select an industrial fan: why the duty point matters</a></li>
+<li><a href="apcd-consulting.html">APCD consulting: air pollution control system consultant</a></li>
+</ul>
+</div>
+{author_box("")}"""
+    schema = [{"@type": "SoftwareApplication", "name": "TRAASS Fan Pro", "alternateName": "TRAASS centrifugal fan design software",
+               "applicationCategory": "EngineeringApplication", "operatingSystem": "Web browser", "url": url, "description": answer,
+               "author": person_ref(), "publisher": {"@id": ORG_ID},
+               "featureList": ["Centrifugal fan selection", "Velocity triangles and performance curve", "Impeller blade and disc stress",
+                               "Shaft and critical speed", "Bearing and plummer block selection", "Motor and start-up analysis",
+                               "Casing and stiffeners", "Balance and vibration limits", "CAD, Excel and Word outputs"]},
+              crumb_schema([("Centrifugal fan software", url)])]
+    page(path, "Centrifugal Fan Design Software | TRAASS Fan Pro by Vedant Pathak", answer, schema, body)
+
+
 def build_services():
     service_page(
         "b2b-marketing-business-development.html",
-        "B2B Marketing & Business Development for Manufacturers",
-        "B2B Marketing & Business Development for Manufacturers | Vedant Pathak",
-        "Vedant Pathak (VP) of TRAASS helps manufacturing companies get found, trusted and chosen through digital marketing, branding, business development and client conversion, measured at every funnel stage.",
+        "B2B Marketing & Digital Marketing for Manufacturers",
+        "B2B Marketing & Digital Marketing for Manufacturers | Vedant Pathak, TRAASS",
+        "Vedant Pathak (VP) of TRAASS does B2B marketing and digital marketing for manufacturers: website and search visibility, LinkedIn and email campaigns, branding, business development and client conversion, measured at every funnel stage.",
         """<h2>Who this is for</h2>
 <p>Manufacturers and industrial suppliers who rely on a few relationships for orders, and want a steadier flow of qualified enquiries.</p>
 <h2>Marketing and branding</h2>
@@ -261,14 +378,14 @@ def build_services():
 <h2>How the work runs</h2>
 <ul><li>Find the right accounts</li><li>Qualify early</li><li>Consult before selling</li><li>Propose around the outcome</li><li>Close with disciplined follow-up</li><li>Turn each result into proof for the next client</li></ul>
 <p>Try the <a href="index.html#growth">funnel calculator</a> to find where your own sales funnel leaks. Related reading: <a href="blog/get-b2b-leads-without-ranking-on-google.html">getting leads without ranking on Google</a>, <a href="blog/what-does-business-development-do-in-manufacturing.html">what business development does</a> and <a href="blog/does-a-manufacturing-company-need-branding.html">branding for manufacturers</a>.</p>""",
-        "B2B Marketing & Business Development for Manufacturers")
+        "B2B Marketing, Digital Marketing & Business Development for Manufacturers")
     service_page(
         "apcd-consulting.html",
-        "APCD & Dust Collection Consulting",
-        "APCD & Dust Collection Consultant | Vedant Pathak (VP) | TRAASS",
-        "Vedant Pathak (VP) of TRAASS advises plants on air pollution control devices (APCD): application study, root cause analysis of existing dust collection systems, and selection of the best-suited equipment and fan, based on 5+ years in the field.",
-        """<h2>What an APCD consultant does</h2>
-<p>An APCD consultant studies your process and dust, finds why an existing system is underperforming, and recommends equipment that meets the emission norm reliably.</p>
+        "APCD Consultant: Air Pollution Control System Consulting",
+        "APCD Consultant | Air Pollution Control System Consultant in India | Vedant Pathak",
+        "Vedant Pathak (VP) of TRAASS is an APCD consultant: an air pollution control system consultant for plants in India. Application study, root cause analysis of existing dust collection systems, and selection of the best-suited air pollution control device and fan, based on 5+ years in the field.",
+        """<h2>What an APCD (air pollution control system) consultant does</h2>
+<p>An APCD consultant, or air pollution control system consultant, studies your process and dust, finds why an existing system is underperforming, and recommends the air pollution control device that meets the emission norm reliably: bag filter, cyclone, wet scrubber or ESP, with the right fan.</p>
 <h2>What I help with</h2>
 <ul>
 <li><strong>Application study:</strong> dust type, particle size, temperature, moisture, airflow and emission limits</li>
@@ -283,14 +400,52 @@ def build_services():
 <li><a href="blog/bag-filter-high-differential-pressure-rca.html">Bag filter showing high ΔP? A 6-step root cause checklist</a></li>
 <li><a href="blog/how-to-select-industrial-fan-duty-point.html">How to select an industrial fan</a></li>
 </ul>""",
-        "APCD & Dust Collection Consulting")
+        "APCD Consulting: Air Pollution Control System Consultant")
+
+
+def _plain(fragment: str) -> str:
+    """HTML to readable Markdown-ish text for AI tools: headings, list items and paragraphs, no markup."""
+    t = re.sub(r"(?is)<(script|style|svg|noscript|nav|header|footer)[^>]*>.*?</\1>", " ", fragment)
+    t = re.sub(r"(?is)<h1[^>]*>(.*?)</h1>", r"\n# \1\n", t)
+    t = re.sub(r"(?is)<h2[^>]*>(.*?)</h2>", r"\n## \1\n", t)
+    t = re.sub(r"(?is)<h3[^>]*>(.*?)</h3>", r"\n### \1\n", t)
+    t = re.sub(r"(?is)<li[^>]*>", "\n- ", t)
+    t = re.sub(r"(?is)</(p|div|ul|ol|section|article|li|tr)>", "\n", t)
+    t = html.unescape(re.sub(r"(?s)<[^>]+>", "", t))
+    lines = [re.sub(r"[ \t]+", " ", x).strip() for x in t.splitlines()]
+    out, blank = [], False
+    for x in lines:
+        if not x:
+            if not blank and out:
+                out.append("")
+            blank = True
+            continue
+        out.append(x)
+        blank = False
+    return "\n".join(out).strip()
+
+
+def build_llms_full(posts):
+    """llms-full.txt: the full readable text of the key pages in one file, for AI assistants and answer engines."""
+    pages = ["vedant-pathak.html", "apcd-consulting.html", "fan-software.html", "b2b-marketing-business-development.html"] + [f"blog/{p['slug']}.html" for p in posts]
+    parts = [f"# TRAASS · Vedant Pathak (VP): full text of {SITE}\n\nUpdated {date.today().isoformat()}. Summary: {SITE}llms.txt\n"]
+    for rel in pages:
+        f = ROOT / rel
+        if not f.exists():
+            continue
+        h = f.read_text(encoding="utf-8")
+        main = re.search(r"(?is)<main[^>]*>(.*?)</main>", h)
+        parts.append(f"\n---\nSource: {SITE}{rel}\n\n" + _plain(main.group(1) if main else h))
+    (ROOT / "llms-full.txt").write_text("\n".join(parts) + "\n", encoding="utf-8", newline="\n")
+    return len(pages)
 
 
 def build_sitemap(posts):
     newest = posts[0]["date"]
-    urls = [("", newest, "1.0"), ("vedant-pathak.html", newest, "0.9"),
+    today = date.today().isoformat()
+    urls = [("", today, "1.0"), ("vedant-pathak.html", today, "0.9"),
             ("b2b-marketing-business-development.html", newest, "0.9"),
-            ("apcd-consulting.html", newest, "0.9"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
+            ("apcd-consulting.html", newest, "0.9"), ("fan-software.html", today, "0.9"), ("markets.html", newest, "0.8"), ("blog/", newest, "0.8")]
     urls += [(f"blog/{p['slug']}.html", p["date"], "0.7") for p in posts]
     rows = "\n".join(f"  <url><loc>{SITE}{u}</loc><lastmod>{d}</lastmod><priority>{pr}</priority></url>" for u, d, pr in urls)
     (ROOT / "sitemap.xml").write_text(
@@ -315,11 +470,13 @@ def main():
     build_blog_index(posts)
     build_profile()
     build_services()
+    build_fan_software()
     (ROOT / "blog" / "pages.js").write_text(
         "window.POST_PAGES=" + json.dumps([p["slug"] for p in posts]) + ";\n", encoding="utf-8", newline="\n")
     total = build_sitemap(posts)
     update_home(posts)
-    print(f"Built {len(posts)} posts; sitemap has {total} URLs")
+    n_llm = build_llms_full(posts)
+    print(f"Built {len(posts)} posts; sitemap has {total} URLs; llms-full.txt has {n_llm} pages")
 
 
 if __name__ == "__main__":

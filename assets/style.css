@@ -316,4 +316,17 @@ html.navbuild #nav .logo.nb-in,html.navbuild #menu>li.nb-in{opacity:1;animation:
 .nb-page{position:absolute;left:0;top:0;width:0;height:0;z-index:45;pointer-events:none}
 .nb-page>.nb-box,.nb-page>.nb-cur{position:absolute}
 .nb-page>.nb-box{transition:opacity .35s}
+/* Blog pictures: ![alt|caption](images/x.jpg){full|center|left|right|cover} (tools/build_site.py, assets/app.js, blog editor) */
+.pimg{margin:22px 0;max-width:100%}
+.pimg img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.pimg figcaption{font-size:.85rem;color:var(--mut);margin-top:8px;text-align:center}
+.pimg-center{width:72%;margin-left:auto;margin-right:auto}
+.pimg-full,.pimg-cover{width:100%}
+.pimg-left{float:left;width:44%;margin:6px 24px 14px 0}
+.pimg-right{float:right;width:44%;margin:6px 0 14px 24px}
+.content h2,.content blockquote{clear:both}
+.content::after{content:"";display:table;clear:both}
+@media(max-width:700px){.pimg-left,.pimg-right,.pimg-center{float:none;width:100%;margin:18px 0}}
+.cover.pic{padding:0;background:#0b0e22}
+.cover.pic img{width:100%;height:100%;object-fit:cover;display:block}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}

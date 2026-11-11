@@ -1,4 +1,76 @@
+# traass.in: search engines and AI assistants are welcome to read, index and cite this site.
+# Summary for AI tools: https://traass.in/llms.txt · Full text: https://traass.in/llms-full.txt
+
+# Everyone, including crawlers not named below (for example Grok / xAI)
 User-agent: *
+Allow: /
+Disallow: /fan-admin.html
+Disallow: /blog-admin.html
+
+# Search engines (ChatGPT search and Copilot use Bing; Gemini and AI Overviews use Google)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# OpenAI: ChatGPT search, ChatGPT browsing, model training
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+# Anthropic: Claude search, Claude browsing, model training
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# Google Gemini training, Apple Intelligence training
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Others: Meta AI, Amazon, DuckDuckGo assist, Mistral, Cohere, Common Crawl (used by many AI models)
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://traass.in/sitemap.xml

@@ -1,0 +1,795 @@
+# TRAASS · Vedant Pathak (VP): full text of https://traass.in/
+
+Updated 2026-11-11. Summary: https://traass.in/llms.txt
+
+
+---
+Source: https://traass.in/vedant-pathak.html
+
+Home › About Vedant Pathak
+
+# Vedant Pathak (VP)
+Vedant Pathak (VP) is the founder of TRAASS: a B.Tech Mechanical Engineer and Certified Data Analyst working across business analysis, B2B marketing, business development and APCD.
+
+## Quick facts
+
+- Name: Vedant Pathak, also known as VP
+
+- Role: Founder of TRAASS (traass.in)
+
+- Education: B.Tech, Mechanical Engineering; Certified Data Analyst
+
+- Known for: APCD and dust collection systems, industrial fan design, B2B marketing and business development for manufacturers, business analysis
+
+- Industries: manufacturing, from steel to FMCG
+
+- Country: India
+
+- Contact: vedant@traass.in
+
+## What I do
+
+- B2B marketing and branding for manufacturing companies
+
+- Business development and client conversion: from market mapping to closed orders
+
+- Business analysis: turning raw data into a story and a decision
+
+- Interactive dashboards, ERP implementation and digital transformation
+
+- APCD and dust collection consulting: application study, RCA of existing systems and the best-suited solution
+
+## Experience
+
+- Now: transforming businesses in every industry, from steel to FMCG, with ERP, dashboards and data-driven decisions
+
+- Last 5 years: digital marketing, branding, B2B marketing for manufacturing and client conversion
+
+- 5+ years: Air Pollution Control Devices and dust collection systems, consulting customers on the best-suited APCD
+
+- Expert in industrial fan design software
+
+## Software: TRAASS Fan Pro
+
+Vedant Pathak builds TRAASS Fan Pro, a centrifugal fan design tool for industrial fans: duty point, wheel geometry, blade and disc stresses, shaft and critical speed, bearings, motor and start-up, built on textbook methods and maker catalogue data.
+
+## Education and certification
+
+- B.Tech, Mechanical Engineering
+
+- Certified Data Analyst
+
+## Services
+
+- B2B Marketing & Business Development for Manufacturers
+
+- APCD & Dust Collection Consulting
+
+- All services
+
+## Articles by Vedant Pathak
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+- Does a manufacturing company really need branding?
+
+- Digital transformation in a steel plant: the first 90 days
+
+- Bag filter showing high ΔP? A 6-step root cause checklist
+
+- How to select an industrial fan: why the duty point matters
+
+- Bag filter, cyclone, scrubber or ESP: choosing the right APCD
+
+- Why most manufacturing dashboards fail (and how to fix them)
+
+- ERP go-live: the 30-day hypercare checklist
+
+- B2B marketing for manufacturers: sell outcomes, not specs
+
+- From raw data to a story the boss will act on
+
+## Frequently asked questions
+
+### Who is Vedant Pathak (VP)?
+Vedant Pathak, known as VP, is the founder of TRAASS (traass.in). He is a B.Tech Mechanical Engineer and Certified Data Analyst who works as a Business Analyst in the mechanical domain, in B2B marketing and business development for manufacturers, and as an APCD and industrial fan expert with 5+ years in dust collection systems.
+
+### Which Vedant Pathak is the founder of TRAASS?
+The Vedant Pathak who founded TRAASS is the mechanical engineer and business analyst who works with manufacturing companies on B2B marketing, business development, APCD (air pollution control devices), dust collection and industrial fans. His website is traass.in and his email is vedant@traass.in.
+
+### What is TRAASS?
+TRAASS is Vedant Pathak's practice for B2B marketing, business development, business analysis, dashboards, ERP implementation, digital transformation, and APCD and dust collection consulting, for companies from steel to FMCG. It also publishes TRAASS Fan Pro, a centrifugal fan design tool.
+
+### What is Vedant Pathak an expert in?
+Air pollution control devices (bag filters, cyclones, wet scrubbers and ESPs), dust collection systems and their root cause analysis, industrial centrifugal fan selection and design, B2B marketing and business development for manufacturers, and business analysis with dashboards and ERP.
+
+### How can I contact Vedant Pathak?
+Email vedant@traass.in, connect on LinkedIn, or use the contact form on traass.in.
+
+## Contact
+
+Email vedant@traass.in, connect on LinkedIn, or use the contact form.
+
+---
+Source: https://traass.in/apcd-consulting.html
+
+Home › APCD Consultant: Air Pollution Control System Consulting
+
+# APCD Consultant: Air Pollution Control System Consulting
+
+Vedant Pathak (VP) of TRAASS is an APCD consultant: an air pollution control system consultant for plants in India. Application study, root cause analysis of existing dust collection systems, and selection of the best-suited air pollution control device and fan, based on 5+ years in the field.
+
+## What an APCD (air pollution control system) consultant does
+
+An APCD consultant, or air pollution control system consultant, studies your process and dust, finds why an existing system is underperforming, and recommends the air pollution control device that meets the emission norm reliably: bag filter, cyclone, wet scrubber or ESP, with the right fan.
+
+## What I help with
+
+- Application study: dust type, particle size, temperature, moisture, airflow and emission limits
+
+- Root cause analysis: low suction, high differential pressure, bag failure, leakage and fan vibration
+
+- Equipment selection: bag filter, cyclone, wet scrubber or ESP
+
+- Fan selection: duty point, static pressure, efficiency and motor sizing, using fan design software
+
+- Proof with data: before and after readings in a dashboard
+
+## Related reading
+
+- Bag filter, cyclone, scrubber or ESP: choosing the right APCD
+
+- Bag filter showing high ΔP? A 6-step root cause checklist
+
+- How to select an industrial fan
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+Discuss your requirement →
+
+---
+Source: https://traass.in/fan-software.html
+
+Home › Centrifugal fan software
+
+# TRAASS Fan Pro: Centrifugal Fan Design Software
+
+TRAASS Fan Pro is centrifugal fan design software by Vedant Pathak (VP): from the duty point to the wheel, blades, shaft, bearings, motor, start-up and casing, for industrial fans in clean air, dust and hot gas.
+
+Log in to Fan Pro → Request access
+
+## What the centrifugal fan software designs
+
+- Fan selection: size, speed and wheel type (backward curved, backward inclined, airfoil, radial tip, radial, paddle, forward curved) for your flow, pressure, temperature, altitude and dust
+
+- Aerodynamics: velocity triangles, slip, losses, performance curve, stall margin and the operating point on your system curve
+
+- Impeller strength: blade, backplate and shroud thickness, with stress checked along the whole blade, overspeed, temperature and wear allowance
+
+- Shaft and critical speed: stepped shaft, deflection, fatigue and first critical speed with margin
+
+- Bearings and housings: spherical roller or ball bearings and SNL plummer blocks picked from maker catalogue data, life, lubrication and regreasing interval
+
+- Motor and start-up: motor from catalogue data, start time for direct-on-line, star-delta, soft starter and VFD, hot and cold gas, damper open or closed
+
+- Casing, hub and accessories: volute, plate and stiffeners, hub and key, inlet box, damper and silencer
+
+- Balance and vibration: balance grade and vibration limits by fan category
+
+- Outputs: CAD drawings (DXF, SVG, STL, STEP), an Excel calculation sheet and a Word report
+
+## Built on published engineering
+
+The calculations follow textbook fluid mechanics and strength of materials, AMCA fan standards and bearing and motor maker catalogue data, and each method is checked against its source. Every value the software picks can be overridden by the engineer.
+
+## Who it is for
+
+Fan manufacturers, APCD and dust collection companies, consultants and plant engineers who design or check centrifugal fans and blowers.
+
+## Access
+
+Fan Pro runs in the browser. Access is by login, given by the admin. Email vedant@traass.in for access or a demo.
+
+## Related reading
+
+- How to select an industrial fan: why the duty point matters
+
+- APCD consulting: air pollution control system consultant
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+---
+Source: https://traass.in/b2b-marketing-business-development.html
+
+Home › B2B Marketing & Digital Marketing for Manufacturers
+
+# B2B Marketing & Digital Marketing for Manufacturers
+
+Vedant Pathak (VP) of TRAASS does B2B marketing and digital marketing for manufacturers: website and search visibility, LinkedIn and email campaigns, branding, business development and client conversion, measured at every funnel stage.
+
+## Who this is for
+
+Manufacturers and industrial suppliers who rely on a few relationships for orders, and want a steadier flow of qualified enquiries.
+
+## Marketing and branding
+
+- Brand and positioning: a clear promise, consistent identity, catalogues and company profiles
+
+- Digital marketing: website, search visibility, LinkedIn and email campaigns
+
+- Technical content: case studies and application notes that buyers trust
+
+- Events: trade-show planning and follow-up
+
+## Business development
+
+- Market mapping: target industries, accounts and decision makers
+
+- Prospecting: outreach that opens technical conversations
+
+- Techno-commercial consulting: site visits and the right solution
+
+- Proposals and closing: offers, follow-up and negotiation
+
+- Pipeline and CRM: lead scoring, conversion tracking and forecasting
+
+## Why an engineer doing this helps
+
+Industrial buyers want to know you understand their plant. A B.Tech Mechanical background and 5+ years with APCD customers means the conversation starts with their problem, and a data analyst's habits mean every channel gets measured in enquiries and orders.
+
+## How the work runs
+
+- Find the right accounts
+
+- Qualify early
+
+- Consult before selling
+
+- Propose around the outcome
+
+- Close with disciplined follow-up
+
+- Turn each result into proof for the next client
+
+Try the funnel calculator to find where your own sales funnel leaks. Related reading: getting leads without ranking on Google, what business development does and branding for manufacturers.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+Discuss your requirement →
+
+---
+Source: https://traass.in/blog/get-b2b-leads-without-ranking-on-google.html
+
+Home › Blog › Marketing
+
+Marketing2026-11-011 min read
+
+# How can a manufacturer get B2B leads without ranking on Google's first page?
+
+Short answer: Go where industrial buyers already are: LinkedIn, existing customers, dealers, trade directories, trade shows and direct outreach. Search is one channel, and in B2B it is rarely the first one to pay off.
+
+Ranking on page one takes months and can't be guaranteed. Meanwhile, you need enquiries this quarter. A manufacturer's buyer list is small and findable, which is a real advantage: you can go to them directly.
+
+## Start with the people who already know you
+
+- Past customers: call them. Ask about spares, upgrades and who else in the group has the same problem
+
+- Referrals: ask right after a successful commissioning, when trust is highest
+
+- Dealers and consultants: one good EPC or consultant relationship can bring repeated enquiries
+
+## Go direct to named accounts
+
+- List 50 target plants in the right industries
+
+- Find the plant head, maintenance head and purchase head on LinkedIn
+
+- Open with something useful about their process, not your catalogue
+
+## Show up where buyers look
+
+- LinkedIn: two posts a week from a real person, not only a company page
+
+- Google Business Profile: free, and it covers searches for your name and company
+
+- Trade directories: IndiaMART, TradeIndia and industry associations
+
+- Trade shows: book meetings before the event and follow up within 48 hours
+
+## Measure one thing
+
+Ask every new enquiry "how did you find us?" and record it. After three months, stop what brings nothing and double what works.
+
+Search brings people who are already looking. Outreach reaches the buyers who haven't started looking yet.
+The website still matters. When your name comes up, buyers will check you out, and that page has to earn their trust.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- Does a manufacturing company really need branding?
+
+- B2B marketing for manufacturers: sell outcomes, not specs
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/what-does-business-development-do-in-manufacturing.html
+
+Home › Blog › Business Development
+
+Business Development2026-11-011 min read
+
+# What does business development do in a manufacturing company?
+
+Short answer: Business development finds new accounts, markets and partners, then builds the relationship and technical trust that turns them into long-term customers. Sales closes orders; BD creates the opportunities.
+
+In a manufacturing company, sales usually handles today's enquiries. Business development decides where next year's orders will come from.
+
+## What BD actually does
+
+- Market mapping: which industries, regions and applications fit the product
+
+- Account targeting: which plants, and who influences the decision there
+
+- Opening doors: first meetings, site visits and technical conversations
+
+- Partnerships: dealers, EPC contractors and consultants
+
+- Feedback: telling the factory what the market is asking for
+
+## Why engineering knowledge changes the result
+
+Industrial buyers are spending on equipment that has to run for years, and a failure stops their plant. They trust someone who can walk the site, ask the right questions and explain why something failed.
+
+Solve one real problem during the first site visit and you stop being a vendor.
+
+## The numbers worth tracking
+
+- New qualified accounts per quarter
+
+- Conversion at each stage: lead, qualified, visit, proposal, order
+
+- Time from first contact to order
+
+- Share of revenue from accounts won in the last two years
+
+## Where companies go wrong
+
+The most common mistake is measuring BD only on this month's orders. Industrial sales cycles are long, so that pushes people back to chasing easy quotations and away from building new accounts.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- Does a manufacturing company really need branding?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/does-a-manufacturing-company-need-branding.html
+
+Home › Blog › Marketing
+
+Marketing2026-11-011 min read
+
+# Does a manufacturing company really need branding?
+
+Short answer: Yes. In B2B manufacturing, branding is not about a fancy logo. It is the trust and clarity that gets you shortlisted before anyone compares prices.
+
+Many manufacturers believe that quality speaks for itself. It does, but only after someone has bought from you. Branding is what gets you onto the shortlist in the first place.
+
+## What a brand means for a manufacturer
+
+- A clear promise: what you do better, and for whom, in one sentence
+
+- Consistency: the same name, logo and message on the website, catalogue, LinkedIn and visiting card
+
+- Proof: case studies, photographs of real installations and technical data
+
+- People: engineers and founders who are visible and helpful
+
+## Where to start
+
+- Write your one-sentence positioning. If your team gives five different answers, start there
+
+- Fix your company profile and catalogue so they answer what buyers ask
+
+- Make your website pass the 30-second test: what do you make, for whom, and why trust you?
+
+- Turn your three best projects into short case studies
+
+## What it pays back
+
+A stronger brand helps you get enquiries before the price discussion starts, and lets your sales team spend less time proving you are credible.
+
+Buyers rarely choose the unknown supplier, even at a lower price, when a breakdown would stop their plant.
+Branding doesn't need a big budget. It needs clarity, consistency and patience.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- B2B marketing for manufacturers: sell outcomes, not specs
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/steel-plant-digital-transformation-first-90-days.html
+
+Home › Blog › Steel
+
+Steel2026-11-011 min read
+
+# Digital transformation in a steel plant: the first 90 days
+
+Short answer: Steel plants don't need a big-bang ERP. They need three numbers they can trust every morning. Here's how I start.
+
+Most steel plants I walk into already have data: weighbridge slips, furnace logs, dispatch registers, Excel MIS. The problem isn't missing data. Nobody trusts it.
+
+## Days 1–30: find the three numbers
+
+Ask the plant head one question: "Which three numbers decide your day?" It's usually production tonnage, power consumption per tonne and dispatch vs. orders. Everything else can wait.
+
+- Map where each number is born (shop floor, weighbridge, SAP/Tally, register)
+
+- Find who touches it before it reaches management
+
+- Note every manual re-entry. That's where the errors are
+
+## Days 31–60: one source of truth
+
+Bring those three numbers into one clean table with automated refresh. No new software yet, just Power Query and discipline.
+
+If the number on the dashboard doesn't match the number in the meeting, the dashboard loses forever.
+
+## Days 61–90: earn the right to go bigger
+
+Once leadership opens the dashboard every morning, you have the trust to talk about ERP modules, mobile data capture and automation. Transformation is 70% process and people, 30% tools.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/bag-filter-high-differential-pressure-rca.html
+
+Home › Blog › APCD
+
+APCD2026-10-311 min read
+
+# Bag filter showing high ΔP? A 6-step root cause checklist
+
+Short answer: High differential pressure is the most common dust collector complaint. It's rarely 'just change the bags'.
+
+A rising differential pressure (ΔP) across a bag filter means lower suction at the hoods, dust escaping and a fan working harder. Before you order new bags, run this checklist.
+
+## 1. Check the cleaning system
+
+- Is compressed air pressure at the header within spec (usually 5–6 bar)?
+
+- Are all solenoid and diaphragm valves firing? Listen to each one
+
+- Is the sequential timer set right for the dust load?
+
+## 2. Check for moisture
+
+Moisture plus fine dust makes a cake that pulse-jet cleaning can't remove. Look for condensation from gas below dew point, leaking water seals or wet compressed air.
+
+## 3. Check the air-to-cloth ratio
+
+If the process airflow has grown since commissioning, the filter is undersized. Measure the actual flow and compare it with the design.
+
+## 4. Check bag media vs. application
+
+Temperature, chemistry and particle size decide the media. Polyester in a hot, acidic stream will blind and fail early.
+
+## 5. Check hopper discharge
+
+A full hopper re-entrains dust onto the bags. Check the rotary airlock and screw conveyor.
+
+## 6. Then, and only then, look at the bags
+
+Changing bags without fixing the root cause just resets the clock.
+Log the ΔP every shift. A simple trend chart tells you more than any single reading.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- Bag filter, cyclone, scrubber or ESP: choosing the right APCD
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/how-to-select-industrial-fan-duty-point.html
+
+Home › Blog › Fans
+
+Fans2026-10-301 min read
+
+# How to select an industrial fan: why the duty point matters
+
+Short answer: A fan isn't selected by airflow alone. Where the fan curve meets the system curve decides efficiency, power and life.
+
+Every fan has a performance curve: pressure against airflow. Every duct system has a resistance curve that rises with the square of flow. Where they cross is the duty point, and that's where your fan will actually run, whatever the datasheet says.
+
+## Common mistakes
+
+- Adding big safety margins. An oversized fan runs throttled, wasting power and causing vibration
+
+- Ignoring density. Hot gas is lighter, so pressure and power change with temperature and altitude
+
+- Selecting off the peak. Running left of the peak pressure point causes surging
+
+## What I check in fan design software
+
+- Duty point near the best-efficiency point
+
+- Margin on flow and pressure (typically 10–20%, not 50%)
+
+- Motor power at the worst case (cold start)
+
+- Tip speed, noise and material for the gas
+
+Try the fan curve simulator on my homepage. Push the system resistance up and watch the duty point slide.
+A well-selected fan can cut 15–30% of a dust collection system's power bill. That's often the fastest payback in the plant.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/choosing-right-apcd-bag-filter-cyclone-scrubber-esp.html
+
+Home › Blog › APCD
+
+APCD2026-10-291 min read
+
+# Bag filter, cyclone, scrubber or ESP: choosing the right APCD
+
+Short answer: There is no 'best' air pollution control device, only the best one for your dust, temperature and emission norms.
+
+In 5+ years of consulting on Air Pollution Control Devices, the most expensive mistake I've seen is choosing the equipment before understanding the application.
+
+## Start with five questions
+
+- What is the dust (type, particle size, abrasiveness, stickiness)?
+
+- What is the gas temperature and moisture?
+
+- What is the airflow, and does it vary?
+
+- What emission limit must you meet?
+
+- Is the dust explosive or combustible?
+
+## A quick guide
+
+- Cyclone: coarse dust (above 10 µm), low cost, often a pre-cleaner
+
+- Bag filter: fine dust, very high efficiency, temperature-limited by media
+
+- Wet scrubber: sticky, hot or explosive dust and gases, but you then need to handle water
+
+- ESP: very high volumes at high temperature, as in power and cement; high capital cost
+
+The right APCD is the cheapest one that meets the norm reliably for ten years, not the cheapest one on the quotation.
+Often the answer is a combination: a cyclone in front to protect a bag filter, with the right fan behind it.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- Bag filter showing high ΔP? A 6-step root cause checklist
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/power-bi-dashboard-manufacturing-kpis.html
+
+Home › Blog › Dashboards
+
+Dashboards2026-10-281 min read
+
+# Why most manufacturing dashboards fail (and how to fix them)
+
+Short answer: A dashboard fails when it answers questions nobody asked. Design backward from the decision.
+
+I've seen beautiful dashboards with 40 charts that nobody opens after week two. The problem is never the tool. It's the design.
+
+## Design backward from decisions
+
+Ask each user: what do you decide every week, and what number tells you? Build only those KPIs first.
+
+- Plant head: OEE, tonnage, power per tonne
+
+- Sales head: orders vs. target, pipeline, collections
+
+- Purchase: stock days, pending POs, price variance
+
+## Rules I follow
+
+- One page, one question
+
+- The most important number goes top-left, biggest
+
+- Every KPI shows a target and a trend, not just a value
+
+- Colour only for exceptions: red means act now
+
+If a chart doesn't change a decision, delete it.
+Try the interactive dashboard on my homepage. Filter by year and segment, and every number recalculates.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/erp-go-live-hypercare-checklist.html
+
+Home › Blog › ERP
+
+ERP2026-10-271 min read
+
+# ERP go-live: the 30-day hypercare checklist
+
+Short answer: Go-live isn't the finish line. The first 30 days decide whether people use the ERP or go back to Excel.
+
+Most ERP failures happen after go-live, not before. Users hit a problem, nobody fixes it quickly, and the parallel Excel sheet quietly comes back.
+
+## Week 1
+
+- A 15-minute stand-up every day with key users from each department
+
+- One issue tracker. No issues by WhatsApp or hallway
+
+- Master data freeze: no new item codes without approval
+
+## Weeks 2–3
+
+- Reconcile stock: system vs. physical for the top 50 items
+
+- Reconcile ledgers: debtors and creditors vs. old books
+
+- Retrain on the five most common errors
+
+## Week 4
+
+- Switch off the old system and old sheets formally
+
+- Publish the first management report from the ERP
+
+- Hand over to a support process with clear owners
+
+Adoption beats configuration. A simple ERP people use beats a perfect one they avoid.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/b2b-marketing-manufacturing-sell-outcomes.html
+
+Home › Blog › Marketing
+
+Marketing2026-10-261 min read
+
+# B2B marketing for manufacturers: sell outcomes, not specs
+
+Short answer: Industrial buyers compare spec sheets in minutes. What wins the order is proof, speed and trust.
+
+In industrial sales, everyone's catalogue looks the same. Same flange sizes, same efficiency claims, same "ISO certified". So how do buyers choose?
+
+## What actually converts
+
+- Case studies with numbers: "Reduced emissions from 150 to 30 mg/Nm³ at a steel re-rolling mill"
+
+- Response time: the first useful technical reply often wins
+
+- Engineering credibility: a site visit and an RCA report beat a brochure
+
+## A simple LinkedIn system
+
+- Two posts a week: one problem-solution, one project result
+
+- Comment on your buyers' posts, not just your own
+
+- Turn every site visit into a short, anonymised lesson
+
+## Track the funnel
+
+Leads → qualified → site visit → proposal → order. Measure conversion at each step. Over five years, tracking this pushed my conversion rate up steadily, because you fix the stage that leaks.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- Does a manufacturing company really need branding?
+
+Talk to me about this →
+
+---
+Source: https://traass.in/blog/raw-data-to-business-story.html
+
+Home › Blog › Data Story
+
+Data Story2026-10-251 min read
+
+# From raw data to a story the boss will act on
+
+Short answer: Analysis isn't finished when the chart is ready. It's finished when someone makes a decision.
+
+Management doesn't want your pivot table. They want to know what happened, why, and what to do.
+
+## My four-step structure
+
+- Headline: one sentence with the main number ("Sales grew 18%, but the South fell 21%")
+
+- Three insights: biggest contributor, fastest mover, biggest risk
+
+- One action: specific, owned and dated
+
+- Appendix: the data, for anyone who wants to check
+
+## Engineering habits that help
+
+As a mechanical engineer I learned to ask "what's the root cause?" before "what's the fix?". The same works in business data: a drop in sales is a symptom, and pricing, coverage or competition is the cause.
+
+Try it: the "Raw Data → Story" tool on my homepage turns a sales table into a headline, insights and an action.
+
+Vedant Pathak (VP), founder of TRAASS
+Business Analyst, B2B marketing and business development for manufacturing, and APCD expert. B.Tech Mechanical, Certified Data Analyst. Get in touch →
+
+## Related articles
+
+- How can a manufacturer get B2B leads without ranking on Google's first page?
+
+- What does business development do in a manufacturing company?
+
+Talk to me about this →

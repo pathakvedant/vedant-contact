@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co https://fan-pro-server.onrender.com; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Blog editor | TRAASS</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/blog-admin.css">
+<script defer src="assets/fan/config.js"></script>
+<script defer src="assets/fan/auth.js"></script>
+<script defer src="blog/posts.js"></script>
+<script defer src="assets/blog-admin.js"></script>
+</head>
+<body class="ba">
+<header class="ba-top">
+ <a href="index.html" class="logo"><img src="assets/traass-logo-reversed.svg" alt="TRAASS" width="120" height="31"></a>
+ <strong>Blog editor</strong>
+ <span id="who" class="ba-who">Checking login…</span>
+</header>
+<main class="ba-grid">
+ <section class="ba-edit" aria-label="Write">
+  <label>Title<input id="fTitle" maxlength="160" placeholder="A question your buyers ask, answered"></label>
+  <div class="ba-row">
+   <label>Web address (slug)<input id="fSlug" maxlength="80" placeholder="made-from-the-title"></label>
+   <label>Date<input id="fDate" type="date"></label>
+  </div>
+  <div class="ba-row">
+   <label>Category<input id="fCat" maxlength="40" list="cats" placeholder="APCD, Fans, Marketing…"><datalist id="cats"></datalist></label>
+   <label>Tags (comma separated)<input id="fTags" maxlength="300" placeholder="APCD consultant, bag filter"></label>
+  </div>
+  <label>Short answer (shown in Google and quoted by AI tools) <small id="exCount"></small><textarea id="fExcerpt" rows="3" maxlength="320" placeholder="Answer the title in one or two plain sentences."></textarea></label>
+  <div class="ba-tools" role="toolbar" aria-label="Formatting">
+   <button type="button" data-ins="h2" title="Heading">H2 Heading</button>
+   <button type="button" data-ins="li" title="Bullet">• Bullet</button>
+   <button type="button" data-ins="q" title="Quote">❝ Quote</button>
+   <button type="button" data-ins="b" title="Bold"><b>B</b> Bold</button>
+   <button type="button" id="addPic" class="pic">🖼 Add picture</button>
+   <input id="picFile" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+  </div>
+  <label>Article<textarea id="fBody" rows="22" spellcheck="true" placeholder="Write one paragraph per line.&#10;&#10;## A heading&#10;- a bullet&#10;> a quote&#10;**bold words**&#10;&#10;Click 'Add picture' to place a picture where the cursor is."></textarea></label>
+  <div id="checks" class="ba-checks" aria-live="polite"></div>
+  <div class="ba-actions">
+   <button type="button" id="publish" class="btn fill" disabled>Publish to website</button>
+   <button type="button" id="download" class="btn">Download files instead</button>
+   <button type="button" id="clear" class="btn ghost">New post</button>
+  </div>
+  <p id="status" class="ba-status" role="status"></p>
+ </section>
+ <section class="ba-preview" aria-label="Preview">
+  <div class="ba-tabs"><button type="button" class="on" data-view="page">Blog page</button><button type="button" data-view="card">Home page card</button></div>
+  <p class="ba-hint">Click a picture in the preview to place it: left, centre, right, full width or cover, and move it up or down.</p>
+  <div id="pvPage" class="pagebody ba-pv"></div>
+  <div id="pvCard" class="ba-pv ba-cardpv" hidden></div>
+ </section>
+</main>
+<div id="picBar" class="ba-picbar" hidden>
+ <span id="picName"></span>
+ <button type="button" data-pos="left">◧ Left</button><button type="button" data-pos="center">▣ Centre</button><button type="button" data-pos="right">◨ Right</button><button type="button" data-pos="full">▭ Full</button><button type="button" data-pos="cover">★ Cover</button>
+ <button type="button" data-move="-1">↑ Up</button><button type="button" data-move="1">↓ Down</button>
+ <label>Alt text<input id="picAlt" maxlength="160"></label><label>Caption<input id="picCap" maxlength="200"></label>
+ <button type="button" id="picDel" class="danger">Remove</button><button type="button" id="picDone">Done</button>
+</div>
+</body>
+</html>

@@ -151,7 +151,10 @@ $('#funnelCta').addEventListener('click',e=>{$('#cMsg').value=e.currentTarget.da
 const POSTS=(window.POSTS||[]).map(p=>({...p,mins:Math.max(1,Math.round(p.body.split(/\s+/).length/200))})).sort((a,b)=>b.date.localeCompare(a.date));
 const CAT_STYLE={'Business Development':['#ffb84d','🤝'],'APCD':['#ff4d9d','🏭'],'Fans':['#b14dff','🌀'],'Steel':['#3dffa8','🔩'],'ERP':['#00e5ff','🧩'],'Dashboards':['#ffb84d','📊'],'Marketing':['#4d8bff','📣'],'Data Story':['#00e5ff','📖']};
 const cs=c=>CAT_STYLE[c]||['#00e5ff','📝'];
-const cover=p=>{const[c,e]=cs(p.cat);return `<div class="cover" style="background:linear-gradient(135deg,${c}33,#0b0e22 70%)">${p.emoji||e}</div>`};
+// One picture per line in a post: ![alt|caption](images/file.jpg){full|center|left|right|cover}. Same rule as tools/build_site.py
+const IMG_LINE=/^!\[([^\]|]*)(?:\|([^\]]*))?\]\((images\/[a-z0-9][a-z0-9-]{0,80}\.(?:jpg|jpeg|png|webp))\)(?:\{(full|center|left|right|cover)\})?$/;
+const coverPic=p=>{const m=p.body.split(/\n/).map(l=>IMG_LINE.exec(l.trim())).filter(Boolean);const c=m.find(x=>x[4]==='cover')||m[0];return c?{src:'blog/'+c[3],alt:c[1].trim()}:null};
+const cover=p=>{const pic=coverPic(p);if(pic)return `<div class="cover pic"><img src="${esc(pic.src)}" alt="${esc(pic.alt)}" loading="lazy" decoding="async"></div>`;const[c,e]=cs(p.cat);return `<div class="cover" style="background:linear-gradient(135deg,${c}33,#0b0e22 70%)">${p.emoji||e}</div>`};
 const fmtDate=d=>new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
 let likes=store.get('vp_likes',{}),cat='All';
 const cats=['All',...new Set(POSTS.map(p=>p.cat))];
@@ -173,6 +176,7 @@ function md(t){const out=[];let list=false;
  t.trim().split(/\n/).forEach(l=>{l=l.trim();const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   if(/^- /.test(l)){if(!list){out.push('<ul>');list=true}out.push('<li>'+inl(l.slice(2))+'</li>');return}
   if(list){out.push('</ul>');list=false}
+  const pic=IMG_LINE.exec(l);if(pic){const cap=(pic[2]||'').trim();out.push(`<figure class="pimg pimg-${pic[4]||'center'}"><img src="blog/${esc(pic[3])}" alt="${esc(pic[1].trim())}" loading="lazy" decoding="async">${cap?`<figcaption>${esc(cap)}</figcaption>`:''}</figure>`);return}
   if(!l)return;if(/^## /.test(l))out.push('<h2>'+inl(l.slice(3))+'</h2>');else if(/^> /.test(l))out.push('<blockquote>'+inl(l.slice(2))+'</blockquote>');else out.push('<p>'+inl(l)+'</p>')});
  if(list)out.push('</ul>');return out.join('')}
 const baseTitle=document.title,metaDesc=document.querySelector('meta[name=description]'),baseDesc=metaDesc.content;
